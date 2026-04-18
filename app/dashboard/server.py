@@ -170,7 +170,9 @@ def api_data(run_id):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
     print("\n  DAM Dashboard")
-    print(f"  http://127.0.0.1:5000")
+    print(f"  http://0.0.0.0:{port}")
     print(f"  Report data dir: {REPORT_DATA_DIR}\n")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=debug, host="0.0.0.0", port=port)
