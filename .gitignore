@@ -1,0 +1,31 @@
+# Secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Generated output (reports and run logs are local artifacts)
+app/output/reports/
+app/output/run_logs/
+
+# IDE / local tooling
+.claude/
+.vscode/
+.idea/
+
+# Planning / scratch workspace
+planning/
+
+# OS
+.DS_Store
+Thumbs.db
