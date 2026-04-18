@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM — {{ run.report_week }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+/* ─── Variables ──────────────────────────────────────────────── */
+:root {
+  --navy:        #0A2540;
+  --navy-mid:    #1E3A5F;
+  --bg:          #EEF1F5;
+  --card:        #FFFFFF;
+  --border:      #E2E8F0;
+  --border-light:#F1F5F9;
+  --text:        #111827;
+  --text-2:      #374151;
+  --text-3:      #6B7280;
+  --text-4:      #9CA3AF;
+
+  --green:       #047857;
+  --green-bg:    #ECFDF5;
+  --green-bd:    #A7F3D0;
+  --amber:       #B45309;
+  --amber-bg:    #FFFBEB;
+  --amber-bd:    #FDE68A;
+  --red:         #B91C1C;
+  --red-bg:      #FEF2F2;
+  --red-bd:      #FECACA;
+  --info:        #4B5563;
+  --info-bg:     #F9FAFB;
+  --info-bd:     #E5E7EB;
+
+  --sh:          0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --sh-md:       0 4px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+  --r:           6px;
+  --r-sm:        4px;
+  --sidebar:     224px;
+  --header:      56px;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+
+/* ─── Fixed Header ───────────────────────────────────────────── */
+.app-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header);
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.hdr-brand {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.hdr-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.hdr-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.25);
+  margin: 0 14px;
+}
+.hdr-name {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.03em;
+}
+.hdr-week {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.01em;
+}
+.hdr-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hdr-run-id {
+  font-size: 10px;
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  color: rgba(255,255,255,0.38);
+}
+.run-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.run-pill.full    { background: #D1FAE5; color: #065F46; }
+.run-pill.partial { background: #FEF3C7; color: #92400E; }
+.run-pill.halted  { background: #FEE2E2; color: #991B1B; }
+.btn-pdf {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: var(--r-sm);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: var(--font);
+}
+.btn-pdf:hover { background: rgba(255,255,255,0.2); }
+
+/* ─── Sidebar ────────────────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: var(--header);
+  left: 0;
+  width: var(--sidebar);
+  bottom: 0;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 50;
+  padding: 16px 0 32px;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sb-section-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding: 0 18px;
+  margin-bottom: 3px;
+  margin-top: 18px;
+}
+.sb-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-3);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+}
+.sb-nav-item:hover { background: var(--bg); color: var(--text); }
+.sb-nav-item.active {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border-left-color: #3B82F6;
+  font-weight: 600;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.status-dot.green        { background: var(--green); }
+.status-dot.yellow       { background: var(--amber); }
+.status-dot.red          { background: var(--red); }
+.status-dot.informational{ background: var(--info); }
+
+.sb-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+.sb-run-item {
+  padding: 8px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background 0.12s;
+}
+.sb-run-item:hover { background: var(--bg); }
+.sb-run-item.active { border-left-color: var(--navy); background: var(--bg); }
+.sb-run-week {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.sb-run-id {
+  font-size: 10px;
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--text-4);
+}
+.sb-run-status {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 100px;
+  margin-top: 2px;
+  width: fit-content;
+}
+.sb-run-status.full    { background: #D1FAE5; color: #065F46; }
+.sb-run-status.partial { background: #FEF3C7; color: #92400E; }
+.sb-run-status.halted  { background: #FEE2E2; color: #991B1B; }
+
+/* ─── Main Content ───────────────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar);
+  padding-top: calc(var(--header) + 32px);
+  padding-bottom: 64px;
+  padding-right: 32px;
+  padding-left: 32px;
+  min-height: 100vh;
+}
+.content-section {
+  margin-bottom: 48px;
+}
+
+/* ─── Section Header ─────────────────────────────────────────── */
+.sec-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--navy);
+}
+.sec-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.sec-dot.green        { background: var(--green); }
+.sec-dot.yellow       { background: var(--amber); }
+.sec-dot.red          { background: var(--red); }
+.sec-dot.informational{ background: var(--info); }
+.sec-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--navy);
+}
+.sec-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+}
+.mini-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+}
+.mini-pill.green        { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-bd); }
+.mini-pill.yellow       { background: var(--amber-bg);  color: var(--amber); border: 1px solid var(--amber-bd); }
+.mini-pill.red          { background: var(--red-bg);    color: var(--red);   border: 1px solid var(--red-bd);   }
+.mini-pill.informational{ background: var(--info-bg);   color: var(--info);  border: 1px solid var(--info-bd);  }
+
+/* ─── Executive Headline ─────────────────────────────────────── */
+.exec-hl {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--r);
+  margin-bottom: 28px;
+  border-left: 4px solid;
+}
+.exec-hl.green  { background: var(--green-bg); border-color: var(--green); }
+.exec-hl.yellow { background: var(--amber-bg); border-color: var(--amber); }
+.exec-hl.red    { background: var(--red-bg);   border-color: var(--red);   }
+.hl-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.hl-body {}
+.hl-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 3px;
+}
+.exec-hl.green  .hl-label { color: var(--green); }
+.exec-hl.yellow .hl-label { color: var(--amber); }
+.exec-hl.red    .hl-label { color: var(--red); }
+.hl-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+.exec-hl.green  .hl-text { color: #065F46; }
+.exec-hl.yellow .hl-text { color: #78350F; }
+.exec-hl.red    .hl-text { color: #7F1D1D; }
+
+/* ─── Domain Health Grid ─────────────────────────────────────── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.dhc {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  padding: 20px;
+  border-top: 3px solid;
+  display: flex;
+  flex-direction: column;
+}
+.dhc.green        { border-top-color: var(--green); }
+.dhc.yellow       { border-top-color: var(--amber); }
+.dhc.red          { border-top-color: var(--red); }
+.dhc.informational{ border-top-color: var(--info); }
+.dhc-name {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+.dhc-score {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.dhc-unit {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-4);
+  margin-left: 1px;
+}
+.dhc-sublabel {
+  font-size: 11px;
+  color: var(--text-4);
+  margin-bottom: 14px;
+}
+.dhc-dots {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+.dhc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dhc-dot.green        { background: var(--green); }
+.dhc-dot.yellow       { background: var(--amber); }
+.dhc-dot.red          { background: var(--red); }
+.dhc-dot.informational{ background: var(--info); }
+
+/* ─── KPI Summary Strip ──────────────────────────────────────── */
+.kpi-summary-strip {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 0;
+}
+.ksum-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.ksum-item + .ksum-item {
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+}
+.ksum-count {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+.ksum-count.green { color: var(--green); }
+.ksum-count.amber { color: var(--amber); }
+.ksum-count.red   { color: var(--red); }
+.ksum-count.info  { color: var(--info); }
+.ksum-lbl {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  line-height: 1.3;
+}
+
+/* ─── KPI Card Grid ──────────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ─── KPI Card ───────────────────────────────────────────────── */
+.kpi-card {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  border-top: 3px solid;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s;
+}
+.kpi-card:hover { box-shadow: var(--sh-md); }
+.kpi-card.green        { border-top-color: var(--green); }
+.kpi-card.yellow       { border-top-color: var(--amber); }
+.kpi-card.red          { border-top-color: var(--red); }
+.kpi-card.informational{ border-top-color: var(--info); }
+
+.kpi-body { padding: 18px 20px 14px; flex: 1; }
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+.kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.kpi-val {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1.5px;
+  color: var(--text);
+}
+.kpi-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+.kpi-badge.green        { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+.kpi-badge.yellow       { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
+.kpi-badge.red          { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bd);   }
+.kpi-badge.informational{ background: var(--info-bg);  color: var(--info);  border: 1px solid var(--info-bd);  }
+
+.kpi-delta {
+  font-size: 11px;
+  color: var(--text-4);
+  margin-bottom: 12px;
+  min-height: 15px;
+}
+.kpi-delta .arr-up   { color: var(--green); font-weight: 600; }
+.kpi-delta .arr-down { color: var(--red);   font-weight: 600; }
+
+/* Historical comparison */
+.kpi-hist {
+  border-top: 1px solid var(--border-light);
+  padding-top: 10px;
+}
+.kpi-hist table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.kpi-hist td { padding: 2px 0; vertical-align: middle; }
+.hist-period { color: var(--text-4); font-style: italic; width: 44%; }
+.hist-val    { color: var(--text-3); font-family: 'SF Mono', Consolas, monospace; text-align: right; width: 28%; font-size: 10.5px; }
+.hist-delta  { text-align: right; font-size: 10.5px; padding-left: 8px; width: 28%; }
+.hist-delta.pos { color: var(--green); }
+.hist-delta.neg { color: var(--red); }
+.hist-delta.neu { color: var(--text-4); }
+
+/* Sparkline */
+.kpi-sparkline {
+  height: 56px;
+  padding: 0;
+  border-top: 1px solid var(--border-light);
+  position: relative;
+}
+.kpi-sparkline canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─── AI Insights Panel ──────────────────────────────────────── */
+.insights-panel {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  overflow: hidden;
+}
+.insights-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.insights-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+.insights-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-4);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1px 8px;
+  border-radius: 100px;
+}
+.insights-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.insight-type-lbl {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+.insight-type-lbl:first-child { margin-top: 0; }
+.insight-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.insight-row:last-child { border-bottom: none; }
+.insight-icon { font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+.insight-content { flex: 1; min-width: 0; }
+.insight-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.insight-action-text {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.55;
+  margin-top: 4px;
+  padding-left: 1px;
+  font-style: italic;
+}
+.fact-tags {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.fact-tag {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: 'SF Mono', Consolas, monospace;
+  background: var(--bg);
+  color: var(--text-4);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+/* ─── System Health ──────────────────────────────────────────── */
+.sys-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+.sys-card {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  overflow: hidden;
+}
+.sys-card-hdr {
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+.sys-card-body { padding: 16px 20px; }
+
+/* Stage pipeline */
+.stage-row {
+  display: grid;
+  grid-template-columns: 76px 1fr 52px 62px 160px;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 12px;
+}
+.stage-row:last-child { border-bottom: none; }
+.stage-name { font-weight: 600; color: var(--text-2); }
+.stage-bar-wrap { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+.stage-bar { height: 100%; border-radius: 3px; background: var(--navy); }
+.stage-bar.fallback { background: var(--amber); }
+.stage-time { font-family: 'SF Mono', Consolas, monospace; color: var(--text-3); text-align: right; }
+.stage-cost { font-family: 'SF Mono', Consolas, monospace; color: var(--text-4); text-align: right; }
+.stage-model { font-size: 11px; color: var(--text-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Stats table */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 12px;
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-lbl { color: var(--text-3); }
+.stat-val { font-weight: 600; color: var(--text); font-family: 'SF Mono', Consolas, monospace; }
+.stat-val.good { color: var(--green); }
+.stat-val.warn { color: var(--amber); }
+.stat-val.bad  { color: var(--red); }
+
+/* Verification stats */
+.verif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.verif-cell {
+  background: var(--bg);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  text-align: center;
+}
+.verif-num { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
+.verif-lbl { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-4); }
+
+/* ─── Print-only header ──────────────────────────────────────── */
+.print-header { display: none; }
+
+/* ─── Print Styles ───────────────────────────────────────────── */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.55in 0.65in;
+  }
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .app-header, .sidebar { display: none !important; }
+  .main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  body { background: white !important; font-size: 10pt; }
+
+  .print-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+    border-bottom: 3px solid var(--navy);
+  }
+  .ph-brand {
+    font-size: 28pt;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1px;
+  }
+  .ph-center { text-align: center; }
+  .ph-title { font-size: 11pt; font-weight: 600; color: var(--text-3); }
+  .ph-week  { font-size: 14pt; font-weight: 700; color: var(--text); margin-top: 2px; }
+  .ph-right { text-align: right; font-size: 9pt; color: var(--text-4); line-height: 1.6; }
+
+  .content-section { break-inside: avoid; margin-bottom: 28pt; }
+  .kpi-card { break-inside: avoid; }
+  .insights-panel { break-inside: avoid; }
+  .sys-grid { break-inside: avoid; }
+
+  .kpi-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10pt !important; }
+  .overview-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 10pt !important; }
+  .sys-grid { grid-template-columns: 1fr 1fr !important; gap: 10pt !important; }
+
+  .kpi-sparkline { display: none !important; }
+  .btn-pdf { display: none !important; }
+
+  .kpi-val { font-size: 26pt !important; }
+  .dhc-score { font-size: 24pt !important; }
+}
+</style>
+</head>
+
+{# ──────────────────────────────────────────────────────────────── #}
+{# JINJA2 MACROS                                                   #}
+{# ──────────────────────────────────────────────────────────────── #}
+
+{% macro fmt_val(fact) -%}
+{%- set v = fact.final_value -%}
+{%- set n = fact.kpi_name -%}
+{%- if n in ['On-Time Ship Rate','On-Time Delivery Rate','Unshipped Orders Rate','Shipment Match Rate','Carrier Mix'] -%}
+  {{ "%.1f"|format(v * 100) }}%
+{%- elif n in ['Order to Ship Time','Transit Time','Label Lag'] -%}
+  {{ "%.1f"|format(v) }}h
+{%- elif n in ['Shipping Cost per Order','Cost by Carrier'] -%}
+  ${{ "%.2f"|format(v) }}
+{%- else -%}
+  {{ v|round(3) }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro fmt_hist_val(v, unit) -%}
+{%- if unit == '%' -%}{{ "%.1f"|format(v) }}%
+{%- elif unit == '$' -%}${{ "%.2f"|format(v) }}
+{%- else -%}{{ "%.1f"|format(v) }}{{ unit }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro hist_delta_class(delta, direction) -%}
+{%- if direction == 'neutral' -%}neu
+{%- elif direction == 'up' -%}{{ 'pos' if delta > 0 else 'neg' }}
+{%- else -%}{{ 'pos' if delta < 0 else 'neg' }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro hist_delta_str(delta, unit) -%}
+{%- if delta|abs < 0.005 -%}—
+{%- elif unit == '%' -%}{{ '▲' if delta > 0 else '▼' }} {{ "%.1f"|format(delta|abs) }}pp
+{%- elif unit == '$' -%}{{ '▲' if delta > 0 else '▼' }} ${{ "%.2f"|format(delta|abs) }}
+{%- else -%}{{ '▲' if delta > 0 else '▼' }} {{ "%.1f"|format(delta|abs) }}{{ unit }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro wow_delta(fact) -%}
+{%- if fact.wow_delta is none or fact.wow_delta == 0 -%}
+  <span>— first run or no change</span>
+{%- else -%}
+  {%- set d = fact.wow_delta -%}
+  {%- set n = fact.kpi_name -%}
+  {%- if d > 0 -%}<span class="arr-up">▲&nbsp;
+  {%- else -%}<span class="arr-down">▼&nbsp;
+  {%- endif -%}
+  {%- if n in ['On-Time Ship Rate','On-Time Delivery Rate','Unshipped Orders Rate','Shipment Match Rate','Carrier Mix'] -%}
+    {{ "%.1f"|format(d|abs * 100) }}pp
+  {%- elif n in ['Order to Ship Time','Transit Time','Label Lag'] -%}
+    {{ "%.1f"|format(d|abs) }}h
+  {%- elif n in ['Shipping Cost per Order','Cost by Carrier'] -%}
+    ${{ "%.2f"|format(d|abs) }}
+  {%- else -%}
+    {{ d|abs|round(3) }}
+  {%- endif -%}
+  </span> vs last week
+{%- endif -%}
+{%- endmacro %}
+
+{# Determine overall headline class and text #}
+{% set red_facts    = run.factlist | selectattr('threshold_status', 'equalto', 'red')    | list %}
+{% set yellow_facts = run.factlist | selectattr('threshold_status', 'equalto', 'yellow') | list %}
+{% if red_facts %}
+  {% set hl_class = 'red' %}
+  {% set hl_icon  = '⚠' %}
+  {% set hl_label = 'Action Required' %}
+  {% set hl_text  = red_facts|length ~ ' metric' ~ ('s require' if red_facts|length > 1 else ' requires') ~ ' immediate attention — ' ~ red_facts[0].kpi_name ~ ' is below threshold at ' ~ fmt_val(red_facts[0]) ~ '.' %}
+{% elif yellow_facts %}
+  {% set hl_class = 'yellow' %}
+  {% set hl_icon  = '▶' %}
+  {% set hl_label = 'Monitor' %}
+  {% set hl_text  = yellow_facts|length ~ ' metric' ~ ('s flagged' if yellow_facts|length > 1 else ' flagged') ~ ' for review — ' ~ yellow_facts[0].kpi_name ~ ' at ' ~ fmt_val(yellow_facts[0]) ~ ' is below target.' %}
+{% else %}
+  {% set hl_class = 'green' %}
+  {% set hl_icon  = '✓' %}
+  {% set hl_label = 'On Track' %}
+  {% set hl_text  = 'All operational metrics within target — no escalation required this week.' %}
+{% endif %}
+
+<body>
+
+<!-- ─── Fixed Header ─────────────────────────────────────────── -->
+<header class="app-header">
+  <div class="hdr-brand">
+    <span class="hdr-logo">DAM</span>
+    <span class="hdr-divider"></span>
+    <span class="hdr-name">Data Analytics Manager</span>
+  </div>
+  <div class="hdr-week">{{ run.report_week }}</div>
+  <div class="hdr-actions">
+    <span class="hdr-run-id">{{ run.run_id }}</span>
+    <span class="run-pill {{ run.final_status }}">{{ run.final_status|upper }}</span>
+    <button class="btn-pdf" onclick="window.print()">↓ Export PDF</button>
+  </div>
+</header>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="sb-section-lbl">Report</div>
+
+  <a href="#overview" class="sb-nav-item" data-section="overview">Overview</a>
+
+  {% for domain in domains %}
+  <a href="#{{ domain }}" class="sb-nav-item" data-section="{{ domain }}">
+    {{ domain_labels[domain] }}
+    <span class="status-dot {{ domain_status.get(domain, 'informational') }}"></span>
+  </a>
+  {% endfor %}
+
+  <a href="#system-health" class="sb-nav-item" data-section="system-health">System Health</a>
+
+  <hr class="sb-divider">
+  <div class="sb-section-lbl">Runs</div>
+
+  {% for r in recent_runs %}
+  <a href="/report/{{ r.run_id }}" class="sb-run-item {% if r.run_id == run.run_id %}active{% endif %}">
+    <span class="sb-run-week">{{ r.report_week }}</span>
+    <span class="sb-run-id">{{ r.run_id }}</span>
+    <span class="sb-run-status {{ r.final_status }}">{{ r.final_status }}</span>
+  </a>
+  {% endfor %}
+</nav>
+
+<!-- ─── Print-only header ────────────────────────────────────── -->
+<div class="print-header">
+  <div class="ph-brand">DAM</div>
+  <div class="ph-center">
+    <div class="ph-title">Data Analytics Manager</div>
+    <div class="ph-week">{{ run.report_week }}</div>
+  </div>
+  <div class="ph-right">
+    Run: {{ run.run_id }}<br>
+    Generated {{ run.generated_at[:10] }}<br>
+    Status: {{ run.final_status|upper }}
+  </div>
+</div>
+
+<!-- ─── Main Content ─────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- OVERVIEW                                                 -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <section class="content-section" id="overview">
+    <div class="sec-header">
+      <span class="sec-dot {{ hl_class }}"></span>
+      <h2 class="sec-title">Overview</h2>
+    </div>
+
+    <!-- Executive Headline -->
+    <div class="exec-hl {{ hl_class }}">
+      <div class="hl-icon">{{ hl_icon }}</div>
+      <div class="hl-body">
+        <div class="hl-label">{{ hl_label }}</div>
+        <div class="hl-text">{{ hl_text }}</div>
+      </div>
+    </div>
+
+    <!-- Domain Health Grid -->
+    <div class="overview-grid">
+      {% for domain in domains %}
+      {% set dom_status = domain_status.get(domain, 'informational') %}
+      {% set dom_score  = domain_scores.get(domain, 5.5) %}
+      {% set dom_facts  = run.factlist | selectattr('domain','equalto', domain) | list %}
+      <div class="dhc {{ dom_status }}">
+        <div class="dhc-name">{{ domain_labels[domain] }}</div>
+        <div class="dhc-score">{{ dom_score }}<span class="dhc-unit">/10</span></div>
+        <div class="dhc-sublabel">{{ dom_facts|length }} metric{{ 's' if dom_facts|length != 1 else '' }}</div>
+        <div class="dhc-dots">
+          {% for f in dom_facts %}
+          <div class="dhc-dot {{ f.threshold_status }}" title="{{ f.kpi_name }}: {{ fmt_val(f) }}"></div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- KPI Summary Strip -->
+    <div class="kpi-summary-strip" style="margin-top:16px">
+      <div class="ksum-item">
+        <span class="ksum-count green">{{ kpi_summary.n_green }}</span>
+        <span class="ksum-lbl">On&nbsp;Track</span>
+      </div>
+      <div class="ksum-item">
+        <span class="ksum-count amber">{{ kpi_summary.n_yellow }}</span>
+        <span class="ksum-lbl">Watch</span>
+      </div>
+      <div class="ksum-item">
+        <span class="ksum-count red">{{ kpi_summary.n_red }}</span>
+        <span class="ksum-lbl">Attention</span>
+      </div>
+      <div class="ksum-item">
+        <span class="ksum-count info">{{ kpi_summary.n_info }}</span>
+        <span class="ksum-lbl">Informational</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- DOMAIN SECTIONS                                          -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  {% for domain in domains %}
+  {% set d_facts    = run.factlist | selectattr('domain','equalto', domain) | list %}
+  {% set d_insights = run.insights | selectattr('domain','equalto', domain) | selectattr('verification_verdict','equalto','aligned') | list %}
+  {% if d_facts %}
+
+  <section class="content-section" id="{{ domain }}">
+    <div class="sec-header">
+      <span class="sec-dot {{ domain_status.get(domain,'informational') }}"></span>
+      <h2 class="sec-title">{{ domain_labels[domain] }}</h2>
+      <div class="sec-pills">
+        {% for f in d_facts %}
+        <span class="mini-pill {{ f.threshold_status }}">{{ fmt_val(f) }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      {% for fact in d_facts %}
+      {% set bench = historical_benchmarks.get(fact.kpi_name) %}
+      <div class="kpi-card {{ fact.threshold_status }}">
+        <div class="kpi-body">
+          <div class="kpi-label">{{ fact.kpi_name }}</div>
+          <div class="kpi-val-row">
+            <span class="kpi-val">{{ fmt_val(fact) }}</span>
+            <span class="kpi-badge {{ fact.threshold_status }}">
+              {% if fact.threshold_status == 'green' %}On Track
+              {% elif fact.threshold_status == 'yellow' %}Watch
+              {% elif fact.threshold_status == 'red' %}Attention
+              {% else %}Info{% endif %}
+            </span>
+          </div>
+          <div class="kpi-delta">{{ wow_delta(fact) }}</div>
+
+          {% if bench %}
+          <div class="kpi-hist">
+            <table>
+              {% for lbl, key in [('Last week','last_week'),('Month avg','month_avg'),('3-month avg','three_month_avg'),('Year avg','year_avg')] %}
+              {% set hv = bench[key] %}
+              {% set delta = fact.final_value - hv %}
+              {% if bench.unit == '%' %}{% set hv_adj = hv / 100 %}{% set delta_adj = fact.final_value - hv_adj %}{% else %}{% set delta_adj = delta %}{% endif %}
+              {% if bench.unit == '%' %}
+                {% set dclass = hist_delta_class(fact.final_value - (hv/100), bench.direction) %}
+                {% set dstr   = hist_delta_str(fact.final_value - (hv/100), bench.unit) %}
+              {% else %}
+                {% set dclass = hist_delta_class(delta, bench.direction) %}
+                {% set dstr   = hist_delta_str(delta, bench.unit) %}
+              {% endif %}
+              <tr>
+                <td class="hist-period">{{ lbl }}</td>
+                <td class="hist-val">{{ fmt_hist_val(hv, bench.unit) }}</td>
+                <td class="hist-delta {{ dclass }}">{{ dstr }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+          {% endif %}
+
+          {% if fact.kpi_name == 'Carrier Mix' and fact.auxiliary_value is not none %}
+          <div style="font-size:11px;color:var(--text-4);margin-top:8px">
+            FedEx {{ "%.1f"|format(fact.final_value*100) }}% &nbsp;·&nbsp; DHL {{ "%.1f"|format(fact.auxiliary_value*100) }}%
+          </div>
+          {% elif fact.kpi_name == 'Cost by Carrier' and fact.auxiliary_value is not none %}
+          <div style="font-size:11px;color:var(--text-4);margin-top:8px">
+            FedEx ${{ "%.2f"|format(fact.final_value) }} avg &nbsp;·&nbsp; DHL ${{ "%.2f"|format(fact.auxiliary_value) }} avg
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Sparkline -->
+        <div class="kpi-sparkline">
+          <canvas data-kpi="{{ fact.kpi_name }}" data-status="{{ fact.threshold_status }}"></canvas>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- AI Insights -->
+    {% if d_insights %}
+    {% set obs     = d_insights | selectattr('claim_type','equalto','observation')        | list %}
+    {% set hyp     = d_insights | selectattr('claim_type','equalto','hypothesis')         | list %}
+    {% set actions = d_insights | selectattr('claim_type','equalto','recommended_action') | list %}
+    <div class="insights-panel">
+      <div class="insights-hdr">
+        <span class="insights-title">AI Insights</span>
+        <span class="insights-badge">{{ d_insights|length }} verified</span>
+      </div>
+      <div class="insights-body">
+        {% if obs %}
+        <div class="insight-type-lbl">Observations</div>
+        {% for i in obs %}
+        <div class="insight-row">
+          <span class="insight-icon">○</span>
+          <div class="insight-content">
+            <div class="insight-text">{{ i.claim_text }}
+              <span class="fact-tags">{% for fid in i.cited_fact_ids %}<span class="fact-tag">{{ fid }}</span>{% endfor %}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if hyp %}
+        <div class="insight-type-lbl">Hypotheses</div>
+        {% for i in hyp %}
+        <div class="insight-row">
+          <span class="insight-icon">◇</span>
+          <div class="insight-content">
+            <div class="insight-text">{{ i.claim_text }}
+              <span class="fact-tags">{% for fid in i.cited_fact_ids %}<span class="fact-tag">{{ fid }}</span>{% endfor %}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if actions %}
+        <div class="insight-type-lbl">Recommended Actions</div>
+        {% for i in actions %}
+        <div class="insight-row">
+          <span class="insight-icon" style="color:var(--navy)">→</span>
+          <div class="insight-content">
+            <div class="insight-text">{{ i.claim_text }}
+              <span class="fact-tags">{% for fid in i.cited_fact_ids %}<span class="fact-tag">{{ fid }}</span>{% endfor %}</span>
+            </div>
+            {% if i.recommended_action %}
+            <div class="insight-action-text">{{ i.recommended_action }}</div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </section>
+  {% endif %}
+  {% endfor %}
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- SYSTEM HEALTH                                            -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <section class="content-section" id="system-health">
+    <div class="sec-header">
+      <span class="sec-dot informational"></span>
+      <h2 class="sec-title">System Health</h2>
+    </div>
+
+    <div class="sys-grid">
+
+      <!-- Stage Pipeline Card -->
+      <div class="sys-card">
+        <div class="sys-card-hdr">Pipeline Execution</div>
+        <div class="sys-card-body">
+          {% set max_latency = run.stage_telemetry | map(attribute='latency_seconds') | max %}
+          {% for t in run.stage_telemetry %}
+          {% set bar_pct = ((t.latency_seconds / max_latency) * 100) | round(1) if max_latency > 0 else 0 %}
+          <div class="stage-row">
+            <span class="stage-name">{{ t.stage | replace('stage_','Stage ') }}</span>
+            <div class="stage-bar-wrap">
+              <div class="stage-bar {{ 'fallback' if t.fallback_activated else '' }}" style="width:{{ bar_pct }}%"></div>
+            </div>
+            <span class="stage-time">{{ "%.1f"|format(t.latency_seconds) }}s</span>
+            <span class="stage-cost">${{ "%.4f"|format(t.api_cost_usd) }}</span>
+            <span class="stage-model">{{ t.model_used or '—' }}</span>
+          </div>
+          {% endfor %}
+          <!-- Totals row -->
+          <div class="stage-row" style="font-weight:600;border-top:1px solid var(--border);margin-top:4px;padding-top:12px">
+            <span class="stage-name" style="color:var(--navy)">Total</span>
+            <div class="stage-bar-wrap"></div>
+            <span class="stage-time" style="color:var(--navy)">{{ "%.1f"|format(run.total_latency_s) }}s</span>
+            <span class="stage-cost" style="color:var(--navy)">${{ "%.4f"|format(run.total_api_cost_usd) }}</span>
+            <span class="stage-model"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Card -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <div class="sys-card">
+          <div class="sys-card-hdr">Run Statistics</div>
+          <div class="sys-card-body">
+            <div class="stat-row">
+              <span class="stat-lbl">Run ID</span>
+              <span class="stat-val" style="font-size:10px">{{ run.run_id }}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-lbl">Status</span>
+              <span class="stat-val {{ 'good' if run.final_status == 'full' else 'warn' }}">{{ run.final_status|upper }}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-lbl">KPI mismatches</span>
+              <span class="stat-val {{ 'warn' if run.kpi_mismatch_count and run.kpi_mismatch_count > 0 else '' }}">
+                {{ run.kpi_mismatch_count or 0 }}
+              </span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-lbl">Total cost</span>
+              <span class="stat-val">${{ "%.5f"|format(run.total_api_cost_usd) }}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-lbl">Total latency</span>
+              <span class="stat-val">{{ "%.1f"|format(run.total_latency_s) }}s</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-lbl">Generated</span>
+              <span class="stat-val" style="font-size:10px">{{ run.generated_at[:19]|replace('T',' ') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys-card">
+          <div class="sys-card-hdr">Verification Quality</div>
+          <div class="sys-card-body">
+            <div class="verif-grid">
+              <div class="verif-cell">
+                <div class="verif-num">
+                  {% if run.claim_acceptance_rate is not none %}
+                  {{ "%.0f"|format(run.claim_acceptance_rate * 100) }}%
+                  {% else %}—{% endif %}
+                </div>
+                <div class="verif-lbl">Claim<br>Acceptance</div>
+              </div>
+              <div class="verif-cell">
+                <div class="verif-num">
+                  {% if run.cross_verifier_agreement is not none %}
+                  {{ "%.0f"|format(run.cross_verifier_agreement * 100) }}%
+                  {% else %}—{% endif %}
+                </div>
+                <div class="verif-lbl">Verifier<br>Agreement</div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              {% for model in run.models_used %}
+              <div class="stat-row">
+                <span class="stat-lbl" style="font-size:11px">{{ model }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── KPI Trend Data for Chart.js ─────────────────────────── -->
+<script id="kpi-trends-data" type="application/json">
+{{ kpi_trends | tojson }}
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Sparklines ──────────────────────────────────────────── */
+  const trends = JSON.parse(document.getElementById('kpi-trends-data').textContent);
+
+  const STATUS_COLORS = {
+    green:         { border: '#047857', bg: 'rgba(4,120,87,0.08)'   },
+    yellow:        { border: '#B45309', bg: 'rgba(180,83,9,0.08)'   },
+    red:           { border: '#B91C1C', bg: 'rgba(185,28,28,0.08)'  },
+    informational: { border: '#4B5563', bg: 'rgba(75,85,99,0.06)'   },
+  };
+
+  document.querySelectorAll('.kpi-sparkline canvas').forEach(canvas => {
+    const kpi    = canvas.dataset.kpi;
+    const status = canvas.dataset.status || 'informational';
+    const data   = trends[kpi] || [];
+    if (data.length < 2) {
+      canvas.closest('.kpi-sparkline').style.display = 'none';
+      return;
+    }
+    const color = STATUS_COLORS[status] || STATUS_COLORS.informational;
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.week_date),
+        datasets: [{
+          data:             data.map(d => d.value),
+          borderColor:      color.border,
+          backgroundColor:  color.bg,
+          borderWidth:      1.5,
+          fill:             true,
+          tension:          0.35,
+          pointRadius:      data.length <= 4 ? 2.5 : 0,
+          pointHoverRadius: 4,
+          pointBackgroundColor: color.border,
+        }]
+      },
+      options: {
+        responsive:           true,
+        maintainAspectRatio:  false,
+        plugins: {
+          legend:  { display: false },
+          tooltip: {
+            callbacks: {
+              title: items => items[0].label,
+              label: item  => kpi + ': ' + item.formattedValue,
+            }
+          }
+        },
+        scales: {
+          x: { display: false },
+          y: { display: false, grace: '12%' }
+        },
+        animation: { duration: 350 },
+      }
+    });
+  });
+
+  /* ── Sidebar: active section via IntersectionObserver ────── */
+  const sections  = document.querySelectorAll('.content-section[id]');
+  const navItems  = document.querySelectorAll('.sb-nav-item[data-section]');
+
+  const activate = id => {
+    navItems.forEach(el => el.classList.toggle('active', el.dataset.section === id));
+  };
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) activate(e.target.id); });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    sections.forEach(s => io.observe(s));
+  }
+
+  /* ── Smooth scroll ───────────────────────────────────────── */
+  document.querySelectorAll('.sb-nav-item[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

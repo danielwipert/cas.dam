@@ -43,8 +43,9 @@ from core.factlist_store import save_factlist, load_prior_factlist, get_baseline
 
 StageResult = Union[VerifiedOutput, DegradationSignal]
 
-LOG_DIR      = "output/run_logs"
-FACTLIST_DIR = "data/factlists"
+LOG_DIR           = "output/run_logs"
+FACTLIST_DIR      = "data/factlists"
+REPORT_DATA_DIR   = "output/report_data"
 
 
 # ===========================================================================
@@ -254,6 +255,9 @@ class DAMOrchestrator:
         log.pdf_path = s5_out.pdf_path
         final_status = "partial" if signals else "full"
 
+        self._save_report_data(log, s3_out.factlist, s4_out.verified_insights,
+                               week_date, report_week, final_status, signals)
+
         print(f"\n{'='*60}")
         print(f"  Run complete -- status: {final_status.upper()}")
         print(f"  Report: {s5_out.pdf_path}")
@@ -294,6 +298,39 @@ class DAMOrchestrator:
         print(f"\n  Total API cost : ${log.total_api_cost_usd:.6f}")
         print(f"  Total latency  : {log.total_latency_s:.1f}s")
         return log
+
+    def _save_report_data(
+        self,
+        log: RunLog,
+        factlist,
+        insights,
+        week_date: str,
+        report_week: str,
+        final_status: str,
+        signals: list,
+    ) -> None:
+        os.makedirs(REPORT_DATA_DIR, exist_ok=True)
+        data = {
+            "run_id":                 log.run_id,
+            "week_date":              week_date,
+            "report_week":            report_week,
+            "generated_at":           datetime.now().isoformat(),
+            "final_status":           final_status,
+            "factlist":               [f.model_dump(mode="json") for f in factlist],
+            "insights":               [i.model_dump(mode="json") for i in insights],
+            "stage_telemetry":        [t.model_dump(mode="json") for t in log.stage_telemetry],
+            "total_api_cost_usd":     log.total_api_cost_usd,
+            "total_latency_s":        log.total_latency_s,
+            "models_used":            log.models_used,
+            "claim_acceptance_rate":  log.claim_acceptance_rate,
+            "cross_verifier_agreement": log.cross_verifier_agreement,
+            "kpi_mismatch_count":     log.kpi_mismatch_count,
+            "html_path":              log.pdf_path,
+        }
+        path = f"{REPORT_DATA_DIR}/{log.run_id}.json"
+        with open(path, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        print(f"  Dashboard data : {path}")
 
     def _save_run_log(self, log: RunLog) -> None:
         os.makedirs(LOG_DIR, exist_ok=True)
