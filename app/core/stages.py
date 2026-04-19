@@ -327,9 +327,16 @@ class Stage1:
     def _parse_dt(self, val: str) -> datetime | None:
         if not val or str(val).strip() == "":
             return None
-        for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        s = str(val).strip()
+        for fmt in (
+            "%Y-%m-%dT%H:%M:%S.%f",
+            "%Y-%m-%dT%H:%M:%S",
+            "%Y-%m-%d %H:%M:%S.%f",
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d",
+        ):
             try:
-                return datetime.strptime(str(val).strip(), fmt)
+                return datetime.strptime(s, fmt)
             except ValueError:
                 continue
         return None

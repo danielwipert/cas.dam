@@ -4,12 +4,12 @@
     "domain": "fulfillment",
     "kpi_name": "Order to Ship Time",
     "llm_value": null,
-    "python_value": 43.48,
-    "final_value": 43.48,
+    "python_value": 42.91,
+    "final_value": 42.91,
     "threshold_status": "yellow",
     "llm_python_match": true,
-    "prior_week_value": 45.27,
-    "wow_delta": -1.79,
+    "prior_week_value": 46.73,
+    "wow_delta": -3.82,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -20,10 +20,10 @@
       ],
       "row_count": 488,
       "formula_used": "Average hours from order_created_at to shipped_at, across all shipped (non-cancelled) orders",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -31,12 +31,12 @@
     "domain": "fulfillment",
     "kpi_name": "On-Time Ship Rate",
     "llm_value": null,
-    "python_value": 0.9447,
-    "final_value": 0.9447,
-    "threshold_status": "red",
+    "python_value": 0.957,
+    "final_value": 0.957,
+    "threshold_status": "yellow",
     "llm_python_match": true,
-    "prior_week_value": 0.9322,
-    "wow_delta": 0.0125,
+    "prior_week_value": 0.905,
+    "wow_delta": 0.052,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -47,10 +47,10 @@
       ],
       "row_count": 488,
       "formula_used": "Percentage of orders where shipped_at <= promised_ship_date, expressed as decimal (e.g. 0.966). Only include orders that have both shipped_at and promised_ship_date.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -62,8 +62,8 @@
     "final_value": 0.024,
     "threshold_status": "yellow",
     "llm_python_match": true,
-    "prior_week_value": 0.026,
-    "wow_delta": -0.002,
+    "prior_week_value": 0.032,
+    "wow_delta": -0.008,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -74,10 +74,10 @@
       ],
       "row_count": 488,
       "formula_used": "Percentage of total orders (including cancelled) with no shipment record, expressed as decimal. Cancelled orders count as unshipped.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -85,12 +85,12 @@
     "domain": "carrier_performance",
     "kpi_name": "Transit Time",
     "llm_value": null,
-    "python_value": 138.67,
-    "final_value": 138.67,
+    "python_value": 138.16,
+    "final_value": 138.16,
     "threshold_status": "green",
     "llm_python_match": true,
-    "prior_week_value": 139.67,
-    "wow_delta": -1.0,
+    "prior_week_value": 152.22,
+    "wow_delta": -14.06,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -101,10 +101,10 @@
       ],
       "row_count": 488,
       "formula_used": "Average hours from first_scan_at to delivered_at, across all delivered shipments",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -112,12 +112,12 @@
     "domain": "carrier_performance",
     "kpi_name": "On-Time Delivery Rate",
     "llm_value": null,
-    "python_value": 0.976,
-    "final_value": 0.976,
+    "python_value": 0.9679,
+    "final_value": 0.9679,
     "threshold_status": "yellow",
     "llm_python_match": true,
-    "prior_week_value": 0.9799,
-    "wow_delta": -0.0039,
+    "prior_week_value": 0.9141,
+    "wow_delta": 0.0538,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -128,23 +128,23 @@
       ],
       "row_count": 488,
       "formula_used": "Percentage of delivered shipments where actual transit time <= expected transit window for that carrier + service level. Express as decimal. Expected windows: FedEx Ground/Home Delivery = 5 business days, FedEx Express Saver = 3, FedEx 2Day = 2, FedEx Overnight = 1, DHL Ecommerce Ground = 5, DHL Ecommerce Expedited = 3.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
     "fact_id": "F006",
     "domain": "carrier_performance",
     "kpi_name": "Carrier Mix",
-    "llm_value": 0.478,
+    "llm_value": 0.5331,
     "python_value": 0.498,
     "final_value": 0.498,
     "threshold_status": "informational",
     "llm_python_match": false,
-    "prior_week_value": 0.5462,
-    "wow_delta": -0.0482,
+    "prior_week_value": 0.5331,
+    "wow_delta": -0.0351,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -155,10 +155,10 @@
       ],
       "row_count": 488,
       "formula_used": "Percentage split of total shipments between FedEx and DHL Ecommerce. Express as two decimals that sum to 1.0. Report as informational \u2014 no threshold applied.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -166,12 +166,12 @@
     "domain": "cost",
     "kpi_name": "Shipping Cost per Order",
     "llm_value": null,
-    "python_value": 11.73,
-    "final_value": 11.73,
+    "python_value": 12.08,
+    "final_value": 12.08,
     "threshold_status": "informational",
     "llm_python_match": true,
-    "prior_week_value": 11.78,
-    "wow_delta": -0.05,
+    "prior_week_value": 12.11,
+    "wow_delta": -0.03,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -182,10 +182,10 @@
       ],
       "row_count": 488,
       "formula_used": "Total shipping cost (from carrier records) divided by total shipped orders. If fewer than 4 weeks of history exist, mark as informational.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -193,13 +193,13 @@
     "domain": "cost",
     "kpi_name": "Cost by Carrier",
     "llm_value": null,
-    "python_value": 15.29,
-    "final_value": 15.29,
+    "python_value": 14.97,
+    "final_value": 14.97,
     "threshold_status": "informational",
     "llm_python_match": true,
-    "prior_week_value": 14.86,
-    "wow_delta": 0.43,
-    "auxiliary_value": 9.85,
+    "prior_week_value": 14.96,
+    "wow_delta": 0.01,
+    "auxiliary_value": 10.2,
     "data_provenance": {
       "source_tables": [
         "reconciliation_shipments",
@@ -209,10 +209,10 @@
       ],
       "row_count": 488,
       "formula_used": "Average shipping cost broken down by carrier (FedEx average, DHL average). Express as a dict: {FedEx: float, DHL Ecommerce: float}. If fewer than 4 weeks of history exist, mark as informational.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
@@ -220,12 +220,12 @@
     "domain": "operational_integrity",
     "kpi_name": "Label Lag",
     "llm_value": null,
-    "python_value": 3.03,
-    "final_value": 3.03,
+    "python_value": 3.45,
+    "final_value": 3.45,
     "threshold_status": "green",
     "llm_python_match": true,
-    "prior_week_value": 2.8,
-    "wow_delta": 0.23,
+    "prior_week_value": 3.62,
+    "wow_delta": -0.17,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -236,23 +236,23 @@
       ],
       "row_count": 488,
       "formula_used": "Average hours from label_created_at to first_scan_at, across all shipments. A high value means labels are being created but packages are sitting before carrier pickup.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   },
   {
     "fact_id": "F010",
     "domain": "operational_integrity",
     "kpi_name": "Shipment Match Rate",
-    "llm_value": 0.9385,
-    "python_value": 0.9385,
-    "final_value": 0.9385,
+    "llm_value": 0.959,
+    "python_value": 0.959,
+    "final_value": 0.959,
     "threshold_status": "red",
     "llm_python_match": true,
-    "prior_week_value": 0.9199,
-    "wow_delta": 0.0186,
+    "prior_week_value": 0.938,
+    "wow_delta": 0.021,
     "auxiliary_value": null,
     "data_provenance": {
       "source_tables": [
@@ -263,10 +263,10 @@
       ],
       "row_count": 488,
       "formula_used": "Percentage of shipments successfully matched to a carrier record (exact or fuzzy), expressed as decimal. Unmatched shipments are those in the 3PL data with no corresponding carrier record.",
-      "date_range": "2026-04-04",
+      "date_range": "2026-03-21",
       "exclusions": null
     },
-    "week_date": "2026-04-04",
+    "week_date": "2026-03-21",
     "python_verified": true
   }
 ]

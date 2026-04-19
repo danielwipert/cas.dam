@@ -1,0 +1,509 @@
+{
+  "run_id": "DAM-20260419-092904-08810f",
+  "week_date": "2026-03-28",
+  "report_week": "Mar 22 - Mar 28, 2026",
+  "generated_at": "2026-04-19T09:30:09.628938",
+  "final_status": "full",
+  "factlist": [
+    {
+      "fact_id": "F001",
+      "domain": "fulfillment",
+      "kpi_name": "Order to Ship Time",
+      "llm_value": null,
+      "python_value": 45.27,
+      "final_value": 45.27,
+      "threshold_status": "yellow",
+      "llm_python_match": true,
+      "prior_week_value": 42.91,
+      "wow_delta": 2.36,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Average hours from order_created_at to shipped_at, across all shipped (non-cancelled) orders",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F002",
+      "domain": "fulfillment",
+      "kpi_name": "On-Time Ship Rate",
+      "llm_value": null,
+      "python_value": 0.9322,
+      "final_value": 0.9322,
+      "threshold_status": "red",
+      "llm_python_match": true,
+      "prior_week_value": 0.957,
+      "wow_delta": -0.0248,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Percentage of orders where shipped_at <= promised_ship_date, expressed as decimal (e.g. 0.966). Only include orders that have both shipped_at and promised_ship_date.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F003",
+      "domain": "fulfillment",
+      "kpi_name": "Unshipped Orders Rate",
+      "llm_value": 0.026,
+      "python_value": 0.026,
+      "final_value": 0.026,
+      "threshold_status": "yellow",
+      "llm_python_match": true,
+      "prior_week_value": 0.024,
+      "wow_delta": 0.002,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Percentage of total orders (including cancelled) with no shipment record, expressed as decimal. Cancelled orders count as unshipped.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F004",
+      "domain": "carrier_performance",
+      "kpi_name": "Transit Time",
+      "llm_value": null,
+      "python_value": 139.67,
+      "final_value": 139.67,
+      "threshold_status": "green",
+      "llm_python_match": true,
+      "prior_week_value": 138.16,
+      "wow_delta": 1.51,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Average hours from first_scan_at to delivered_at, across all delivered shipments",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F005",
+      "domain": "carrier_performance",
+      "kpi_name": "On-Time Delivery Rate",
+      "llm_value": null,
+      "python_value": 0.9799,
+      "final_value": 0.9799,
+      "threshold_status": "yellow",
+      "llm_python_match": true,
+      "prior_week_value": 0.9679,
+      "wow_delta": 0.012,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Percentage of delivered shipments where actual transit time <= expected transit window for that carrier + service level. Express as decimal. Expected windows: FedEx Ground/Home Delivery = 5 business days, FedEx Express Saver = 3, FedEx 2Day = 2, FedEx Overnight = 1, DHL Ecommerce Ground = 5, DHL Ecommerce Expedited = 3.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F006",
+      "domain": "carrier_performance",
+      "kpi_name": "Carrier Mix",
+      "llm_value": 0.506,
+      "python_value": 0.5462,
+      "final_value": 0.5462,
+      "threshold_status": "informational",
+      "llm_python_match": false,
+      "prior_week_value": 0.498,
+      "wow_delta": 0.0482,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Percentage split of total shipments between FedEx and DHL Ecommerce. Express as two decimals that sum to 1.0. Report as informational \u2014 no threshold applied.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F007",
+      "domain": "cost",
+      "kpi_name": "Shipping Cost per Order",
+      "llm_value": null,
+      "python_value": 11.78,
+      "final_value": 11.78,
+      "threshold_status": "informational",
+      "llm_python_match": true,
+      "prior_week_value": 12.08,
+      "wow_delta": -0.3,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Total shipping cost (from carrier records) divided by total shipped orders. If fewer than 4 weeks of history exist, mark as informational.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F008",
+      "domain": "cost",
+      "kpi_name": "Cost by Carrier",
+      "llm_value": null,
+      "python_value": 14.86,
+      "final_value": 14.86,
+      "threshold_status": "informational",
+      "llm_python_match": true,
+      "prior_week_value": 14.97,
+      "wow_delta": -0.11,
+      "auxiliary_value": 10.3,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Average shipping cost broken down by carrier (FedEx average, DHL average). Express as a dict: {FedEx: float, DHL Ecommerce: float}. If fewer than 4 weeks of history exist, mark as informational.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F009",
+      "domain": "operational_integrity",
+      "kpi_name": "Label Lag",
+      "llm_value": null,
+      "python_value": 2.8,
+      "final_value": 2.8,
+      "threshold_status": "green",
+      "llm_python_match": true,
+      "prior_week_value": 3.45,
+      "wow_delta": -0.65,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Average hours from label_created_at to first_scan_at, across all shipments. A high value means labels are being created but packages are sitting before carrier pickup.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    },
+    {
+      "fact_id": "F010",
+      "domain": "operational_integrity",
+      "kpi_name": "Shipment Match Rate",
+      "llm_value": 0.9199,
+      "python_value": 0.9199,
+      "final_value": 0.9199,
+      "threshold_status": "red",
+      "llm_python_match": true,
+      "prior_week_value": 0.959,
+      "wow_delta": -0.0391,
+      "auxiliary_value": null,
+      "data_provenance": {
+        "source_tables": [
+          "reconciliation_shipments",
+          "canonical_orders",
+          "canonical_shipments",
+          "canonical_carrier_shipments"
+        ],
+        "row_count": 487,
+        "formula_used": "Percentage of shipments successfully matched to a carrier record (exact or fuzzy), expressed as decimal. Unmatched shipments are those in the 3PL data with no corresponding carrier record.",
+        "date_range": "2026-03-28",
+        "exclusions": null
+      },
+      "week_date": "2026-03-28",
+      "python_verified": true
+    }
+  ],
+  "insights": [
+    {
+      "claim_text": "Order to Ship Time increased to 45.27 hours, up 2.36 hours from last week, and is now in yellow status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F001"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "fulfillment"
+    },
+    {
+      "claim_text": "On-Time Ship Rate dropped to 93.22%, down 2.48 percentage points from last week, and is now in red status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F002"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "fulfillment"
+    },
+    {
+      "claim_text": "Unshipped Orders Rate increased to 2.6%, up 0.2 percentage points from last week, and is in yellow status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F003"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "fulfillment"
+    },
+    {
+      "claim_text": "Transit Time is 139.67 hours, up 1.51 hours from last week, but remains in green status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F004"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "carrier_performance"
+    },
+    {
+      "claim_text": "On-Time Delivery Rate improved to 97.99%, up 1.2 percentage points from last week, but is in yellow status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F005"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "carrier_performance"
+    },
+    {
+      "claim_text": "Carrier Mix shifted to 54.62% FedEx, up 4.82 percentage points from last week, with DHL Ecommerce at 45.38%.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F006"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "carrier_performance"
+    },
+    {
+      "claim_text": "Shipping Cost per Order decreased to $11.78, down $0.30 from last week.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F007"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "cost"
+    },
+    {
+      "claim_text": "Average shipping cost for FedEx is $14.86 and for DHL Ecommerce is $10.30, both slightly decreased from last week.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F008"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "cost"
+    },
+    {
+      "claim_text": "Label Lag improved to 2.8 hours, down 0.65 hours from last week, and is in green status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F009"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "operational_integrity"
+    },
+    {
+      "claim_text": "Shipment Match Rate dropped to 91.99%, down 3.91 percentage points from last week, and is in red status.",
+      "claim_type": "observation",
+      "cited_fact_ids": [
+        "F010"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": null,
+      "domain": "operational_integrity"
+    },
+    {
+      "claim_text": "Investigate the root cause of the drop in Shipment Match Rate to improve data accuracy and ensure proper carrier record tracking.",
+      "claim_type": "recommended_action",
+      "cited_fact_ids": [
+        "F010"
+      ],
+      "verification_verdict": "aligned",
+      "strip_reason": null,
+      "recommended_action": "Investigate the root cause of the drop in Shipment Match Rate to improve data accuracy and ensure proper carrier record tracking.",
+      "domain": "operational_integrity"
+    }
+  ],
+  "stage_telemetry": [
+    {
+      "stage": "stage_1",
+      "retry_count": 0,
+      "api_cost_usd": 0.004609439999999999,
+      "latency_seconds": 17.55,
+      "model_used": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      "fallback_activated": false,
+      "mapping_confidence_avg": 1.0,
+      "ambiguous_field_count": 0,
+      "exact_match_rate": null,
+      "fuzzy_match_volume": null,
+      "fuzzy_match_avg_confidence": null,
+      "kpi_mismatch_count": null,
+      "claim_count_generated": null,
+      "claim_acceptance_rate": null,
+      "cross_verifier_agreement": null,
+      "render_time_seconds": null,
+      "pdf_page_count": null
+    },
+    {
+      "stage": "stage_2",
+      "retry_count": 0,
+      "api_cost_usd": 0.0007708799999999999,
+      "latency_seconds": 1.61,
+      "model_used": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      "fallback_activated": false,
+      "mapping_confidence_avg": null,
+      "ambiguous_field_count": null,
+      "exact_match_rate": 0.9199,
+      "fuzzy_match_volume": 0,
+      "fuzzy_match_avg_confidence": 0.0,
+      "kpi_mismatch_count": null,
+      "claim_count_generated": null,
+      "claim_acceptance_rate": null,
+      "cross_verifier_agreement": null,
+      "render_time_seconds": null,
+      "pdf_page_count": null
+    },
+    {
+      "stage": "stage_3",
+      "retry_count": 0,
+      "api_cost_usd": 0.00349096,
+      "latency_seconds": 12.77,
+      "model_used": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      "fallback_activated": false,
+      "mapping_confidence_avg": null,
+      "ambiguous_field_count": null,
+      "exact_match_rate": null,
+      "fuzzy_match_volume": null,
+      "fuzzy_match_avg_confidence": null,
+      "kpi_mismatch_count": 1,
+      "claim_count_generated": null,
+      "claim_acceptance_rate": null,
+      "cross_verifier_agreement": null,
+      "render_time_seconds": null,
+      "pdf_page_count": null
+    },
+    {
+      "stage": "stage_4",
+      "retry_count": 0,
+      "api_cost_usd": 0.00817425,
+      "latency_seconds": 32.89,
+      "model_used": "deepseek-ai/DeepSeek-V3 + Qwen/Qwen2.5-7B-Instruct-Turbo",
+      "fallback_activated": false,
+      "mapping_confidence_avg": null,
+      "ambiguous_field_count": null,
+      "exact_match_rate": null,
+      "fuzzy_match_volume": null,
+      "fuzzy_match_avg_confidence": null,
+      "kpi_mismatch_count": null,
+      "claim_count_generated": 18,
+      "claim_acceptance_rate": 0.611,
+      "cross_verifier_agreement": 0.556,
+      "render_time_seconds": null,
+      "pdf_page_count": null
+    },
+    {
+      "stage": "stage_5",
+      "retry_count": 0,
+      "api_cost_usd": 0.0,
+      "latency_seconds": 0.17,
+      "model_used": null,
+      "fallback_activated": false,
+      "mapping_confidence_avg": null,
+      "ambiguous_field_count": null,
+      "exact_match_rate": null,
+      "fuzzy_match_volume": null,
+      "fuzzy_match_avg_confidence": null,
+      "kpi_mismatch_count": null,
+      "claim_count_generated": null,
+      "claim_acceptance_rate": null,
+      "cross_verifier_agreement": null,
+      "render_time_seconds": 0.17,
+      "pdf_page_count": 9
+    }
+  ],
+  "total_api_cost_usd": 0.017045529999999996,
+  "total_latency_s": 64.99,
+  "models_used": [
+    "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+    "deepseek-ai/DeepSeek-V3 + Qwen/Qwen2.5-7B-Instruct-Turbo"
+  ],
+  "claim_acceptance_rate": 0.611,
+  "cross_verifier_agreement": 0.556,
+  "kpi_mismatch_count": 1,
+  "html_path": "output/reports/DAM_DAM-20260419-092904-08810f.html"
+}
