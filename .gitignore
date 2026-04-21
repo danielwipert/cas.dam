@@ -17,6 +17,14 @@ env/
 # Generated output (reports and run logs are local artifacts)
 app/output/reports/
 app/output/run_logs/
+app/output/report_data/
+app/output/meta_governance/
+
+# Knowledge base — source PDFs and generated FAISS index are local artifacts
+app/knowledge_base/sources/
+app/knowledge_base/faiss_index/
+app/knowledge_base/hf_cache/
+app/knowledge_base/chunk_store.json
 
 # IDE / local tooling
 .claude/

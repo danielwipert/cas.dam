@@ -468,8 +468,8 @@ class AdversarialRunner:
         whether the appropriate gate caught the planted error.
         Returns a list of result dicts.
         """
-        from stages import Stage1, Stage2
-        from schemas import Stage1Input, Stage2Input
+        from core.stages import Stage1, Stage2
+        from core.schemas import Stage1Input, Stage2Input
 
         results = []
 
@@ -514,8 +514,8 @@ class AdversarialRunner:
         fedex:       str,
         dhl:         str,
     ) -> dict:
-        from stages import Stage1, Stage2
-        from schemas import Stage1Input, Stage2Input, DegradationSignal, VerifiedOutput
+        from core.stages import Stage1, Stage2
+        from core.schemas import Stage1Input, Stage2Input, DegradationSignal, VerifiedOutput
 
         run_id = f"ADV-{category}-{datetime.now().strftime('%H%M%S')}"
 
