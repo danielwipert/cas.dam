@@ -277,6 +277,13 @@ class HealthTelemetry(BaseModel):
     render_time_seconds:         Optional[float] = None  # Stage 5
     pdf_page_count:              Optional[int]   = None  # Stage 5
 
+    # Stage 6 telemetry
+    domains_processed:           Optional[int]   = None
+    chunks_retrieved_per_domain: Optional[str]   = None  # JSON-encoded dict
+    green_kpi_domains:           Optional[str]   = None  # JSON-encoded list
+    yellow_red_kpi_domains:      Optional[str]   = None  # JSON-encoded list
+    recommendations_stripped:    Optional[int]   = None
+
 
 # ---------------------------------------------------------------------------
 # MVS INTERFACE CONTRACT  (VerifiedOutput / DegradationSignal)
@@ -376,6 +383,42 @@ class Stage4Output(BaseModel):
     claim_acceptance_rate:      float
     cross_verifier_agreement:   float
     stripped_claim_log:         list[InsightClaim]   # stripped claims logged, not surfaced
+    domain_recommendations:     dict[str, list[str]] = Field(default_factory=dict)
+    # ^ keyed by KPIDomain.value; consumed by Stage 6, not rendered in report
+
+
+# ---------------------------------------------------------------------------
+# STAGE 6: SUPPLY CHAIN ADVISOR  (RAG-powered knowledge layer)
+# ---------------------------------------------------------------------------
+
+class Stage6Recommendation(BaseModel):
+    """One unified recommendation grounded in both Stage 4 data and knowledge base."""
+    text:              str
+    source_chunk_ids:  list[str]   # chunk_ids that support this recommendation
+    source_fact_ids:   list[str]   # FACT_IDs from Stage 3 FactList that support it
+
+
+class Stage6DomainBlock(BaseModel):
+    """Stage 6 output for one KPI domain."""
+    domain:           KPIDomain
+    commentary:       str                          # expert commentary paragraph (3-5 sentences)
+    recommendations:  list[Stage6Recommendation]   # 2-3 unified recommendations
+    chunk_citations:  list[str]                    # all chunk_ids that informed this block
+    citation_sources: list[str] = Field(default_factory=list)
+    # ^ human-readable "Title (Author)" strings for report rendering
+
+
+class Stage6Output(BaseModel):
+    """Full Stage 6 output — one block per domain that succeeded retrieval."""
+    domain_blocks:          list[Stage6DomainBlock]
+    domains_skipped:        list[KPIDomain]     # omitted due to insufficient chunk retrieval
+    total_chunks_retrieved: int
+
+
+class Stage6Input(BaseModel):
+    """Input to Stage 6 — Stage 4 output + verified FactList."""
+    stage4_output:  Stage4Output
+    factlist:       list[FactListEntry]
 
 
 class Stage5Input(BaseModel):
@@ -384,16 +427,18 @@ class Stage5Input(BaseModel):
     stage2_output:       Stage2Output
     stage3_output:       Stage3Output
     stage4_output:       Stage4Output
-    degradation_signals: list[DegradationSignal]  # disclosures from any failed stage
+    stage6_output:       Optional[Stage6Output] = None   # None when Stage 6 degraded
+    degradation_signals: list[DegradationSignal]         # disclosures from any failed stage
     run_id:              str
     report_week:         str   # human-readable date range for report header
 
 
 class Stage5Output(BaseModel):
-    """PDF file path + render metadata emitted by Stage 5."""
-    pdf_path:       str
-    render_time_s:  float
-    page_count:     int
+    """PDF + HTML file paths and render metadata emitted by Stage 5."""
+    pdf_path:          str
+    html_path:         Optional[str] = None   # static dashboard HTML
+    render_time_s:     float
+    page_count:        int
     sections_rendered: list[str]
 
 

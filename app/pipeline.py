@@ -35,10 +35,11 @@ from typing import Union
 from core.schemas import (
     DegradationLevel, DegradationSignal, HealthTelemetry,
     RunLog, Stage1Input, Stage2Input, Stage3Input, Stage4Input,
-    Stage5Input, Stage1Output, Stage2Output, Stage3Output,
-    Stage4Output, VerifiedOutput,
+    Stage5Input, Stage6Input, Stage1Output, Stage2Output, Stage3Output,
+    Stage4Output, Stage6Output, VerifiedOutput,
 )
 from core.stages import Stage1, Stage2, Stage3, Stage4, Stage5
+from core.stage6_supply_chain_advisor import Stage6SupplyChainAdvisor
 from core.factlist_store import save_factlist, load_prior_factlist, get_baseline_status
 
 StageResult = Union[VerifiedOutput, DegradationSignal]
@@ -199,6 +200,7 @@ class DAMOrchestrator:
                 claim_acceptance_rate=0.0,
                 cross_verifier_agreement=0.0,
                 stripped_claim_log=[],
+                domain_recommendations={},
             )
         else:
             s4_out: Stage4Output = s4_result.payload
@@ -225,6 +227,29 @@ class DAMOrchestrator:
             ]
 
         # ----------------------------------------------------------------
+        # STAGE 6
+        # ----------------------------------------------------------------
+        print("\n[ Stage 6 ] Supply Chain Advisor (RAG)...")
+        s6_input = Stage6Input(
+            stage4_output=s4_out,
+            factlist=s3_out.factlist,
+        )
+        s6_result = Stage6SupplyChainAdvisor().run(s6_input)
+        self._record_telemetry(log, s6_result)
+
+        if isinstance(s6_result, DegradationSignal):
+            signals.append(s6_result)
+            s6_out: Stage6Output = None
+            print(f"  ! Stage 6 degraded -- report continues without expert commentary")
+            print(f"    Reason: {s6_result.failure_reason}")
+        else:
+            s6_out: Stage6Output = s6_result.payload
+            print(f"  + {len(s6_out.domain_blocks)} domain blocks  "
+                  f"| {s6_out.total_chunks_retrieved} chunks retrieved")
+            if s6_out.domains_skipped:
+                print(f"  ! Domains skipped: {[d.value for d in s6_out.domains_skipped]}")
+
+        # ----------------------------------------------------------------
         # STAGE 5
         # ----------------------------------------------------------------
         print("\n[ Stage 5 ] Report Compilation...")
@@ -234,6 +259,7 @@ class DAMOrchestrator:
             stage2_output=s2_out,
             stage3_output=s3_out,
             stage4_output=s4_out,
+            stage6_output=s6_out,
             degradation_signals=signals,
             run_id=run_id,
             report_week=report_week,
@@ -251,12 +277,15 @@ class DAMOrchestrator:
         print(f"  + PDF: {s5_out.pdf_path}  "
               f"| Pages: {s5_out.page_count}  "
               f"| Render: {s5_out.render_time_s:.1f}s")
+        if s5_out.html_path:
+            print(f"  + Site: output/site/index.html")
 
         log.pdf_path = s5_out.pdf_path
         final_status = "partial" if signals else "full"
 
         self._save_report_data(log, s3_out.factlist, s4_out.verified_insights,
-                               week_date, report_week, final_status, signals)
+                               week_date, report_week, final_status, signals, s6_out,
+                               s5_out.html_path)
 
         print(f"\n{'='*60}")
         print(f"  Run complete -- status: {final_status.upper()}")
@@ -308,6 +337,8 @@ class DAMOrchestrator:
         report_week: str,
         final_status: str,
         signals: list,
+        s6_out=None,
+        html_path: str = None,
     ) -> None:
         os.makedirs(REPORT_DATA_DIR, exist_ok=True)
         data = {
@@ -325,7 +356,10 @@ class DAMOrchestrator:
             "claim_acceptance_rate":  log.claim_acceptance_rate,
             "cross_verifier_agreement": log.cross_verifier_agreement,
             "kpi_mismatch_count":     log.kpi_mismatch_count,
-            "html_path":              log.pdf_path,
+            "html_path":              html_path or log.pdf_path,
+            "stage6_domains_processed": len(s6_out.domain_blocks) if s6_out else 0,
+            "stage6_chunks_retrieved":  s6_out.total_chunks_retrieved if s6_out else 0,
+            "stage6_domains_skipped":   [d.value for d in s6_out.domains_skipped] if s6_out else [],
         }
         path = f"{REPORT_DATA_DIR}/{log.run_id}.json"
         with open(path, "w") as f:

@@ -1213,12 +1213,22 @@ class Stage4:
                 health_telemetry=telemetry,
             )
 
+        # Derive domain_recommendations from verified recommended_action claims.
+        # Consumed by Stage 6 as context input; not rendered in the report directly.
+        domain_recs: dict[str, list[str]] = {}
+        for claim in verified_insights:
+            if claim.claim_type == ClaimType.recommended_action:
+                key = claim.domain.value
+                txt = claim.recommended_action or claim.claim_text
+                domain_recs.setdefault(key, []).append(txt)
+
         output = Stage4Output(
             verified_insights=verified_insights,
             claim_count_generated=total_generated,
             claim_acceptance_rate=round(acceptance_rate, 3),
             cross_verifier_agreement=round(agreement_rate, 3),
             stripped_claim_log=stripped_claims,
+            domain_recommendations=domain_recs,
         )
 
         return VerifiedOutput(
@@ -1234,7 +1244,7 @@ class Stage4:
 
 class Stage5:
     """
-    Assembles verified data into a two-page management report (PDF).
+    Assembles verified data into a management report (PDF, up to 3 pages).
     No LLM. Fully deterministic. Still a viable system.
 
     L1: Jinja2 template rendering + WeasyPrint PDF conversion
@@ -1254,8 +1264,9 @@ class Stage5:
     def run(self, inp: Stage5Input) -> StageResult:
         t0 = time.time()
 
+        from core.report_renderer import render_pdf_html, render_dashboard_html
+
         # ---- Constitutional check — must have a FactList ----
-        # Empty insights are allowed: report renders with a disclosure instead.
         if not inp.stage3_output.factlist:
             return DegradationSignal(
                 stage="stage_5",
@@ -1267,9 +1278,9 @@ class Stage5:
                 ),
             )
 
-        # ---- L1: Render report ----
+        # ---- L1: Render PDF HTML ----
         try:
-            html, sections_rendered = self._render_html(inp)
+            html, sections_rendered = render_pdf_html(inp)
         except Exception as e:
             return DegradationSignal(
                 stage="stage_5",
@@ -1309,10 +1320,20 @@ class Stage5:
                 ),
             )
 
+        # ---- Render + save dashboard HTML (non-fatal if it fails) ----
+        html_path = None
+        try:
+            dash_html = render_dashboard_html(inp)
+            html_path = self._save_html(dash_html, inp.run_id)
+            print(f"  + Dashboard HTML: {html_path}")
+        except Exception as e:
+            print(f"  ! Dashboard HTML generation failed (non-fatal): {e}")
+
         render_time = round(time.time() - t0, 2)
 
         output = Stage5Output(
             pdf_path=pdf_path,
+            html_path=html_path,
             render_time_s=render_time,
             page_count=page_count,
             sections_rendered=sections_rendered,
@@ -1329,11 +1350,20 @@ class Stage5:
             ),
         )
 
+    def _save_html(self, html: str, run_id: str) -> str:
+        """Save dashboard HTML to output/reports/ and output/site/index.html."""
+        os.makedirs("output/reports", exist_ok=True)
+        os.makedirs("output/site", exist_ok=True)
+        report_path = f"output/reports/{run_id}.html"
+        site_path   = "output/site/index.html"
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write(html)
+        with open(site_path, "w", encoding="utf-8") as f:
+            f.write(html)
+        return report_path
+
     def _render_html(self, inp: Stage5Input) -> tuple[str, list[str]]:
-        """
-        Render the executive report HTML.
-        Returns (html_string, list_of_sections_rendered).
-        """
+        """Legacy method kept for reference — replaced by report_renderer.render_pdf_html()."""
         factlist = inp.stage3_output.factlist
         insights = inp.stage4_output.verified_insights
 
@@ -1496,6 +1526,12 @@ class Stage5:
         agreement    = inp.stage4_output.cross_verifier_agreement
         disclosures  = [s.failure_reason for s in inp.degradation_signals]
 
+        # ── Stage 6 lookup — index domain blocks by domain value ─────────────
+        s6_blocks: dict[str, object] = {}
+        if inp.stage6_output is not None:
+            for blk in inp.stage6_output.domain_blocks:
+                s6_blocks[blk.domain.value] = blk
+
         # ── Domain cards ──────────────────────────────────────────────────────
         sections_rendered = []
         domain_cards_html = ""
@@ -1536,16 +1572,54 @@ class Stage5:
                   {divider}{hist}
                 </div>"""
 
-            # Insight list
-            insight_items = ""
-            for obs in (observations + hypotheses)[:3]:
-                insight_items += f'<li class="insight obs">{obs.claim_text}</li>'
-            for act in actions[:2]:
-                txt = act.recommended_action or act.claim_text
-                insight_items += f'<li class="insight act"><span class="act-label">Action</span>{txt}</li>'
+            # ── Analysis panel — Stage 6 if available, Stage 4 fallback ──────
+            s6_blk = s6_blocks.get(domain)
 
-            if not insight_items:
-                insight_items = '<li class="insight no-data">No verified insights generated for this domain.</li>'
+            if s6_blk is not None:
+                # Stage 4 data-driven observations only (no actions — Stage 6 owns recs)
+                obs_items = ""
+                for obs in (observations + hypotheses)[:3]:
+                    obs_items += f'<li class="insight obs">{obs.claim_text}</li>'
+                if not obs_items:
+                    obs_items = '<li class="insight no-data">KPI data above is authoritative this period.</li>'
+
+                # Stage 6 recommendations
+                recs_html = ""
+                for idx, rec in enumerate(s6_blk.recommendations, 1):
+                    recs_html += (
+                        f'<li class="s6-rec">'
+                        f'<span class="s6-rec-num">{idx}.</span>{rec.text}'
+                        f'</li>'
+                    )
+
+                analysis_html = f"""
+              <div class="insight-panel">
+                <div class="insight-panel-label">Data Analysis</div>
+                <ul class="insight-list">{obs_items}</ul>
+              </div>
+              <div class="s6-panel">
+                <div class="s6-section-label">Expert Commentary</div>
+                <p class="s6-commentary">{s6_blk.commentary}</p>
+                <div class="s6-section-label">Recommendations</div>
+                <ul class="s6-recs-list">{recs_html}</ul>
+              </div>"""
+
+            else:
+                # Option A fallback — Stage 4 insights + actions unchanged
+                insight_items = ""
+                for obs in (observations + hypotheses)[:3]:
+                    insight_items += f'<li class="insight obs">{obs.claim_text}</li>'
+                for act in actions[:2]:
+                    txt = act.recommended_action or act.claim_text
+                    insight_items += f'<li class="insight act"><span class="act-label">Action</span>{txt}</li>'
+                if not insight_items:
+                    insight_items = '<li class="insight no-data">No verified insights generated for this domain.</li>'
+
+                analysis_html = f"""
+              <div class="insight-panel">
+                <div class="insight-panel-label">Analysis &amp; Actions</div>
+                <ul class="insight-list">{insight_items}</ul>
+              </div>"""
 
             domain_cards_html += f"""
             <div class="domain-section" id="{domain}_block">
@@ -1555,10 +1629,7 @@ class Stage5:
                 <hr>
               </div>
               <div class="kpi-grid">{kpi_cards}</div>
-              <div class="insight-panel">
-                <div class="insight-panel-label">Analysis &amp; Actions</div>
-                <ul class="insight-list">{insight_items}</ul>
-              </div>
+              {analysis_html}
             </div>"""
 
             sections_rendered.append(f"{domain}_block")
@@ -1571,6 +1642,20 @@ class Stage5:
             disc_block = f"<ul class='disc-list'>{disc_items}</ul>"
         else:
             disc_block = "<span>None — full pipeline completed.</span>"
+
+        # ── Stage 6 footer line ───────────────────────────────────────────────
+        if inp.stage6_output is not None:
+            s6_domains_ok   = len(inp.stage6_output.domain_blocks)
+            s6_domains_skip = len(inp.stage6_output.domains_skipped)
+            s6_chunks       = inp.stage6_output.total_chunks_retrieved
+            s6_footer = (
+                f"Stage&nbsp;6 Supply Chain Advisor: "
+                f"{s6_domains_ok} domain(s) with expert commentary &middot; "
+                f"{s6_chunks} knowledge base chunks retrieved"
+                + (f" &middot; {s6_domains_skip} domain(s) skipped" if s6_domains_skip else "")
+            )
+        else:
+            s6_footer = "Stage&nbsp;6 Supply Chain Advisor: unavailable this run (knowledge base commentary omitted)"
 
         no_insights_note = ""
         if not insights:
@@ -1946,6 +2031,47 @@ body {{
   border-color: transparent;
 }}
 
+/* ── Stage 6 Expert Commentary panel ─────────────────────── */
+.s6-panel {{
+  margin-top: 12px;
+  border-top: 1.5px solid var(--ft-teal);
+  padding-top: 10px;
+}}
+.s6-section-label {{
+  font-size: 8pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--ft-teal);
+  margin-bottom: 5px;
+}}
+.s6-commentary {{
+  font-size: 10pt;
+  color: var(--ft-ink);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}}
+.s6-recs-list {{
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}}
+.s6-rec {{
+  font-size: 9.5pt;
+  color: var(--ft-ink);
+  padding: 6px 10px;
+  background: #E6F4F5;
+  border-left: 3px solid var(--ft-teal);
+  line-height: 1.5;
+}}
+.s6-rec-num {{
+  font-weight: 700;
+  color: var(--ft-teal);
+  margin-right: 5px;
+}}
 /* ── Degraded pipeline banner ─────────────────────────────── */
 .no-insights-banner {{
   background: var(--c-watch-bg);
@@ -2099,10 +2225,11 @@ body {{
     </div>
     <div style="margin-top:6px">
       <strong>Models:</strong>&nbsp;
-      Llama 3.3 70B (Stages 1&ndash;3) &middot;
+      Llama 3.3 70B (Stages 1&ndash;3 &amp; 6) &middot;
       DeepSeek V3 (Generation) &middot;
       Qwen2.5 7B (Verification)
     </div>
+    <div style="margin-top:4px;font-size:9pt">{s6_footer}</div>
     <div class="brand-stamp">
       Produced by Chorus AI Systems &mdash; multi-model verified pipeline. Not financial advice.
     </div>
@@ -2211,7 +2338,8 @@ body {{
         """
         Convert HTML to PDF.  Strategy:
           1. WeasyPrint (full fidelity, requires GTK — works on Linux/Mac)
-          2. HTML fallback (browser-printable — used on Windows where GTK is absent)
+          2. Playwright + Chromium (Windows-compatible, high fidelity)
+          3. HTML fallback (browser-printable — used when no PDF engine available)
         Returns (path, page_count).
         """
         os.makedirs("output/reports", exist_ok=True)
@@ -2224,9 +2352,41 @@ body {{
             doc.write_pdf(pdf_path)
             return pdf_path, len(doc.pages)
         except Exception:
+            pass  # fall through to Playwright
+
+        # ---- Attempt 2: Playwright + Chromium ----
+        try:
+            from playwright.sync_api import sync_playwright
+            import base64
+            import tempfile
+
+            pdf_path = f"output/reports/DAM_{run_id}.pdf"
+
+            # Write HTML to a temp file so Playwright can load it with file:// URI
+            # (inline HTML via set_content loses relative resource resolution but
+            #  our report is self-contained, so we pass it directly as content)
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch()
+                page = browser.new_page()
+                page.set_content(html, wait_until="networkidle")
+                page.pdf(
+                    path=pdf_path,
+                    format="A4",
+                    margin={"top": "15mm", "bottom": "15mm",
+                            "left": "12mm", "right": "12mm"},
+                    print_background=True,
+                )
+                # Rough page count from file size (Playwright doesn't expose page count)
+                import os as _os
+                size_kb = _os.path.getsize(pdf_path) / 1024
+                browser.close()
+
+            page_count = max(1, int(size_kb // 80))
+            return pdf_path, page_count
+        except Exception:
             pass  # fall through to HTML fallback
 
-        # ---- Fallback: save as HTML (open in browser → Print → Save as PDF) ----
+        # ---- Fallback: save as HTML (open in browser -> Print -> Save as PDF) ----
         html_path = f"output/reports/DAM_{run_id}.html"
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(html)
