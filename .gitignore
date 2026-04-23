@@ -26,6 +26,12 @@ app/knowledge_base/faiss_index/
 app/knowledge_base/hf_cache/
 app/knowledge_base/chunk_store.json
 
+# Node (one-off screenshot tooling, not part of the project)
+node_modules/
+package.json
+package-lock.json
+screenshot.mjs
+
 # IDE / local tooling
 .claude/
 .vscode/

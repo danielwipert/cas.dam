@@ -1,0 +1,79 @@
+[
+  {
+    "filename": "The Goal - Eliyahu M. Goldratt.pdf",
+    "source_title": "The Goal",
+    "author": "Eliyahu M. Goldratt",
+    "domain_tags": ["fulfillment"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "FedEx 2026 Guide.pdf",
+    "source_title": "FedEx Service Guide 2026",
+    "author": "FedEx",
+    "domain_tags": ["carrier_performance", "cost"],
+    "content_type": "benchmark"
+  },
+  {
+    "filename": "DHL Ecom Trend Report.pdf",
+    "source_title": "DHL Ecommerce Trend Report",
+    "author": "DHL",
+    "domain_tags": ["carrier_performance", "cost"],
+    "content_type": "benchmark"
+  },
+  {
+    "filename": "CSCMP Supply Chain Management Definitions and Glossary .pdf",
+    "source_title": "CSCMP Supply Chain Management Definitions and Glossary",
+    "author": "Council of Supply Chain Management Professionals",
+    "domain_tags": ["fulfillment", "carrier_performance", "cost", "operational_integrity"],
+    "content_type": "definition"
+  },
+  {
+    "filename": "SCOR Model.pdf",
+    "source_title": "SCOR Model Documentation",
+    "author": "ASCM",
+    "domain_tags": ["fulfillment", "carrier_performance", "cost", "operational_integrity"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "Christopher Logistics and Supply Chain Management 4th txtbk.pdf",
+    "source_title": "Logistics and Supply Chain Management (4th Edition)",
+    "author": "Martin Christopher",
+    "domain_tags": ["fulfillment", "carrier_performance", "cost", "operational_integrity"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "Fundamentals of Supply Chain.pdf",
+    "source_title": "Fundamentals of Supply Chain Management",
+    "author": "Various",
+    "domain_tags": ["fulfillment", "carrier_performance", "cost", "operational_integrity"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "Operations Management - Slack, Brandon-Jones and Johnston.pdf",
+    "source_title": "Operations Management",
+    "author": "Nigel Slack, Alistair Brandon-Jones, Robert Johnston",
+    "domain_tags": ["fulfillment", "operational_integrity"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "Operations and Supply Chain Management.pdf",
+    "source_title": "Operations and Supply Chain Management",
+    "author": "Various",
+    "domain_tags": ["fulfillment", "carrier_performance", "cost", "operational_integrity"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "Supply Chain Management - Strategy, Planning, and Operation.pdf",
+    "source_title": "Supply Chain Management: Strategy, Planning, and Operation",
+    "author": "Sunil Chopra, Peter Meindl",
+    "domain_tags": ["fulfillment", "carrier_performance", "cost", "operational_integrity"],
+    "content_type": "framework"
+  },
+  {
+    "filename": "Supply Chain Management and Advanced Planning.pdf",
+    "source_title": "Supply Chain Management and Advanced Planning",
+    "author": "Hartmut Stadtler, Christoph Kilger",
+    "domain_tags": ["fulfillment", "cost", "operational_integrity"],
+    "content_type": "framework"
+  }
+]

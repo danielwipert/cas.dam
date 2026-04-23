@@ -1172,7 +1172,7 @@ class Stage4:
 
             claim = InsightClaim(
                 claim_text=ct,
-                claim_type=ClaimType(raw_claim.get("claim_type", "observation")),
+                claim_type=ClaimType(raw_claim.get("claim_type", "observation") if raw_claim.get("claim_type") in ("observation", "hypothesis", "recommended_action") else "observation"),
                 cited_fact_ids=cited,
                 verification_verdict=VerificationVerdict(verdict if verdict in ("aligned", "stripped") else "stripped"),
                 strip_reason=strip_reasons.get(ct),
