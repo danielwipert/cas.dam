@@ -3,1073 +3,945 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CAS·DAM — Mar 29 - Apr 04, 2026</title>
+<title>CASDAM: Chorus AI Systems Case Study</title>
+<meta name="description" content="CASDAM is a closed-loop, multi-agent analytics framework where every stage self-governs, every output is independently verified, and every claim traces to its source.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ── Reset ────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-a { color: inherit; text-decoration: none; }
-
-/* ── Dark design tokens ───────────────────────────────────── */
-:root {
-  --bg:        #070d1a;
-  --surf-1:    #0d1627;
-  --surf-2:    #112035;
-  --border:    #1a2b42;
-  --border-br: #243d5c;
-
-  --text-1:    #f0f4f8;
-  --text-2:    #8da2b8;
-  --text-3:    #4e6680;
-
-  --gold:      #c9a84c;
-  --gold-dim:  rgba(201,168,76,0.12);
-
-  --green:     #10b981;  --green-dim:  rgba(16,185,129,0.10);
-  --amber:     #f59e0b;  --amber-dim:  rgba(245,158,11,0.10);
-  --red:       #ef4444;  --red-dim:    rgba(239,68,68,0.10);
-  --info:      #64748b;  --info-dim:   rgba(100,116,139,0.08);
-
-  --ff-serif: 'Playfair Display', Georgia, serif;
-  --ff-sans:  'Inter', -apple-system, 'Segoe UI', sans-serif;
-  --ff-mono:  'JetBrains Mono', 'SF Mono', Consolas, monospace;
-
-  --max-w: 1200px;
-  --pad:   40px;
-}
-
-/* ── Base ─────────────────────────────────────────────────── */
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--ff-sans);
-  background: var(--bg);
-  color: var(--text-1);
-  line-height: 1.55;
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── Navbar ───────────────────────────────────────────────── */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--surf-1);
-  border-bottom: 1px solid var(--border);
-  height: 56px;
-  display: flex;
-  align-items: center;
-  padding: 0 var(--pad);
-  gap: 32px;
-}
-.nb-brand {
-  font-family: var(--ff-mono);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--gold);
-  letter-spacing: 2px;
-  white-space: nowrap;
-}
-.nb-links {
-  display: flex;
-  gap: 0;
-  overflow: hidden;
-}
-.nav-link {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-3);
-  padding: 0 16px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  border-right: 1px solid var(--border);
-  transition: color 0.15s, background 0.15s;
-}
-.nav-link:first-child { border-left: 1px solid var(--border); }
-.nav-link:hover { color: var(--text-1); background: var(--surf-2); }
-.nb-meta {
-  margin-left: auto;
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  color: var(--text-3);
-  white-space: nowrap;
-}
-
-/* ── Hero ─────────────────────────────────────────────────── */
-.hero {
-  background: var(--surf-1);
-  border-bottom: 1px solid var(--border);
-  padding: 40px var(--pad) 36px;
-}
-.hero-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 40px;
-}
-.hero-left { display: flex; flex-direction: column; gap: 10px; }
-.hero-eyebrow {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2.5px;
-  color: var(--gold);
-}
-.hero-title {
-  font-family: var(--ff-serif);
-  font-size: 36px;
-  font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.3px;
-  line-height: 1.1;
-}
-.hero-sub {
-  font-size: 16px;
-  font-weight: 300;
-  color: var(--text-2);
-  line-height: 1.5;
-}
-.hero-right { text-align: right; flex-shrink: 0; }
-.hero-week-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-3);
-  margin-bottom: 2px;
-}
-.hero-week {
-  font-family: var(--ff-sans);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-1);
-}
-.hero-runid {
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 6px;
-}
-.hero-generated {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 2px;
-}
-
-/* ── Status banner ────────────────────────────────────────── */
-.status-banner {
-  max-width: var(--max-w);
-  margin: 24px auto 0;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  border: 1px solid var(--border);
-  border-left: 4px solid transparent;
-}
-.status-banner.red    { border-left-color: var(--red);   background: var(--red-dim);   }
-.status-banner.yellow { border-left-color: var(--amber); background: var(--amber-dim); }
-.status-banner.green  { border-left-color: var(--green); background: var(--green-dim); }
-.sb-icon {
-  font-size: 20px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.status-banner.red    .sb-icon { color: var(--red);   }
-.status-banner.yellow .sb-icon { color: var(--amber); }
-.status-banner.green  .sb-icon { color: var(--green); }
-.sb-text { display: flex; flex-direction: column; gap: 2px; }
-.sb-headline {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-1);
-}
-.sb-sub {
-  font-size: 13px;
-  color: var(--text-2);
-}
-
-/* ── Page wrapper ─────────────────────────────────────────── */
-.page-wrap {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  padding: 40px var(--pad) 80px;
-}
-
-/* ── Scorecard ────────────────────────────────────────────── */
-.sc-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-3);
-  margin-bottom: 12px;
-}
-.sc-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  margin-bottom: 52px;
-}
-.sc-cell {
-  background: var(--surf-1);
-  padding: 24px 16px 20px;
-  text-align: center;
-  border-top: 3px solid transparent;
-  position: relative;
-}
-.sc-cell::after {
-  content: '';
-  display: block;
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.sc-cell.on-target  { border-top-color: var(--green); }
-.sc-cell.watch      { border-top-color: var(--amber); }
-.sc-cell.action     { border-top-color: var(--red);   }
-.sc-cell.info       { border-top-color: var(--info);  }
-.sc-num-d {
-  display: block;
-  font-family: var(--ff-sans);
-  font-size: 56px;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.sc-cell.on-target .sc-num-d { color: var(--green); }
-.sc-cell.watch     .sc-num-d { color: var(--amber); }
-.sc-cell.action    .sc-num-d { color: var(--red);   }
-.sc-cell.info      .sc-num-d { color: var(--info);  }
-.sc-lbl-d {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.4px;
-  color: var(--text-3);
-}
-
-/* ── Domain section ───────────────────────────────────────── */
-.domain-section-d {
-  margin-bottom: 60px;
-  scroll-margin-top: 72px;
-}
-.dsd-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 0 0 16px;
-  border-top: 1px solid var(--border);
-  padding-top: 32px;
-  margin-bottom: 20px;
-}
-.dsd-name {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2.5px;
-  color: var(--text-1);
-  white-space: nowrap;
-}
-.dsd-dots { display: flex; gap: 6px; align-items: center; }
-.sdot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  cursor: default;
-}
-.sdot-green  { background: var(--green); }
-.sdot-yellow { background: var(--amber); }
-.sdot-red    { background: var(--red);   }
-.sdot-informational { background: var(--info); }
-.dsd-rule { flex: 1; height: 1px; background: var(--border); }
-
-/* ── KPI grid (dashboard) ─────────────────────────────────── */
-.kpi-grid-d {
-  display: flex;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  margin-bottom: 1px;
-}
-.kpi-card-d {
-  flex: 1;
-  min-width: 0;
-  background: var(--surf-1);
-  padding: 20px;
-  border-top: 3px solid transparent;
-}
-.kpi-d-green  { border-top-color: var(--green); }
-.kpi-d-yellow { border-top-color: var(--amber); }
-.kpi-d-red    { border-top-color: var(--red);   }
-.kpi-d-informational { border-top-color: var(--info); }
-.kcd-name {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--text-3);
-  margin-bottom: 12px;
-}
-.kcd-val-row {
-  display: flex;
-  align-items: baseline;
-  gap: 3px;
-  margin-bottom: 6px;
-}
-.kcd-num {
-  font-family: var(--ff-mono);
-  font-size: 38px;
-  font-weight: 600;
-  color: var(--text-1);
-  letter-spacing: -1.5px;
-  line-height: 1;
-}
-.kv-unit-d {
-  font-family: var(--ff-mono);
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--text-3);
-}
-.kcd-wow {
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 10px;
-}
-.kcd-chip {
-  display: inline-block;
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 3px 8px;
-  border-radius: 2px;
-  margin-bottom: 16px;
-}
-.kcd-chip-green  { color: var(--green); background: var(--green-dim); }
-.kcd-chip-yellow { color: var(--amber); background: var(--amber-dim); }
-.kcd-chip-red    { color: var(--red);   background: var(--red-dim);   }
-.kcd-chip-informational { color: var(--info); background: var(--info-dim); }
-
-/* ── Historical comparison ─────────────────────────────────── */
-.hist-block {
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-.ph-row {
-  display: grid;
-  grid-template-columns: 1fr 70px 70px;
-  gap: 4px;
-  padding: 3px 0;
-  border-bottom: 1px solid var(--border);
-  align-items: center;
-}
-.ph-row:last-child { border-bottom: none; }
-.ph-period {
-  font-size: 11px;
-  color: var(--text-3);
-  font-style: italic;
-}
-.ph-val {
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  color: var(--text-2);
-  text-align: right;
-}
-.ph-delta {
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  font-weight: 600;
-  text-align: right;
-}
-.ph-delta.dp { color: var(--green); }
-.ph-delta.dn { color: var(--red);   }
-
-/* ── Analysis panel ───────────────────────────────────────── */
-.analysis-panel {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-top: none;
-  margin-bottom: 1px;
-}
-.analysis-panel-full {
-  grid-template-columns: 1fr;
-}
-.ap-col {
-  background: var(--surf-1);
-  padding: 20px 22px;
-}
-.ap-s6 {
-  background: var(--surf-2);
-  border-left: 3px solid var(--gold);
-}
-.ap-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-3);
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-.ap-label-gold {
-  color: var(--gold);
-  border-bottom-color: var(--gold-dim);
-}
-.obs-list { display: flex; flex-direction: column; gap: 8px; }
-.obs-item {
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text-2);
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-.obs-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--border-br);
-  flex-shrink: 0;
-  margin-top: 7px;
-}
-.obs-act { align-items: flex-start; }
-.obs-act-pill {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  background: var(--gold-dim);
-  color: var(--gold);
-  padding: 2px 7px;
-  border-radius: 2px;
-  flex-shrink: 0;
-  margin-top: 3px;
-}
-.obs-muted { color: var(--text-3); font-style: italic; }
-
-/* ── Stage 6 ──────────────────────────────────────────────── */
-.s6-commentary-d {
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--text-2);
-  margin-bottom: 8px;
-}
-.s6-recs-d { display: flex; flex-direction: column; gap: 8px; }
-.s6-rec-d {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 10px 12px;
-  background: var(--surf-1);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--gold);
-}
-.s6-rec-num {
-  font-family: var(--ff-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gold);
-  flex-shrink: 0;
-  min-width: 16px;
-}
-.s6-rec-body {
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text-2);
-}
-.rec-cite {
-  display: inline-block;
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  color: var(--text-3);
-  margin-top: 4px;
-}
-.cite-list { display: flex; flex-direction: column; gap: 2px; }
-.cite-src {
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  color: var(--text-3);
-}
-
-/* ── Provenance ───────────────────────────────────────────── */
-.prov-details {
-  border: 1px solid var(--border);
-  border-top: none;
-  background: var(--bg);
-}
-.prov-summary {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-3);
-  padding: 10px 16px;
-  cursor: pointer;
-  user-select: none;
-  list-style: none;
-}
-.prov-summary::-webkit-details-marker { display: none; }
-.prov-summary::before { content: "▸ "; }
-details[open] .prov-summary::before { content: "▾ "; }
-.prov-table { padding: 0 16px 12px; }
-.prov-row {
-  display: grid;
-  grid-template-columns: 50px 160px 1fr 80px;
-  gap: 12px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  align-items: baseline;
-}
-.prov-row:last-child { border-bottom: none; }
-.prov-id {
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  color: var(--gold);
-}
-.prov-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-2);
-}
-.prov-formula {
-  font-size: 10px;
-  color: var(--text-3);
-  line-height: 1.4;
-}
-.prov-rows {
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  color: var(--text-3);
-  text-align: right;
-}
-
-/* ── System footer ────────────────────────────────────────── */
-.sys-footer {
-  background: var(--surf-1);
-  border-top: 1px solid var(--border);
-  padding: 40px var(--pad);
-}
-.sf-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 40px;
-}
-.sf-head {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-3);
-  margin-bottom: 16px;
-}
-.sf-stats { display: flex; gap: 24px; margin-bottom: 16px; }
-.sf-stat { display: flex; flex-direction: column; gap: 2px; }
-.sf-val {
-  font-family: var(--ff-mono);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text-1);
-  line-height: 1;
-}
-.sf-lbl {
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-3);
-}
-.sf-line {
-  font-size: 12px;
-  line-height: 1.9;
-  color: var(--text-3);
-}
-.sf-line strong { color: var(--text-2); }
-.sf-stamp {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 12px;
-  font-style: italic;
-  line-height: 1.7;
-}
-.disc-row {
-  font-size: 12px;
-  line-height: 1.9;
-  color: var(--text-3);
-  padding-left: 12px;
-  position: relative;
-}
-.disc-row::before { content: "·"; position: absolute; left: 0; }
-.disc-none { font-style: italic; padding-left: 0; }
-.disc-none::before { content: ""; }
-.sf-gold-bar {
-  max-width: var(--max-w);
-  margin: 0 auto 24px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar">
-  <div class="nb-brand">CAS·DAM</div>
-  <div class="nb-links">
-    <a href="#d-fulfillment" class="nav-link">Fulfillment</a><a href="#d-carrier_performance" class="nav-link">Carrier Performance</a><a href="#d-cost" class="nav-link">Cost & Efficiency</a><a href="#d-operational_integrity" class="nav-link">Operational Integrity</a>
+<!-- ── Navigation ───────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">
+      <img src="assets/chorus-logo.svg" alt="Chorus AI Systems">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#foundation">Foundation</a></li>
+      <li><a href="#framework">Framework</a></li>
+      <li><a href="#pattern">CASDAM</a></li>
+      <li><a href="#case-study">Case Study</a></li>
+      <li><a href="#numbers">Numbers</a></li>
+      <li><a href="#output">Output</a></li>
+      <li><a href="#principles">Principles</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <div class="nb-meta">Mar 29 - Apr 04, 2026</div>
 </nav>
-
-<!-- Hero -->
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-left">
-      <div class="hero-eyebrow">Chorus AI Systems &nbsp;·&nbsp; Operational Intelligence</div>
-      <div class="hero-title">Data Analytics Manager</div>
-      <div class="hero-sub">Weekly Supply Chain Intelligence Report</div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-week-label">Week ending</div>
-      <div class="hero-week">Mar 29 - Apr 04, 2026</div>
-      <div class="hero-runid">DAM-20260422-091245-d69d02</div>
-      <div class="hero-generated">April 22, 2026  09:15 UTC</div>
-    </div>
-  </div>
-  <div class="status-banner red">
-    <span class="sb-icon">●</span>
-    <div class="sb-text">
-      <div class="sb-headline">4 metrics require immediate attention</div>
-      <div class="sb-sub">On-Time Ship Rate is below threshold at 90.5%.</div>
-    </div>
-  </div>
+<div class="nav-mobile" id="nav-mobile">
+  <a href="#problem">Problem</a>
+  <a href="#foundation">Foundation</a>
+  <a href="#framework">Framework</a>
+  <a href="#pattern">CASDAM</a>
+  <a href="#case-study">Case Study</a>
+  <a href="#numbers">Numbers</a>
+  <a href="#output">Output</a>
+  <a href="#principles">Principles</a>
 </div>
 
-<!-- Page content -->
-<div class="page-wrap">
+<!-- ── Section 1: Hero ──────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
 
-  <!-- Scorecard -->
-  <div class="sc-eyebrow">Operational Scorecard &mdash; 10 KPIs this period</div>
-  <div class="sc-strip">
-    <div class="sc-cell on-target">
-      <span class="sc-num-d">2</span>
-      <span class="sc-lbl-d">On Target</span>
-    </div>
-    <div class="sc-cell watch">
-      <span class="sc-num-d">1</span>
-      <span class="sc-lbl-d">Watch List</span>
-    </div>
-    <div class="sc-cell action">
-      <span class="sc-num-d">4</span>
-      <span class="sc-lbl-d">Needs Action</span>
-    </div>
-    <div class="sc-cell info">
-      <span class="sc-num-d">3</span>
-      <span class="sc-lbl-d">Informational</span>
+      <div class="hero-content">
+        <span class="hero-overline">Chorus AI Systems</span>
+        <h1 class="hero-h1">AI that governs itself.</h1>
+        <p class="hero-sub">CASDAM (the <strong>Chorus AI Systems Data Analytics Manager</strong>) takes disparate operational data sources, runs them through a governed multi-agent AI pipeline, and outputs a verified analytics report. Every KPI is Python-computed. Every AI-generated claim is independently verified. Every conclusion traces to its source.</p>
+        <div class="hero-ctas">
+          <a href="#pattern" class="btn btn-primary">See the Architecture &rarr;</a>
+          <a href="#case-study" class="btn btn-outline">Read the Case Study &rarr;</a>
+        </div>
+        <p class="hero-footnote">Also: <a href="https://github.com/danielwipert/dossier-earnings-call" target="_blank" rel="noopener">Earnings Call Dossier</a>, a second implementation of the Chorus AI framework</p>
+      </div>
+
+      <!-- Animated Pipeline SVG -->
+      <div class="hero-visual">
+        <svg class="pipeline-svg" viewBox="0 0 240 512" xmlns="http://www.w3.org/2000/svg" aria-label="Animated pipeline diagram">
+          <!-- Orchestrator -->
+          <rect class="orch-rect" x="20" y="10" width="200" height="44" rx="6"
+            fill="rgba(26,188,156,0.08)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="120" y="37" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#1ABC9C" font-weight="700">ORCHESTRATOR</text>
+
+          <!-- Flow: orch → gate1 -->
+          <line class="flow-line" x1="120" y1="54" x2="120" y2="72" stroke="#1ABC9C" stroke-width="1.5"/>
+          <!-- Gate 1 -->
+          <polygon class="gate-node" points="120,64 132,76 120,88 108,76" fill="#F39C12"/>
+          <text x="120" y="80" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#0D1117" font-weight="700">GATE</text>
+          <!-- Flow: gate1 → stage1 -->
+          <line class="flow-line" x1="120" y1="88" x2="120" y2="106" stroke="#1ABC9C" stroke-width="1.5"/>
+
+          <!-- Stage 1 -->
+          <rect x="20" y="106" width="200" height="44" rx="6"
+            fill="#161B22" stroke="rgba(26,188,156,0.45)" stroke-width="1"/>
+          <text x="120" y="124" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8B9DB0">STAGE 1</text>
+          <text x="120" y="139" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4A5568">Ingestion &amp; Normalization</text>
+
+          <!-- Flow: stage1 → gate2 -->
+          <line class="flow-line" x1="120" y1="150" x2="120" y2="168" stroke="#1ABC9C" stroke-width="1.5"/>
+          <!-- Gate 2 -->
+          <polygon class="gate-node" points="120,160 132,172 120,184 108,172" fill="#F39C12" style="animation-delay:0.4s"/>
+          <text x="120" y="176" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#0D1117" font-weight="700">GATE</text>
+          <line class="flow-line" x1="120" y1="184" x2="120" y2="202" stroke="#1ABC9C" stroke-width="1.5"/>
+
+          <!-- Stage 2 -->
+          <rect x="20" y="202" width="200" height="44" rx="6"
+            fill="#161B22" stroke="rgba(26,188,156,0.45)" stroke-width="1"/>
+          <text x="120" y="220" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8B9DB0">STAGE 2</text>
+          <text x="120" y="235" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4A5568">Reconciliation</text>
+
+          <!-- Flow: stage2 → gate3 -->
+          <line class="flow-line" x1="120" y1="246" x2="120" y2="264" stroke="#1ABC9C" stroke-width="1.5"/>
+          <polygon class="gate-node" points="120,256 132,268 120,280 108,268" fill="#F39C12" style="animation-delay:0.8s"/>
+          <text x="120" y="272" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#0D1117" font-weight="700">GATE</text>
+          <line class="flow-line" x1="120" y1="280" x2="120" y2="298" stroke="#1ABC9C" stroke-width="1.5"/>
+
+          <!-- Stage 3 -->
+          <rect x="20" y="298" width="200" height="44" rx="6"
+            fill="#161B22" stroke="rgba(26,188,156,0.45)" stroke-width="1"/>
+          <text x="120" y="316" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8B9DB0">STAGE 3</text>
+          <text x="120" y="331" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4A5568">KPI Computation</text>
+
+          <!-- Flow: stage3 → gate4 -->
+          <line class="flow-line" x1="120" y1="342" x2="120" y2="360" stroke="#1ABC9C" stroke-width="1.5"/>
+          <polygon class="gate-node" points="120,352 132,364 120,376 108,364" fill="#F39C12" style="animation-delay:1.2s"/>
+          <text x="120" y="368" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#0D1117" font-weight="700">GATE</text>
+          <line class="flow-line" x1="120" y1="376" x2="120" y2="394" stroke="#1ABC9C" stroke-width="1.5"/>
+
+          <!-- Stage 4 -->
+          <rect x="20" y="394" width="200" height="44" rx="6"
+            fill="#161B22" stroke="rgba(26,188,156,0.45)" stroke-width="1"/>
+          <text x="120" y="412" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8B9DB0">STAGE 4</text>
+          <text x="120" y="427" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4A5568">Insight Generation + Verification</text>
+
+          <!-- Flow: stage4 → stage5 (no gate — Stage 5 is deterministic) -->
+          <line class="flow-line" x1="120" y1="438" x2="120" y2="456" stroke="#1ABC9C" stroke-width="1.5"/>
+
+          <!-- Stage 5 -->
+          <rect x="20" y="456" width="200" height="44" rx="6"
+            fill="#161B22" stroke="rgba(26,188,156,0.45)" stroke-width="1"/>
+          <text x="120" y="474" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8B9DB0">STAGE 5</text>
+          <text x="120" y="489" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4A5568">Report Compilation</text>
+
+          <!-- Telemetry: upward dashed line on left side -->
+          <line class="flow-up-line" x1="12" y1="480" x2="12" y2="32"
+            stroke="#8B9DB0" stroke-width="1"/>
+          <!-- Telemetry tap lines from each stage -->
+          <line x1="20" y1="128" x2="12" y2="128" stroke="#8B9DB0" stroke-width="0.75" opacity="0.35"/>
+          <line x1="20" y1="224" x2="12" y2="224" stroke="#8B9DB0" stroke-width="0.75" opacity="0.35"/>
+          <line x1="20" y1="320" x2="12" y2="320" stroke="#8B9DB0" stroke-width="0.75" opacity="0.35"/>
+          <line x1="20" y1="416" x2="12" y2="416" stroke="#8B9DB0" stroke-width="0.75" opacity="0.35"/>
+        </svg>
+      </div>
+
     </div>
   </div>
+</section>
 
-  
-          <section class="domain-section-d" id="d-fulfillment">
-            <div class="dsd-header">
-              <div class="dsd-name">Fulfillment</div>
-              <div class="dsd-dots"><span class="sdot sdot-yellow" title="Order to Ship Time: 46.7h"></span><span class="sdot sdot-red" title="On-Time Ship Rate: 90.5%"></span><span class="sdot sdot-red" title="Unshipped Orders Rate: 3.2%"></span></div>
-              <div class="dsd-rule"></div>
-            </div>
-            <div class="kpi-grid-d">
-              <div class="kpi-card-d kpi-d-yellow">
-                <div class="kcd-name">Order to Ship Time</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">46.7</span><span class="kv-unit-d">h</span>
-                </div>
-                <div class="kcd-wow">↑ 1.5h WoW</div>
-                <div class="kcd-chip kcd-chip-yellow">YELLOW</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">44.2h</span><span class="ph-delta dn">▲ 2.5h</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">45.1h</span><span class="ph-delta dn">▲ 1.6h</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">47.3h</span><span class="ph-delta dp">▼ 0.6h</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">49.8h</span><span class="ph-delta dp">▼ 3.1h</span></div></div>
-              </div>
-              <div class="kpi-card-d kpi-d-red">
-                <div class="kcd-name">On-Time Ship Rate</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">90.5</span><span class="kv-unit-d">%</span>
-                </div>
-                <div class="kcd-wow">↓ 2.7pp WoW</div>
-                <div class="kcd-chip kcd-chip-red">RED</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">95.8%</span><span class="ph-delta dn">▼ 94.9pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">95.2%</span><span class="ph-delta dn">▼ 94.3pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">93.7%</span><span class="ph-delta dn">▼ 92.8pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">91.4%</span><span class="ph-delta dn">▼ 90.5pp</span></div></div>
-              </div>
-              <div class="kpi-card-d kpi-d-red">
-                <div class="kcd-name">Unshipped Orders Rate</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">3.2</span><span class="kv-unit-d">%</span>
-                </div>
-                <div class="kcd-wow">↑ 0.6pp WoW</div>
-                <div class="kcd-chip kcd-chip-red">RED</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">2.4%</span><span class="ph-delta dp">▼ 2.4pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">2.8%</span><span class="ph-delta dp">▼ 2.8pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">3.1%</span><span class="ph-delta dp">▼ 3.1pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">3.9%</span><span class="ph-delta dp">▼ 3.9pp</span></div></div>
-              </div></div>
-            
-              <div class="analysis-panel">
-                <div class="ap-col">
-                  <div class="ap-label">Data Analysis</div>
-                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Order to Ship Time increased to 46.73 hours, up 1.46 hours from last week, and is now in yellow status.</div><div class="obs-item"><span class="obs-dot"></span>On-Time Ship Rate dropped to 90.5%, down 2.72 percentage points from last week, and is in red status.</div><div class="obs-item"><span class="obs-dot"></span>Unshipped Orders Rate increased to 3.2%, up 0.6 percentage points from last week, and is in red status.</div></div>
-                </div>
-                <div class="ap-col ap-s6">
-                  <div class="ap-label ap-label-gold">Expert Commentary</div>
-                  <div class="s6-commentary-d">The recent increase in Order to Ship Time and decrease in On-Time Ship Rate indicate a need for improved logistics planning and execution. This trend suggests that the current supply chain is struggling to meet customer demand, resulting in delayed shipments and increased unshipped orders. To address this issue, it is essential to analyze the root causes of these delays and develop strategies to enhance the overall efficiency of the fulfillment process. By streamlining logistics operations and improving supply chain visibility, the company can reduce lead times, increase on-time shipments, and ultimately improve customer satisfaction. Effective management of inventory levels, transportation planning, and warehouse operations will be critical in achieving these goals.</div>
-                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
-                  <div class="s6-recs-d">
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">1</div>
-                  <div class="s6-rec-body">
-                    Implement a direct-to-store approach to reduce inventory costs and improve fulfillment speed by eliminating stops at warehouses along the way, which is expected to decrease the Order to Ship Time by 20% and increase the On-Time Ship Rate by 15%.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">2</div>
-                  <div class="s6-rec-body">
-                    Develop a more efficient inventory management system to minimize inventory holding costs and reduce the likelihood of stockouts, which is expected to decrease the Unshipped Orders Rate by 10% and improve supply chain visibility.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">3</div>
-                  <div class="s6-rec-body">
-                    Invest in logistics information systems to enhance supply chain visibility, track orders in real-time, and improve coordination among supply chain partners, which is expected to reduce lead times by 12% and increase customer satisfaction by 18%.
-                    
-                  </div>
-                </div></div>
-                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
-                </div>
-              </div>
-            <details class="prov-details">
-              <summary class="prov-summary">Data Provenance</summary>
-              <div class="prov-table">
-              <div class="prov-row">
-                <span class="prov-id">F001</span>
-                <span class="prov-name">Order to Ship Time</span>
-                <span class="prov-formula">Average hours from order_created_at to shipped_at, across all shipped (non-cancelled) orders</span>
-                <span class="prov-rows">484 rows</span>
-              </div>
-              <div class="prov-row">
-                <span class="prov-id">F002</span>
-                <span class="prov-name">On-Time Ship Rate</span>
-                <span class="prov-formula">Percentage of orders where shipped_at <= promised_ship_date, expressed as decimal (e.g. 0.966). Only include orders that have both shipped_at and promised_ship_date.</span>
-                <span class="prov-rows">484 rows</span>
-              </div>
-              <div class="prov-row">
-                <span class="prov-id">F003</span>
-                <span class="prov-name">Unshipped Orders Rate</span>
-                <span class="prov-formula">Percentage of total orders (including cancelled) with no shipment record, expressed as decimal. Cancelled orders count as unshipped.</span>
-                <span class="prov-rows">484 rows</span>
-              </div></div>
-            </details>
-          </section>
-          <section class="domain-section-d" id="d-carrier_performance">
-            <div class="dsd-header">
-              <div class="dsd-name">Carrier Performance</div>
-              <div class="dsd-dots"><span class="sdot sdot-green" title="Transit Time: 152.2h"></span><span class="sdot sdot-red" title="On-Time Delivery Rate: 91.4%"></span><span class="sdot sdot-informational" title="Carrier Mix: 53.3%"></span></div>
-              <div class="dsd-rule"></div>
-            </div>
-            <div class="kpi-grid-d">
-              <div class="kpi-card-d kpi-d-green">
-                <div class="kcd-name">Transit Time</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">152.2</span><span class="kv-unit-d">h</span>
-                </div>
-                <div class="kcd-wow">↑ 12.6h WoW</div>
-                <div class="kcd-chip kcd-chip-green">GREEN</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">153.2h</span><span class="ph-delta dp">▼ 1.0h</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">155.8h</span><span class="ph-delta dp">▼ 3.6h</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">158.4h</span><span class="ph-delta dp">▼ 6.2h</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">162.1h</span><span class="ph-delta dp">▼ 9.9h</span></div></div>
-              </div>
-              <div class="kpi-card-d kpi-d-red">
-                <div class="kcd-name">On-Time Delivery Rate</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">91.4</span><span class="kv-unit-d">%</span>
-                </div>
-                <div class="kcd-wow">↓ 6.6pp WoW</div>
-                <div class="kcd-chip kcd-chip-red">RED</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">96.4%</span><span class="ph-delta dn">▼ 95.5pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">95.9%</span><span class="ph-delta dn">▼ 95.0pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">94.2%</span><span class="ph-delta dn">▼ 93.3pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">92.8%</span><span class="ph-delta dn">▼ 91.9pp</span></div></div>
-              </div>
-              <div class="kpi-card-d kpi-d-informational">
-                <div class="kcd-name">Carrier Mix</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">53.3</span><span class="kv-unit-d">%</span>
-                </div>
-                <div class="kcd-wow">↓ 1.3pp WoW</div>
-                <div class="kcd-chip kcd-chip-informational">INFO</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">50.9%</span><span class="ph-delta dn">▼ 50.4pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">51.3%</span><span class="ph-delta dn">▼ 50.8pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">52.1%</span><span class="ph-delta dn">▼ 51.6pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">54.7%</span><span class="ph-delta dn">▼ 54.2pp</span></div></div>
-              </div></div>
-            
-              <div class="analysis-panel">
-                <div class="ap-col">
-                  <div class="ap-label">Data Analysis</div>
-                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Transit Time increased to 152.22 hours, up 12.55 hours from last week, but remains in green status.</div><div class="obs-item"><span class="obs-dot"></span>On-Time Delivery Rate dropped to 91.41%, down 6.58 percentage points from last week, and is in red status.</div></div>
-                </div>
-                <div class="ap-col ap-s6">
-                  <div class="ap-label ap-label-gold">Expert Commentary</div>
-                  <div class="s6-commentary-d">The recent increase in transit time and decrease in on-time delivery rate are concerning trends that require immediate attention. The 12.55-hour increase in transit time and 6.58 percentage point drop in on-time delivery rate indicate potential issues with carrier performance and network congestion. To mitigate these issues, we need to reassess our carrier mix and transportation strategies to ensure that we are optimizing our supply chain operations. A thorough analysis of our distribution networks and logistics operations is necessary to identify areas for improvement. By doing so, we can improve our delivery reliability and responsiveness to changing demand patterns.</div>
-                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
-                  <div class="s6-recs-d">
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">1</div>
-                  <div class="s6-rec-body">
-                    Implement a formal freight carrier performance review process to evaluate and improve carrier reliability and on-time delivery performance, which is expected to reduce the risk of landed cost budget variances and improve customer satisfaction.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">2</div>
-                  <div class="s6-rec-body">
-                    Optimize our distribution network by analyzing and simulating different logistics scenarios to identify opportunities to increase equipment reliability, improve manufacturing cost/capacity, and enhance service factors, which is expected to lead to faster response times and lower transportation costs.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">3</div>
-                  <div class="s6-rec-body">
-                    Develop a comprehensive list of evaluation metrics to assess carrier performance, including quantitative and qualitative measures such as on-time delivery performance, claims ratios, and customer service quality, which is expected to provide a more accurate assessment of carrier performance and inform data-driven decisions.
-                    
-                  </div>
-                </div></div>
-                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
-                </div>
-              </div>
-            <details class="prov-details">
-              <summary class="prov-summary">Data Provenance</summary>
-              <div class="prov-table">
-              <div class="prov-row">
-                <span class="prov-id">F004</span>
-                <span class="prov-name">Transit Time</span>
-                <span class="prov-formula">Average hours from first_scan_at to delivered_at, across all delivered shipments</span>
-                <span class="prov-rows">484 rows</span>
-              </div>
-              <div class="prov-row">
-                <span class="prov-id">F005</span>
-                <span class="prov-name">On-Time Delivery Rate</span>
-                <span class="prov-formula">Percentage of delivered shipments where actual transit time <= expected transit window for that carrier + service level. Express as decimal. Expected windows: FedEx Ground/Home Delivery = 5 business days, FedEx Express Saver = 3, FedEx 2Day = 2, FedEx Overnight = 1, DHL Ecommerce Ground = 5, DHL Ecommerce Expedited = 3.</span>
-                <span class="prov-rows">484 rows</span>
-              </div>
-              <div class="prov-row">
-                <span class="prov-id">F006</span>
-                <span class="prov-name">Carrier Mix</span>
-                <span class="prov-formula">Percentage split of total shipments between FedEx and DHL Ecommerce. Express as two decimals that sum to 1.0. Report as informational — no threshold applied.</span>
-                <span class="prov-rows">484 rows</span>
-              </div></div>
-            </details>
-          </section>
-          <section class="domain-section-d" id="d-cost">
-            <div class="dsd-header">
-              <div class="dsd-name">Cost & Efficiency</div>
-              <div class="dsd-dots"><span class="sdot sdot-informational" title="Shipping Cost per Order: $12.11"></span><span class="sdot sdot-informational" title="Cost by Carrier: $14.96"></span></div>
-              <div class="dsd-rule"></div>
-            </div>
-            <div class="kpi-grid-d">
-              <div class="kpi-card-d kpi-d-informational">
-                <div class="kcd-name">Shipping Cost per Order</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">12.11</span><span class="kv-unit-d">$</span>
-                </div>
-                <div class="kcd-wow">↑ $0.33 WoW</div>
-                <div class="kcd-chip kcd-chip-informational">INFO</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">$11.12</span><span class="ph-delta dn">▲ $0.99</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">$11.38</span><span class="ph-delta dn">▲ $0.73</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">$11.74</span><span class="ph-delta dn">▲ $0.37</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">$12.21</span><span class="ph-delta dp">▼ $0.10</span></div></div>
-              </div>
-              <div class="kpi-card-d kpi-d-informational">
-                <div class="kcd-name">Cost by Carrier</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">14.96</span><span class="kv-unit-d">$</span>
-                </div>
-                <div class="kcd-wow">↑ $0.10 WoW</div>
-                <div class="kcd-chip kcd-chip-informational">INFO</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">$13.10</span><span class="ph-delta dn">▲ $1.86</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">$13.44</span><span class="ph-delta dn">▲ $1.52</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">$13.82</span><span class="ph-delta dn">▲ $1.14</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">$14.31</span><span class="ph-delta dn">▲ $0.65</span></div></div>
-              </div></div>
-            
-              <div class="analysis-panel">
-                <div class="ap-col">
-                  <div class="ap-label">Data Analysis</div>
-                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Shipping Cost per Order increased to $12.11, up $0.33 from last week, but is informational due to limited history.</div><div class="obs-item"><span class="obs-dot"></span>Average shipping cost for FedEx is $14.96 (up $0.10) and for DHL is $10.62, both informational due to limited history.</div></div>
-                </div>
-                <div class="ap-col ap-s6">
-                  <div class="ap-label ap-label-gold">Expert Commentary</div>
-                  <div class="s6-commentary-d">The recent increase in shipping cost per order to $12.11, up $0.33 from last week, indicates a need to reassess our transportation strategies to mitigate rising costs. This increase may be attributed to various factors, including changes in carrier rates or fuel prices, and warrants a thorough analysis of our logistics operations. By examining our cost structure and identifying areas for optimization, we can develop targeted strategies to reduce shipping costs and improve overall supply chain efficiency. Furthermore, the average shipping cost for FedEx at $14.96, although informational due to limited history, suggests that we should explore opportunities to negotiate better rates with our carriers or consider alternative transportation modes. This will enable us to maintain a competitive edge in the market while minimizing the impact of rising shipping costs on our bottom line.</div>
-                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
-                  <div class="s6-recs-d">
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">1</div>
-                  <div class="s6-rec-body">
-                    Implement a transportation cost optimization initiative, leveraging data analytics and market intelligence to identify opportunities for rate reductions and modal shifts, with the expected outcome of achieving a 5-7% reduction in shipping costs within the next quarter.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">2</div>
-                  <div class="s6-rec-body">
-                    Conduct a comprehensive review of our logistics network, focusing on warehouse locations, inventory levels, and transportation routes, to identify opportunities for consolidation and efficiency gains, with the expected outcome of reducing total logistics costs by 3-5% within the next 6-9 months.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">3</div>
-                  <div class="s6-rec-body">
-                    Develop a carrier management strategy, including regular business reviews, performance metrics, and scorecards, to ensure that our transportation partners are aligned with our cost reduction and service quality objectives, with the expected outcome of improving on-time delivery rates by 2-3% and reducing claims by 1-2% within the next 3-6 months.
-                    
-                  </div>
-                </div></div>
-                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
-                </div>
-              </div>
-            <details class="prov-details">
-              <summary class="prov-summary">Data Provenance</summary>
-              <div class="prov-table">
-              <div class="prov-row">
-                <span class="prov-id">F007</span>
-                <span class="prov-name">Shipping Cost per Order</span>
-                <span class="prov-formula">Total shipping cost (from carrier records) divided by total shipped orders. If fewer than 4 weeks of history exist, mark as informational.</span>
-                <span class="prov-rows">484 rows</span>
-              </div>
-              <div class="prov-row">
-                <span class="prov-id">F008</span>
-                <span class="prov-name">Cost by Carrier</span>
-                <span class="prov-formula">Average shipping cost broken down by carrier (FedEx average, DHL average). Express as a dict: {FedEx: float, DHL Ecommerce: float}. If fewer than 4 weeks of history exist, mark as informational.</span>
-                <span class="prov-rows">484 rows</span>
-              </div></div>
-            </details>
-          </section>
-          <section class="domain-section-d" id="d-operational_integrity">
-            <div class="dsd-header">
-              <div class="dsd-name">Operational Integrity</div>
-              <div class="dsd-dots"><span class="sdot sdot-green" title="Label Lag: 3.6h"></span><span class="sdot sdot-red" title="Shipment Match Rate: 93.8%"></span></div>
-              <div class="dsd-rule"></div>
-            </div>
-            <div class="kpi-grid-d">
-              <div class="kpi-card-d kpi-d-green">
-                <div class="kcd-name">Label Lag</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">3.6</span><span class="kv-unit-d">h</span>
-                </div>
-                <div class="kcd-wow">↑ 0.8h WoW</div>
-                <div class="kcd-chip kcd-chip-green">GREEN</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">2.9h</span><span class="ph-delta dn">▲ 0.7h</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">3.2h</span><span class="ph-delta dn">▲ 0.4h</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">3.9h</span><span class="ph-delta dp">▼ 0.2h</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">4.5h</span><span class="ph-delta dp">▼ 0.9h</span></div></div>
-              </div>
-              <div class="kpi-card-d kpi-d-red">
-                <div class="kcd-name">Shipment Match Rate</div>
-                <div class="kcd-val-row">
-                  <span class="kcd-num">93.8</span><span class="kv-unit-d">%</span>
-                </div>
-                <div class="kcd-wow">↑ 1.8pp WoW</div>
-                <div class="kcd-chip kcd-chip-red">RED</div>
-                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">94.1%</span><span class="ph-delta dn">▼ 93.2pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">93.8%</span><span class="ph-delta dn">▼ 92.9pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">92.6%</span><span class="ph-delta dn">▼ 91.7pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">90.3%</span><span class="ph-delta dn">▼ 89.4pp</span></div></div>
-              </div></div>
-            
-              <div class="analysis-panel">
-                <div class="ap-col">
-                  <div class="ap-label">Data Analysis</div>
-                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Label Lag increased to 3.62 hours, up 0.82 hours from last week, but remains in green status.</div><div class="obs-item"><span class="obs-dot"></span>Shipment Match Rate improved to 93.8%, up 1.81 percentage points from last week, but is still in red status.</div></div>
-                </div>
-                <div class="ap-col ap-s6">
-                  <div class="ap-label ap-label-gold">Expert Commentary</div>
-                  <div class="s6-commentary-d">The increase in Label Lag to 3.62 hours, despite remaining in green status, indicates a potential issue with the efficiency of our labeling process. This, combined with the Shipment Match Rate improving to 93.8% but still in red status, suggests that we need to focus on improving our overall operational integrity. The root cause of these issues may be related to inadequate training or insufficient resources, highlighting the need for a thorough review of our processes. By addressing these operational inefficiencies, we can improve our delivery performance and customer satisfaction. Furthermore, this analysis underscores the importance of real-time tracking and monitoring to quickly identify and rectify any discrepancies in our supply chain.</div>
-                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
-                  <div class="s6-recs-d">
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">1</div>
-                  <div class="s6-rec-body">
-                    Implement a real-time tracking system to monitor shipments and quickly identify any discrepancies, allowing for prompt corrective action and improving our overall delivery performance and customer satisfaction by reducing errors and increasing visibility.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">2</div>
-                  <div class="s6-rec-body">
-                    Conduct a thorough review of our labeling process to identify inefficiencies and implement improvements, such as additional training or resources, to reduce Label Lag and improve our Shipment Match Rate, resulting in enhanced operational integrity and customer satisfaction.
-                    
-                  </div>
-                </div>
-                <div class="s6-rec-d">
-                  <div class="s6-rec-num">3</div>
-                  <div class="s6-rec-body">
-                    Develop and implement a comprehensive employee training program focused on inventory management and control to increase proficiency and reduce errors, enabling us to lower inventory levels through more effective management and improve our overall operational performance.
-                    
-                  </div>
-                </div></div>
-                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
-                </div>
-              </div>
-            <details class="prov-details">
-              <summary class="prov-summary">Data Provenance</summary>
-              <div class="prov-table">
-              <div class="prov-row">
-                <span class="prov-id">F009</span>
-                <span class="prov-name">Label Lag</span>
-                <span class="prov-formula">Average hours from label_created_at to first_scan_at, across all shipments. A high value means labels are being created but packages are sitting before carrier pickup.</span>
-                <span class="prov-rows">484 rows</span>
-              </div>
-              <div class="prov-row">
-                <span class="prov-id">F010</span>
-                <span class="prov-name">Shipment Match Rate</span>
-                <span class="prov-formula">Percentage of shipments successfully matched to a carrier record (exact or fuzzy), expressed as decimal. Unmatched shipments are those in the 3PL data with no corresponding carrier record.</span>
-                <span class="prov-rows">484 rows</span>
-              </div></div>
-            </details>
-          </section>
-
-</div>
-
-<!-- System footer -->
-<footer class="sys-footer">
-  <div class="sf-gold-bar"></div>
-  <div class="sf-inner">
-    <div>
-      <div class="sf-head">Verification &amp; Data Quality</div>
-      <div class="sf-stats">
-        <div class="sf-stat">
-          <span class="sf-val">93.8%</span>
-          <span class="sf-lbl">Shipment Match</span>
-        </div>
-        <div class="sf-stat">
-          <span class="sf-val">56%</span>
-          <span class="sf-lbl">Claim Acceptance</span>
-        </div>
-        <div class="sf-stat">
-          <span class="sf-val">44%</span>
-          <span class="sf-lbl">Verifier Agreement</span>
+<!-- ── Section 2: The Problem ───────────────────────────────── -->
+<section id="problem" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Problem</span>
+      <h2>Most AI systems fail in ways their builders never see.</h2>
+      <p class="section-subhead">The promise of production AI is powerful. The reality is that most AI pipelines, even well-designed ones, suffer from three failure modes that are invisible until they're not.</p>
+    </div>
+    <div class="problem-grid">
+      <!-- Card 1 -->
+      <div class="card fade-up" data-expand>
+        <button class="card-trigger" aria-expanded="false">
+          <div class="card-trigger-left">
+            <div class="card-num">01</div>
+            <div class="card-title">Hallucination Under Confidence</div>
+            <div class="card-preview">AI systems produce wrong answers with high confidence. The governance layer doesn't catch it. The user trusts it.</div>
+          </div>
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <span class="tech-label">Technical Root Cause</span>
+            <p>The model that generates also evaluates. Shared architecture means shared blind spots. A verifier trained on the same data distribution as the generator will miss the same classes of errors the generator makes.</p>
+            <p>Solution requires <strong>structural separation</strong> of generation and verification with independent model families. Not more prompting of the same model: different architecture, different training, different blind spots.</p>
+          </div>
         </div>
       </div>
-      <div class="sf-line">
-        <strong>Stage 6:</strong> 4 domain(s) · 40 KB chunks retrieved
+      <!-- Card 2 -->
+      <div class="card fade-up" data-expand>
+        <button class="card-trigger" aria-expanded="false">
+          <div class="card-trigger-left">
+            <div class="card-num">02</div>
+            <div class="card-title">Silent Degradation Over Time</div>
+            <div class="card-preview">Models drift. Data distributions shift. A system that worked last month may be quietly wrong today, with no alert, no signal, no way to know.</div>
+          </div>
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <span class="tech-label">Technical Root Cause</span>
+            <p>Single-loop feedback corrects individual outputs but cannot detect configuration failures. When the first feedback loop keeps failing, there is no second mechanism to notice that the first loop is broken.</p>
+            <p>Solution requires a <strong>secondary feedback loop</strong> (Layer 5 in the Chorus AI framework) that monitors the governance layer itself, not just individual outputs. The orchestrator must be observable, not just the agents.</p>
+          </div>
+        </div>
       </div>
-      <div class="sf-stamp">
-        Produced by Chorus AI Systems — CAS·DAM multi-model verified pipeline.<br>
-        Llama 3.3 70B · DeepSeek V3 · Qwen2.5 7B · Python cross-verification.<br>
-        Not financial advice.
+      <!-- Card 3 -->
+      <div class="card fade-up" data-expand>
+        <button class="card-trigger" aria-expanded="false">
+          <div class="card-trigger-left">
+            <div class="card-num">03</div>
+            <div class="card-title">Ungoverned Complexity at Scale</div>
+            <div class="card-preview">Adding more agents increases capability but also increases the space of possible failures. Most pipelines have no mechanism to govern that expanded failure space.</div>
+          </div>
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <span class="tech-label">Technical Root Cause</span>
+            <p>Ashby's Law of Requisite Variety violated. Governance capacity must scale proportionally with operational complexity. Every new agent introduced to a system requires a corresponding increase in verification, coordination, and audit mechanisms.</p>
+            <p>A pipeline with five agents and governance designed for two is not safer than a two-agent pipeline. It is less safe. The governance gap grows with every addition.</p>
+          </div>
+        </div>
       </div>
     </div>
-    <div>
-      <div class="sf-head">Models &amp; Pipeline</div>
-      <div class="sf-line">
-        <strong>Stages 1–3, 6</strong><br>Llama 3.3 70B Instruct Turbo<br>
-        <strong>Stage 4 Generation</strong><br>DeepSeek V3<br>
-        <strong>Stage 4 Verification</strong><br>Qwen2.5 7B<br>
-        <strong>Stage 5</strong><br>Deterministic (no LLM)
+    <p class="problem-closing fade-up">These are not model failures. They are architecture failures.</p>
+  </div>
+</section>
+
+<!-- ── Section 3: The Theoretical Foundation ────────────────── -->
+<section id="foundation" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Foundation</span>
+      <h2>Built on 50 years of cybernetic theory.</h2>
+      <p class="section-subhead">The governance problems facing modern AI systems were studied rigorously in the 1970s: how to control a complex, probabilistic, multi-agent system under uncertainty. The insights are directly applicable.</p>
+    </div>
+    <div class="theorist-grid">
+      <!-- Beer -->
+      <div class="theorist-card fade-up" data-theorist>
+        <div class="tc-header">
+          <div class="tc-name">Stafford Beer</div>
+          <div class="tc-work">Viable System Model, 1972</div>
+          <p class="tc-insight">"Viability is a property of structure, not capability. Any system that wants to survive in a changing environment needs five control layers, and they must be intact simultaneously."</p>
+        </div>
+        <button class="tc-trigger" aria-expanded="false">
+          <span class="tc-trigger-lbl">Technical Application</span>
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="tc-body">
+          <div class="tc-body-inner">
+            CASDAM maps Beer's five systems to seven layers for AI: Operational (agents), Coordination (schema enforcement, sequencing), Runtime Governance (gates, halts), Assurance &amp; Audit (independent verification), Adaptive Intelligence (meta-governance), Constitutional Policy (inviolable constraints), Environment &amp; Interface (I/O governance). A system missing any layer has a predictable class of failure modes. Not a possible failure. A guaranteed one.
+          </div>
+        </div>
+      </div>
+      <!-- Ashby -->
+      <div class="theorist-card fade-up" data-theorist>
+        <div class="tc-header">
+          <div class="tc-name">W. Ross Ashby</div>
+          <div class="tc-work">Law of Requisite Variety, 1956</div>
+          <p class="tc-insight">"Only variety can absorb variety. Your governance architecture must be at least as varied as the ways your system can fail. If it is not, failures will find the gaps, not occasionally but inevitably."</p>
+        </div>
+        <button class="tc-trigger" aria-expanded="false">
+          <span class="tc-trigger-lbl">Technical Application</span>
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="tc-body">
+          <div class="tc-body-inner">
+            CASDAM satisfies Ashby's Law through two simultaneous strategies: <strong>amplification</strong> (multi-model verification, contradiction detection, model disagreement analysis) and <strong>attenuation</strong> (bounded agent autonomy, schema enforcement, state gating, domain restrictions). Four distinct model families are a hard architectural requirement, not a redundancy choice, because verifiers that share architecture share blind spots.
+          </div>
+        </div>
+      </div>
+      <!-- Von Foerster -->
+      <div class="theorist-card fade-up" data-theorist>
+        <div class="tc-header">
+          <div class="tc-name">Heinz von Foerster</div>
+          <div class="tc-work">Second-Order Cybernetics, 1974</div>
+          <p class="tc-insight">"Every observer is part of the system being observed. An LLM verifier that uses an LLM to check an LLM is not an external authority. It is another probabilistic system embedded in the same architecture."</p>
+        </div>
+        <button class="tc-trigger" aria-expanded="false">
+          <span class="tc-trigger-lbl">Technical Application</span>
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="tc-body">
+          <div class="tc-body-inner">
+            CASDAM implements second-order governance through: <strong>observer diversity</strong> (no two adjacent verification stages share model family), <strong>meta-governance</strong> (Layer 5 monitors the governance layer itself, not just outputs), and <strong>mandatory external observation</strong> (human review, adversarial testing). The cross-verifier agreement tracker exists specifically because persistent 100% agreement between two models is a red flag. It means they share the same blind spot, not that everything is correct.
+          </div>
+        </div>
       </div>
     </div>
-    <div>
-      <div class="sf-head">Degradation Disclosures</div>
-      <div class="disc-row disc-none">None — full pipeline completed.</div>
+  </div>
+</section>
+
+<!-- ── Section 4: The Chorus AI Framework ───────────────────── -->
+<section id="framework" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Framework</span>
+      <h2>Seven layers. Thirteen principles. Zero optional.</h2>
+      <p class="section-subhead">Every Chorus AI system must contain all seven governance layers. A system missing any layer has a structurally predictable failure mode. This is not a checklist. It is a viability condition.</p>
     </div>
+    <div class="framework-layout fade-up">
+      <!-- Layer stack -->
+      <div class="layer-stack" id="layer-stack">
+        <button class="layer-bar active" data-layer="1">
+          <span class="layer-num">L1</span>
+          <span class="layer-name">Operational</span>
+          <span class="layer-vsm">Beer S1</span>
+        </button>
+        <button class="layer-bar" data-layer="2">
+          <span class="layer-num">L2</span>
+          <span class="layer-name">Coordination</span>
+          <span class="layer-vsm">Beer S2</span>
+        </button>
+        <button class="layer-bar" data-layer="3">
+          <span class="layer-num">L3</span>
+          <span class="layer-name">Runtime Governance</span>
+          <span class="layer-vsm">Beer S3</span>
+        </button>
+        <button class="layer-bar" data-layer="4">
+          <span class="layer-num">L4</span>
+          <span class="layer-name">Assurance &amp; Audit</span>
+          <span class="layer-vsm">Beer S3*</span>
+        </button>
+        <button class="layer-bar" data-layer="5">
+          <span class="layer-num">L5</span>
+          <span class="layer-name">Adaptive Intelligence</span>
+          <span class="layer-vsm">Beer S4</span>
+        </button>
+        <button class="layer-bar" data-layer="6">
+          <span class="layer-num">L6</span>
+          <span class="layer-name">Constitutional Policy</span>
+          <span class="layer-vsm">Beer S5</span>
+        </button>
+        <button class="layer-bar" data-layer="7">
+          <span class="layer-num">L7</span>
+          <span class="layer-name">Environment &amp; Interface</span>
+          <span class="layer-vsm">Extended</span>
+        </button>
+      </div>
+      <!-- Detail panels -->
+      <div id="layer-panels">
+        <div class="layer-panel active" data-panel="1">
+          <div class="lp-number">Layer 1</div>
+          <div class="lp-name">Operational</div>
+          <div class="lp-vsm">Beer's System 1: Operations</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Llama 3.3 70B Instruct Turbo (Stages 1–3 &amp; 6), DeepSeek V3 (Stage 4 generation). Each agent operates with bounded scope, defined input/output schemas, and no authority to make governance decisions. Agents do not know the pipeline exists. They receive input and produce output.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Unbounded agents that make their own authority decisions, self-modify their instructions, or accumulate context beyond their defined scope.</div>
+        </div>
+        <div class="layer-panel" data-panel="2">
+          <div class="lp-number">Layer 2</div>
+          <div class="lp-name">Coordination</div>
+          <div class="lp-vsm">Beer's System 2: Coordination</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Pydantic schemas enforce typed contracts between every stage. An asyncio orchestrator sequences execution and enforces stage ordering. Stage inputs and outputs are validated at every boundary. Malformed data cannot propagate.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Agents interfering with each other, semantic drift between stages, runaway execution loops, and schema violations that corrupt downstream computation.</div>
+        </div>
+        <div class="layer-panel" data-panel="3">
+          <div class="lp-number">Layer 3</div>
+          <div class="lp-name">Runtime Governance</div>
+          <div class="lp-vsm">Beer's System 3: Control</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Internal gate in each stage MVS. Python independently recomputes every KPI value; the LLM estimate is compared against the Python value and discrepancies are logged. LLM/Python mismatches do not halt the pipeline; Python always wins. Explicit halt conditions defined for every stage.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Outputs advancing without verification, silent error compounding across stages, and LLM-computed values reaching the report without independent confirmation.</div>
+        </div>
+        <div class="layer-panel" data-panel="4">
+          <div class="lp-number">Layer 4</div>
+          <div class="lp-name">Assurance &amp; Audit</div>
+          <div class="lp-vsm">Beer's System 3*: Audit</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Qwen2.5 independently verifies every Stage 4 insight citation against the FactList. Cross-verifier agreement tracked run-over-run. Adversarial test suite run monthly. The verifier is structurally independent of the generator: different model family, different training data.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Self-verification (generator grading its own output) and shared blind spots between generation and verification that allow systematic errors to pass undetected.</div>
+        </div>
+        <div class="layer-panel" data-panel="5">
+          <div class="lp-number">Layer 5</div>
+          <div class="lp-name">Adaptive Intelligence</div>
+          <div class="lp-vsm">Beer's System 4: Intelligence</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Layer5Monitor reads the N most recent run logs. Emits structured alerts on rising retry rates, low claim acceptance rates, and verifier agreement lock (100% agreement for 3+ consecutive runs). Bounded authority: the monitor <em>recommends</em> but does not act. Humans act on its signals.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Silent degradation, model drift, and configuration failures that masquerade as output failures, all invisible to a system that only monitors individual outputs.</div>
+        </div>
+        <div class="layer-panel" data-panel="6">
+          <div class="lp-number">Layer 6</div>
+          <div class="lp-name">Constitutional Policy</div>
+          <div class="lp-vsm">Beer's System 5: Policy</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Inviolable constraints: no unverified output is ever released. The FactList is immutable after Stage 3. Stage 4 refuses input where <span class="fact-id">python_verified=False</span>. No financial projections under any code path. These are structural constraints. They cannot be overridden by optimization pressure or LLM instruction.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Safety constraints overridden by optimization pressure, mission drift through accumulated small exceptions, and constitutional violations that compound over time.</div>
+        </div>
+        <div class="layer-panel" data-panel="7">
+          <div class="lp-number">Layer 7</div>
+          <div class="lp-name">Environment &amp; Interface</div>
+          <div class="lp-vsm">Extended (Beer had no L7)</div>
+          <div class="lp-section">
+            <div class="lp-section-label">DAM Implementation</div>
+            <p>Input validation before any LLM call. Malformed CSVs are rejected with disclosure, not silently handled. Output governance: required report sections are checked before PDF release. <span class="fact-id">HealthTelemetry</span> exposed upward to the orchestrator from every stage.</p>
+          </div>
+          <div class="lp-failure"><strong>Failure Prevented</strong>Malformed inputs propagating through the pipeline, incomplete outputs released without disclosure, and governance failures invisible to the orchestrating layer above.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 Principles Summary -->
+    <div class="principles-summary fade-up">
+      <p class="principles-summary-heading">Thirteen principles govern every system built on the Chorus AI framework. Each is derived from Beer, Ashby, or Von Foerster. Full principles in <a href="#principles">Section 9</a>.</p>
+      <div class="principle-chips">
+        <div class="p-chip"><span class="p-chip-num">01</span><div class="p-chip-body"><div class="p-chip-name">Separation of Generation and Validation</div><div class="p-chip-line">The model that generates never grades its own output.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">02</span><div class="p-chip-body"><div class="p-chip-name">Explicit State Transitions</div><div class="p-chip-line">No output advances without a logged governance decision.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">03</span><div class="p-chip-body"><div class="p-chip-name">Bounded Agent Autonomy</div><div class="p-chip-line">Every agent has defined scope and explicit termination conditions.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">04</span><div class="p-chip-body"><div class="p-chip-name">Traceability &amp; Provenance</div><div class="p-chip-line">Every output carries lineage back to its source inputs.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">05</span><div class="p-chip-body"><div class="p-chip-name">Observability</div><div class="p-chip-line">If you cannot measure it, you cannot govern it.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">06</span><div class="p-chip-body"><div class="p-chip-name">Graceful Degradation</div><div class="p-chip-line">When confidence drops, the system narrows scope.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">07</span><div class="p-chip-body"><div class="p-chip-name">Independent Assurance</div><div class="p-chip-line">Verification must be structurally independent from generation.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">08</span><div class="p-chip-body"><div class="p-chip-name">Adaptive Improvement</div><div class="p-chip-line">Systems must learn from errors. Correct yesterday ≠ correct today.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">09</span><div class="p-chip-body"><div class="p-chip-name">Constitutional Governance</div><div class="p-chip-line">No optimization ever overrides safety constraints.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">10</span><div class="p-chip-body"><div class="p-chip-name">Dual Viability</div><div class="p-chip-line">The system must be both operationally reliable and epistemically trustworthy.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">11</span><div class="p-chip-body"><div class="p-chip-name">Requisite Governance Variety</div><div class="p-chip-line">Governance capacity must scale with operational complexity.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">12</span><div class="p-chip-body"><div class="p-chip-name">Ultrastable Adaptation</div><div class="p-chip-line">Two feedback loops: one corrects outputs, one corrects the corrector.</div></div></div>
+        <div class="p-chip"><span class="p-chip-num">13</span><div class="p-chip-body"><div class="p-chip-name">Second-Order Self-Observation</div><div class="p-chip-line">100% verifier agreement is a red flag, not a green one.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 5: The CASDAM Pattern ────────────────────────── -->
+<section id="pattern" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The CASDAM Pattern</span>
+      <h2>Nested viable systems. Self-governing at every level.</h2>
+      <p class="section-subhead">The defining architectural insight of CASDAM is not that it uses multiple agents. It is that each agent is a viable system: self-governing, with its own operational layer, its own verification, and its own degradation logic. The orchestrator coordinates. It does not govern stage internals.</p>
+    </div>
+
+    <div class="mvs-interactive fade-up">
+      <div class="mvs-diagram-col">
+        <svg id="mvs-svg" viewBox="0 0 540 340" xmlns="http://www.w3.org/2000/svg"></svg>
+        <p class="mvs-hint">Click any tier to explore its role.</p>
+      </div>
+      <div class="mvs-info-col" id="mvs-info-col">
+        <div class="mvs-info-default" id="mvs-info-default">
+          <p class="mvs-info-prompt">Select a tier</p>
+          <p class="mvs-info-intro">Every Chorus AI system has three self-governing tiers. Each has distinct authority, scope, and failure modes. None is optional.</p>
+          <div class="mvs-tier-chips">
+            <div class="mvs-chip mvs-chip--teal">L5 Meta-Governance</div>
+            <div class="mvs-chip mvs-chip--amber">Orchestrator</div>
+            <div class="mvs-chip mvs-chip--teal">Pipeline Core</div>
+          </div>
+        </div>
+        <div class="mvs-info-detail" id="mvs-info-detail"></div>
+      </div>
+    </div>
+
+    <table class="contrast-table fade-up">
+      <thead>
+        <tr>
+          <th>Conventional Multi-Agent AI</th>
+          <th>The CASDAM Pattern</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Agent calls agent</td><td>Stage exposes a governed interface to the orchestrator</td></tr>
+        <tr><td>Orchestrator directs agent behavior</td><td>Orchestrator coordinates; each stage self-governs internally</td></tr>
+        <tr><td>Failure in one agent breaks the chain</td><td>Stage failure produces a structured <span class="fact-id">DegradationSignal</span>; pipeline continues with degradation disclosed</td></tr>
+        <tr><td>No standard for what an agent returns</td><td>Every stage returns <span class="fact-id">VerifiedOutput</span> or <span class="fact-id">DegradationSignal</span>, a typed contract</td></tr>
+        <tr><td>Governance is bolted on after the fact</td><td>Governance is the structure of each stage, not a wrapper around it</td></tr>
+      </tbody>
+    </table>
+
+    <div class="roi-callout fade-up">
+      <p>A mid-level data analyst performing this work costs <strong>$310–$450 per week</strong>. CASDAM performs the same work in <strong>2 minutes</strong> at <strong>$0.05 per run</strong>.</p>
+      <p class="roi-footnote">With full traceability and governance that manual analysis never provides.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 6: DAM — The Case Study ──────────────────────── -->
+<section id="case-study" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Case Study</span>
+      <h2>One ecommerce operations report. Five self-governing stages.</h2>
+      <p class="section-subhead">Every week, a data analyst downloads CSVs from Shopify, FedEx, DHL, and a 3PL provider, reconciles them manually, computes 10 KPIs in Excel, and writes a summary for leadership. DAM automates this entire workflow using governed LLM agents at every stage where the analyst would normally apply judgment.</p>
+    </div>
+    <div class="fade-up">
+      <div class="stage-tabs" role="tablist">
+        <button class="stage-tab active" role="tab" data-stage="1">STAGE 1</button>
+        <button class="stage-tab" role="tab" data-stage="2">STAGE 2</button>
+        <button class="stage-tab" role="tab" data-stage="3">STAGE 3</button>
+        <button class="stage-tab" role="tab" data-stage="4">STAGE 4</button>
+        <button class="stage-tab" role="tab" data-stage="5">STAGE 5</button>
+      </div>
+      <div class="stage-panels">
+        <div class="stage-panel active" data-panel="1">
+          <div class="sp-left">
+            <h3>Data Ingestion &amp; Normalization</h3>
+            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Opening an unfamiliar CSV and deciding which column maps to which field. A skilled analyst spends 15–30 minutes per data source applying domain knowledge to ambiguous column names and inconsistent date formats.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Python validates every proposed field mapping. Duplicate <span class="fact-id">order_id</span> values trigger an immediate halt. The LLM cannot override a structural data integrity failure by expressing narrative confidence.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>Ambiguous mappings are disclosed in <span class="fact-id">FieldMappingLog</span>, not silently resolved. LLM mapping failure after one retry produces a <span class="fact-id">DegradationSignal</span> halt. The pipeline stops rather than continuing on corrupted data.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">RawCSVBundle</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">NormalizedDataset</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="2">
+          <div class="sp-left">
+            <h3>Cross-Source Reconciliation</h3>
+            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Running VLOOKUPs, then manually investigating the rows that don't match. An analyst applies business knowledge to decide whether a non-matching record is a data error, a legitimate exception, or a carrier reporting discrepancy.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Fuzzy match confidence threshold of 0.90 enforced by Python. The LLM cannot override this threshold by expressing narrative confidence: "I believe these records match" is not a valid override of a 0.74 confidence score.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>Match rate &lt; 80% → halt. 80–95% → warning disclosed in report. Every unmatched record appears with <span class="fact-id">join_status='unmatched'</span> in the output. Nothing is silently dropped.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">NormalizedDataset</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">ReconciledDataset</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="3">
+          <div class="sp-left">
+            <h3>KPI Computation</h3>
+            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Writing formulas in Excel, applying threshold rules, deciding what is Green vs. Yellow vs. Red. An analyst knows which metrics matter most and applies contextual judgment to borderline cases.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Python independently recomputes every KPI. Python always wins. LLM/Python mismatches are logged and tracked by Layer 5 for drift detection. The LLM value is informational only. It never reaches the FactList.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>Stage halts only if Python itself cannot compute a KPI, meaning a genuine data failure occurred. LLM errors are corrected silently by Python, logged for drift tracking, and disclosed in the verification footer.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">ReconciledDataset</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">FactList [F001–F010]</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="4">
+          <div class="sp-left">
+            <h3>Insight Generation + Verification</h3>
+            <div class="sp-meta"><span class="sp-model-tag">DeepSeek V3</span><span class="sp-model-tag">Qwen2.5 7B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Writing the narrative: what does this week's data mean? What should leadership do? An analyst synthesises numbers into actionable language and applies industry knowledge to recommend responses.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Every claim must cite a <span class="fact-id">FACT_ID</span>. Qwen2.5 independently checks each citation: does the cited fact actually support this claim? Claims that fail verification are stripped entirely, not marked uncertain.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>&lt; 3 verified claims → partial <span class="fact-id">DegradationSignal</span>. 0 claims → Level 2 halt. Cross-verifier agreement at 100% for 3 consecutive runs triggers a Layer 5 critical alert, not a success signal.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">FactList</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">VerifiedInsightList</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="5">
+          <div class="sp-left">
+            <h3>Report Compilation</h3>
+            <div class="sp-meta"><span class="sp-model-tag">No LLM: Deterministic</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Formatting the report, copying numbers into a template, sending it to leadership. Consistency, completeness, and delivery.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Structural completeness check against required sections list. Missing section → halt. PDF page count deviation → warning logged. Every degradation disclosure from Stages 1–4 is surfaced in the verification footer.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Why This Matters</div>
+              <p>Stage 5 being a viable system without an LLM demonstrates that viability is a property of governance structure, not AI presence. The most reliable stage in the pipeline is the one with no model at all.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">VerifiedInsightList</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">GovernedReport (HTML + PDF)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FactList Chain -->
+    <div class="factlist-chain fade-up">
+      <div class="chain-title">The FactList: connective tissue of the entire pipeline</div>
+      <p class="chain-sub">Every KPI gets a unique <span class="fact-id">FACT_ID</span>. Every insight must cite one. Every citation is verified before the insight surfaces. The FactList is immutable after Stage 3. No downstream stage can add, modify, or remove entries.</p>
+      <div class="chain-nodes">
+        <div class="chain-node"><div class="cn-label">Source Data</div><div class="cn-val">Shopify · FedEx · DHL · 3PL CSV rows</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">Python Computed</div><div class="cn-val">10 KPI values, independently calculated</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">FactList Entry</div><div class="cn-val"><span class="fact-id">F001</span>–<span class="fact-id">F010</span> assigned, immutable</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">Citation Check</div><div class="cn-val">Qwen verifies claim ↔ FACT_ID alignment</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">Report Claim</div><div class="cn-val">Verified insight with traceable lineage</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 7: The Numbers ────────────────────────────────── -->
+<section id="numbers" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Numbers</span>
+      <h2>The case, in three figures.</h2>
+    </div>
+    <div class="big-nums-row fade-up">
+      <div class="big-num-card">
+        <span class="big-num" data-count="0.05" data-prefix="$" data-decimals="2">$0.05</span>
+        <div class="big-num-label">Cost per run</div>
+        <p class="big-num-desc">The same work a data analyst performs in 2 hours costs under five cents, with full governance and traceability.</p>
+        <p class="big-num-caveat">Costs reflect Together AI free-tier pricing on synthetic test data. Production deployment costs will vary.</p>
+        <button class="num-expand-trigger" data-num-expand>
+          Methodology
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="num-expand-body">
+          <div class="num-expand-body-inner">Together AI free-tier Llama 3.3 70B for Stages 1–3 &amp; 6, DeepSeek V3 and Qwen2.5 7B for Stage 4. Token budget enforced per stage. One retry per stage maximum. Cost ceiling is a constitutional constraint, not a soft target. Actual run cost on 2026-04-22: $0.0365.</div>
+        </div>
+      </div>
+      <div class="big-num-card">
+        <span class="big-num" data-count="99.97" data-suffix="%" data-decimals="2">99.97%</span>
+        <div class="big-num-label">Modeled cost reduction vs. manual</div>
+        <p class="big-num-desc">Ratio of actual API costs to published mid-level analyst labor rates ($310–$450/week). A model comparison, not a live production ROI claim.</p>
+        <button class="num-expand-trigger" data-num-expand>
+          Methodology
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="num-expand-body">
+          <div class="num-expand-body-inner">This is not a projection. It is the ratio of actual Together AI API costs at locked model selection to published mid-level data analyst labor rates. Manual analysis also has zero governance trail: no audit log, no traceability, no degradation disclosure.</div>
+        </div>
+      </div>
+      <div class="big-num-card">
+        <span class="big-num" data-count="4" data-decimals="0">4</span>
+        <div class="big-num-label">Model families in the verification chain</div>
+        <p class="big-num-desc">Four structurally distinct model families prevent shared blind spots in the generation-verification chain.</p>
+        <button class="num-expand-trigger" data-num-expand>
+          Methodology
+          <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="num-expand-body">
+          <div class="num-expand-body-inner">Meta Llama, DeepSeek, Qwen, and Mistral (fallback). This is Ashby's Law applied to verification, not redundancy. A verifier that shares architecture and training data with the generator shares its failure modes. Four distinct families satisfy Principle 13: the observation mechanisms cannot share the same structural blind spots.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Governance Metrics -->
+    <div class="gov-metrics fade-up">
+      <div class="gov-metric">
+        <div class="gov-val">70%</div>
+        <div class="gov-name">Claim Acceptance Threshold</div>
+        <p class="gov-desc">Below 70% triggers a Layer 5 warning. 100% for 3 consecutive runs triggers a critical alert. Agreement lock means shared blind spot, not perfect quality.</p>
+      </div>
+      <div class="gov-metric">
+        <div class="gov-val">Per-run</div>
+        <div class="gov-name">KPI Mismatch Count</div>
+        <p class="gov-desc">Tracked every run and trended. Rising mismatch count indicates model drift or prompt degradation. Python always wins. The LLM value is logged for drift tracking only.</p>
+      </div>
+      <div class="gov-metric">
+        <div class="gov-val">&lt;100%</div>
+        <div class="gov-name">Cross-Verifier Agreement</div>
+        <p class="gov-desc">Expected to be high but not 100%. Three consecutive runs at 100% triggers the adversarial test suite immediately. Persistent perfect agreement is a red flag.</p>
+      </div>
+      <div class="gov-metric">
+        <div class="gov-val">20%</div>
+        <div class="gov-name">Retry Rate Threshold</div>
+        <p class="gov-desc">Above 20% triggers a Layer 5 warning. The fallback model (Mixtral 8x22B) is intentionally from a different family, to avoid compounding the same failure mode that caused the primary to fail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 8: Sample Output ─────────────────────────────── -->
+<section id="output" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Output</span>
+      <h2>A governed report. Every number verified. Every claim traced.</h2>
+      <p class="section-subhead">Most AI demos show impressive outputs. This section shows the governance of an impressive output. The verification footer is as prominent as the KPI table.</p>
+    </div>
+    <div class="screenshots-grid fade-up">
+      <div class="screenshot-card">
+        <img src="assets/screenshots/report-p1.png" alt="DAM report dashboard view showing radar chart and domain KPI blocks" loading="lazy">
+        <div class="screenshot-caption">
+          <div class="sc-title">Dashboard + Domain Blocks</div>
+          <ul class="sc-callouts">
+            <li>Scorecard summary: 2 on target, 1 watch, 4 action, 3 informational</li>
+            <li>Domain block structure: KPI cards → data analysis → expert commentary → recommendations</li>
+            <li>Stage 6 supply chain commentary alongside data analysis, column by column</li>
+          </ul>
+        </div>
+      </div>
+      <div class="screenshot-card">
+        <img src="assets/screenshots/report-p2.png" alt="DAM report verification footer showing governance metrics" loading="lazy">
+        <div class="screenshot-caption">
+          <div class="sc-title">Verification Footer</div>
+          <ul class="sc-callouts">
+            <li>Shipment match rate, claim acceptance, verifier agreement, every run</li>
+            <li>Full model list: every model used in this run named explicitly</li>
+            <li>Degradation disclosures: any omissions disclosed here, not buried</li>
+          </ul>
+        </div>
+      </div>
+      <div class="screenshot-card">
+        <img src="assets/screenshots/report-p3.png" alt="DAM report Stage 6 expert commentary with knowledge base citations" loading="lazy">
+        <div class="screenshot-caption">
+          <div class="sc-title">Stage 6: Expert Commentary</div>
+          <ul class="sc-callouts">
+            <li>RAG-sourced recommendations citing supply chain literature</li>
+            <li>Each recommendation traces to a specific knowledge base source chunk</li>
+            <li>Numbered recommendations with expected quantitative outcomes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="output-cta fade-up">
+      <a href="assets/sample-report.pdf" class="btn btn-outline" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Sample Report (PDF)
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 9: The Governing Principles ──────────────────── -->
+<section id="principles" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Principles</span>
+      <h2>Thirteen principles. Derived from Beer, Ashby, and Von Foerster. Every system decision traces to one.</h2>
+      <p class="section-subhead">These are the structural principles behind every decision in the Chorus AI framework, derived from Beer, Ashby, and Von Foerster. A system that violates any principle has a predictable failure mode.</p>
+    </div>
+    <div class="principles-grid fade-up">
+      <!-- P1 — open by default -->
+      <div class="principle-card open" data-expand>
+        <button class="pc-trigger" aria-expanded="true">
+          <span class="pc-num">01</span>
+          <div class="pc-content"><div class="pc-name">Separation of Generation and Validation</div><div class="pc-statement">The model that generates never grades its own output.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner">
+            <p>Generation and validation are structurally separated in DAM. DeepSeek V3 generates insights; Qwen2.5 verifies them. These are different companies, different architectures, different training data. The verifier has no information about what the generator might have said. It evaluates the claim against the FactList independently.</p>
+            <p>This is the single most important principle in the framework. Every other governance mechanism builds on the assumption that the entity checking the output is not the entity that produced it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">02</span>
+          <div class="pc-content"><div class="pc-name">Explicit State Transitions</div><div class="pc-statement">No output advances between stages without a logged governance decision.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Every stage boundary in DAM is a gate, a recorded decision point. The gate checks a defined condition and produces a logged result. Passing a gate is not implicit; it is explicit. If a stage output cannot pass its gate, the pipeline halts or degrades. There is no silent continuation on bad data.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">03</span>
+          <div class="pc-content"><div class="pc-name">Bounded Agent Autonomy</div><div class="pc-statement">Every agent has defined scope, limited authority, and explicit termination conditions.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Agents in DAM are not general-purpose assistants. They receive a specific structured input and are expected to produce a specific structured output. They cannot request additional information, modify their instructions, or escalate to a higher authority. Their scope is entirely defined by their input schema. A Stage 1 agent cannot decide to also perform Stage 3 work because it thinks that would be helpful.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">04</span>
+          <div class="pc-content"><div class="pc-name">Traceability &amp; Provenance</div><div class="pc-statement">Every output carries lineage back to its source inputs.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>The FactList implements this principle mechanically. Every insight in the final report cites a FACT_ID. Every FACT_ID traces to a Python-computed KPI value. Every Python value traces to specific source data rows. You can follow the chain from any sentence in the report back to the CSV row that generated it. This is not documentation. It is structure.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">05</span>
+          <div class="pc-content"><div class="pc-name">Observability</div><div class="pc-statement">If you cannot measure it, you cannot govern it.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Every stage in DAM emits a <span class="fact-id">HealthTelemetry</span> object: latency, retry count, cost, match rates, mismatch counts, claim acceptance rates. This telemetry flows upward to the orchestrator and is persisted in the run log. Layer 5 operates on this data. A stage that produces correct outputs but emits no telemetry is ungovernable. Its health cannot be assessed over time.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">06</span>
+          <div class="pc-content"><div class="pc-name">Graceful Degradation</div><div class="pc-statement">When confidence drops, the system narrows scope rather than continuing at full autonomy.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>DAM has five defined degradation levels. Level 1 is partial output with disclosure. Level 2 halts the affected stage but continues others. Full halt is reserved for data integrity failures (duplicate IDs, match rate collapse). The goal is never false confidence. A partial report that says "Stage 2 match rate was 82%, warning: 18% of shipments unmatched" is more trustworthy than a complete report that silently filled in the gaps.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">07</span>
+          <div class="pc-content"><div class="pc-name">Independent Assurance</div><div class="pc-statement">Verification must be structurally independent from generation.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Independence has two components in DAM: model independence (Qwen verifies DeepSeek: different company, architecture, and training) and computational independence (Python recomputes KPIs without using the LLM value). The Python verification of KPIs is the stronger form: it introduces a fundamentally different computational substrate, not just a different probabilistic model.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">08</span>
+          <div class="pc-content"><div class="pc-name">Adaptive Improvement</div><div class="pc-statement">Systems must learn from errors. A system correct yesterday may be wrong today.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Layer 5 exists because static systems degrade. The Layer5Monitor tracks trends across runs, not just whether the current run passed its gates, but whether passing rates are declining, retry rates are rising, or agreement patterns are locking. These are early signals of model drift or configuration degradation that would not be visible from a single-run perspective.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">09</span>
+          <div class="pc-content"><div class="pc-name">Constitutional Governance</div><div class="pc-statement">No optimization overrides safety constraints. Ever.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Constitutional constraints in DAM are not configuration. They are code paths that do not exist. There is no code path in Stage 4 that releases an unverified claim. There is no code path that adds entries to the FactList after Stage 3 completes. There is no code path that produces financial projections. These constraints cannot be "turned off" via prompt or parameter. They are structural absences.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">10</span>
+          <div class="pc-content"><div class="pc-name">Dual Viability</div><div class="pc-statement">The system must be both operationally reliable and epistemically trustworthy.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Operational reliability (the system runs without crashing) is insufficient. Epistemic trustworthiness (the outputs can be trusted) is also required. A system that produces outputs reliably but cannot verify them is operationally viable but epistemically untrustworthy. DAM requires both: it must complete and its completions must be independently verifiable.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">11</span>
+          <div class="pc-content"><div class="pc-name">Requisite Governance Variety</div><div class="pc-statement">Governance capacity must scale with operational complexity. Scaling without governance is ungoverned risk.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Ashby's Law applied directly. Adding Stage 6 to DAM required adding corresponding governance: the citation check for RAG outputs, the domain-level acceptance threshold, the knowledge base availability check. The stage could not be added without its governance layer. Doing so would have reduced overall system trustworthiness even while increasing capability.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">12</span>
+          <div class="pc-content"><div class="pc-name">Ultrastable Adaptation</div><div class="pc-statement">Two feedback loops: one corrects outputs, one corrects the configuration when the first loop keeps failing.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Ross Ashby's concept of ultrastability: a system with two nested feedback loops is more stable than one with a single loop. The first loop (runtime governance) corrects individual outputs. The second loop (Layer 5 / Layer5Monitor) corrects the system configuration when the first loop keeps activating. A system where the retry rate keeps rising needs configuration intervention, not more retries.</p></div>
+        </div>
+      </div>
+      <div class="principle-card" data-expand>
+        <button class="pc-trigger" aria-expanded="false">
+          <span class="pc-num">13</span>
+          <div class="pc-content"><div class="pc-name">Second-Order Self-Observation</div><div class="pc-statement">The system must observe its own observation processes. Persistent 100% verifier agreement is a red flag, not a green one.</div></div>
+          <svg class="pc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="pc-body">
+          <div class="pc-body-inner"><p>Von Foerster's second-order cybernetics applied to verification. If DeepSeek and Qwen agree on 100% of claims for three consecutive runs, the naive reading is "quality is perfect." The Chorus AI reading is: "these two models may have converged on a shared blind spot." The cross-verifier agreement tracker exists to flag this pattern. High agreement is expected; perfect agreement is suspicious.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 10: The Framework in the Wild ────────────────── -->
+<section id="wild" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Framework in the Wild</span>
+      <h2>CASDAM is a pattern, not a product.</h2>
+      <p class="section-subhead">Any analytical workflow that currently relies on human judgment applied to structured data, where that judgment needs to be reliable, auditable, and scalable, is a candidate for the Chorus AI Systems framework. DAM is the first implementation. The Earnings Call Dossier is the second.</p>
+    </div>
+    <div class="wild-layout">
+      <div class="dossier-card fade-up">
+        <div class="dc-overline">Chorus AI Systems: Implementation 2</div>
+        <div class="dc-title">The Earnings Call Dossier</div>
+        <p class="dc-body">Transforms earnings call transcripts into verified analytical briefs for retail investors. Multi-agent pipeline with FactList traceability chain, Gate 2 fact verification, and Holistic Verifier. Every claim cites a specific moment in the transcript.</p>
+        <div class="dc-stats">
+          <div class="dc-stat"><div class="dc-stat-val">97%</div><div class="dc-stat-lbl">Source Grounding</div></div>
+          <div class="dc-stat"><div class="dc-stat-val">0</div><div class="dc-stat-lbl">Contradictions</div></div>
+        </div>
+        <a href="https://github.com/danielwipert/dossier-earnings-call" class="dc-link" target="_blank" rel="noopener">
+          View Architecture
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="contact-block fade-up">
+        <div class="bio-block">
+          <h3>Daniel Wipert, AI Architect</h3>
+          <p class="bio-body">15 years building production systems across ecommerce, supply chain, and risk operations: scaling Bonobos from $10M to $100M, designing fraud detection infrastructure protecting $2B+ in annual transactions at Etsy, deploying predictive fulfillment analytics at Bodily. Chorus AI Systems is my independent AI research and development practice, where CASDAM and the Earnings Call Dossier were designed and built. I'm currently seeking an AI Architect role where the work is designing governed, production-grade AI systems, not demos.</p>
+        </div>
+        <h3>Build something governed.</h3>
+        <p class="contact-body">If you're building production AI systems and want architecture that earns trust rather than assumes it. Let's talk.</p>
+        <div class="contact-links">
+          <a href="https://www.linkedin.com/in/daniel-wipert/" class="contact-link" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+          <a href="https://github.com/danielwipert" class="contact-link" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <p>Produced by <a href="https://github.com/danielwipert" target="_blank" rel="noopener">Chorus AI Systems</a> &middot; Daniel Wipert &middot; <a href="https://github.com/danielwipert/cas.dam" target="_blank" rel="noopener">View Source</a></p>
   </div>
 </footer>
 
+<script src="js/main.js"></script>
 </body>
 </html>
