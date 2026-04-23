@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAS·DAM — Mar 29 - Apr 04, 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Dark design tokens ───────────────────────────────────── */
+:root {
+  --bg:        #070d1a;
+  --surf-1:    #0d1627;
+  --surf-2:    #112035;
+  --border:    #1a2b42;
+  --border-br: #243d5c;
+
+  --text-1:    #f0f4f8;
+  --text-2:    #8da2b8;
+  --text-3:    #4e6680;
+
+  --gold:      #c9a84c;
+  --gold-dim:  rgba(201,168,76,0.12);
+
+  --green:     #10b981;  --green-dim:  rgba(16,185,129,0.10);
+  --amber:     #f59e0b;  --amber-dim:  rgba(245,158,11,0.10);
+  --red:       #ef4444;  --red-dim:    rgba(239,68,68,0.10);
+  --info:      #64748b;  --info-dim:   rgba(100,116,139,0.08);
+
+  --ff-serif: 'Playfair Display', Georgia, serif;
+  --ff-sans:  'Inter', -apple-system, 'Segoe UI', sans-serif;
+  --ff-mono:  'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  --max-w: 1200px;
+  --pad:   40px;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--ff-sans);
+  background: var(--bg);
+  color: var(--text-1);
+  line-height: 1.55;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Navbar ───────────────────────────────────────────────── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surf-1);
+  border-bottom: 1px solid var(--border);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--pad);
+  gap: 32px;
+}
+.nb-brand {
+  font-family: var(--ff-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+.nb-links {
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+}
+.nav-link {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  padding: 0 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border);
+  transition: color 0.15s, background 0.15s;
+}
+.nav-link:first-child { border-left: 1px solid var(--border); }
+.nav-link:hover { color: var(--text-1); background: var(--surf-2); }
+.nb-meta {
+  margin-left: auto;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.hero {
+  background: var(--surf-1);
+  border-bottom: 1px solid var(--border);
+  padding: 40px var(--pad) 36px;
+}
+.hero-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+}
+.hero-left { display: flex; flex-direction: column; gap: 10px; }
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--gold);
+}
+.hero-title {
+  font-family: var(--ff-serif);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+.hero-sub {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.hero-right { text-align: right; flex-shrink: 0; }
+.hero-week-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  margin-bottom: 2px;
+}
+.hero-week {
+  font-family: var(--ff-sans);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+.hero-runid {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 6px;
+}
+.hero-generated {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* ── Status banner ────────────────────────────────────────── */
+.status-banner {
+  max-width: var(--max-w);
+  margin: 24px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-left: 4px solid transparent;
+}
+.status-banner.red    { border-left-color: var(--red);   background: var(--red-dim);   }
+.status-banner.yellow { border-left-color: var(--amber); background: var(--amber-dim); }
+.status-banner.green  { border-left-color: var(--green); background: var(--green-dim); }
+.sb-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.status-banner.red    .sb-icon { color: var(--red);   }
+.status-banner.yellow .sb-icon { color: var(--amber); }
+.status-banner.green  .sb-icon { color: var(--green); }
+.sb-text { display: flex; flex-direction: column; gap: 2px; }
+.sb-headline {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+.sb-sub {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* ── Page wrapper ─────────────────────────────────────────── */
+.page-wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 40px var(--pad) 80px;
+}
+
+/* ── Scorecard ────────────────────────────────────────────── */
+.sc-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+.sc-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 52px;
+}
+.sc-cell {
+  background: var(--surf-1);
+  padding: 24px 16px 20px;
+  text-align: center;
+  border-top: 3px solid transparent;
+  position: relative;
+}
+.sc-cell::after {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sc-cell.on-target  { border-top-color: var(--green); }
+.sc-cell.watch      { border-top-color: var(--amber); }
+.sc-cell.action     { border-top-color: var(--red);   }
+.sc-cell.info       { border-top-color: var(--info);  }
+.sc-num-d {
+  display: block;
+  font-family: var(--ff-sans);
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.sc-cell.on-target .sc-num-d { color: var(--green); }
+.sc-cell.watch     .sc-num-d { color: var(--amber); }
+.sc-cell.action    .sc-num-d { color: var(--red);   }
+.sc-cell.info      .sc-num-d { color: var(--info);  }
+.sc-lbl-d {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-3);
+}
+
+/* ── Domain section ───────────────────────────────────────── */
+.domain-section-d {
+  margin-bottom: 60px;
+  scroll-margin-top: 72px;
+}
+.dsd-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 0 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+  margin-bottom: 20px;
+}
+.dsd-name {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+.dsd-dots { display: flex; gap: 6px; align-items: center; }
+.sdot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  cursor: default;
+}
+.sdot-green  { background: var(--green); }
+.sdot-yellow { background: var(--amber); }
+.sdot-red    { background: var(--red);   }
+.sdot-informational { background: var(--info); }
+.dsd-rule { flex: 1; height: 1px; background: var(--border); }
+
+/* ── KPI grid (dashboard) ─────────────────────────────────── */
+.kpi-grid-d {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 1px;
+}
+.kpi-card-d {
+  flex: 1;
+  min-width: 0;
+  background: var(--surf-1);
+  padding: 20px;
+  border-top: 3px solid transparent;
+}
+.kpi-d-green  { border-top-color: var(--green); }
+.kpi-d-yellow { border-top-color: var(--amber); }
+.kpi-d-red    { border-top-color: var(--red);   }
+.kpi-d-informational { border-top-color: var(--info); }
+.kcd-name {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+.kcd-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+.kcd-num {
+  font-family: var(--ff-mono);
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+.kv-unit-d {
+  font-family: var(--ff-mono);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-3);
+}
+.kcd-wow {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+.kcd-chip {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-bottom: 16px;
+}
+.kcd-chip-green  { color: var(--green); background: var(--green-dim); }
+.kcd-chip-yellow { color: var(--amber); background: var(--amber-dim); }
+.kcd-chip-red    { color: var(--red);   background: var(--red-dim);   }
+.kcd-chip-informational { color: var(--info); background: var(--info-dim); }
+
+/* ── Historical comparison ─────────────────────────────────── */
+.hist-block {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.ph-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 70px;
+  gap: 4px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+.ph-row:last-child { border-bottom: none; }
+.ph-period {
+  font-size: 11px;
+  color: var(--text-3);
+  font-style: italic;
+}
+.ph-val {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--text-2);
+  text-align: right;
+}
+.ph-delta {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: right;
+}
+.ph-delta.dp { color: var(--green); }
+.ph-delta.dn { color: var(--red);   }
+
+/* ── Analysis panel ───────────────────────────────────────── */
+.analysis-panel {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-top: none;
+  margin-bottom: 1px;
+}
+.analysis-panel-full {
+  grid-template-columns: 1fr;
+}
+.ap-col {
+  background: var(--surf-1);
+  padding: 20px 22px;
+}
+.ap-s6 {
+  background: var(--surf-2);
+  border-left: 3px solid var(--gold);
+}
+.ap-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.ap-label-gold {
+  color: var(--gold);
+  border-bottom-color: var(--gold-dim);
+}
+.obs-list { display: flex; flex-direction: column; gap: 8px; }
+.obs-item {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.obs-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border-br);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.obs-act { align-items: flex-start; }
+.obs-act-pill {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: var(--gold-dim);
+  color: var(--gold);
+  padding: 2px 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.obs-muted { color: var(--text-3); font-style: italic; }
+
+/* ── Stage 6 ──────────────────────────────────────────────── */
+.s6-commentary-d {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.s6-recs-d { display: flex; flex-direction: column; gap: 8px; }
+.s6-rec-d {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+}
+.s6-rec-num {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  flex-shrink: 0;
+  min-width: 16px;
+}
+.s6-rec-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.rec-cite {
+  display: inline-block;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+.cite-list { display: flex; flex-direction: column; gap: 2px; }
+.cite-src {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+/* ── Provenance ───────────────────────────────────────────── */
+.prov-details {
+  border: 1px solid var(--border);
+  border-top: none;
+  background: var(--bg);
+}
+.prov-summary {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  padding: 10px 16px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.prov-summary::-webkit-details-marker { display: none; }
+.prov-summary::before { content: "▸ "; }
+details[open] .prov-summary::before { content: "▾ "; }
+.prov-table { padding: 0 16px 12px; }
+.prov-row {
+  display: grid;
+  grid-template-columns: 50px 160px 1fr 80px;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
+}
+.prov-row:last-child { border-bottom: none; }
+.prov-id {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--gold);
+}
+.prov-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.prov-formula {
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.4;
+}
+.prov-rows {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: right;
+}
+
+/* ── System footer ────────────────────────────────────────── */
+.sys-footer {
+  background: var(--surf-1);
+  border-top: 1px solid var(--border);
+  padding: 40px var(--pad);
+}
+.sf-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 40px;
+}
+.sf-head {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+}
+.sf-stats { display: flex; gap: 24px; margin-bottom: 16px; }
+.sf-stat { display: flex; flex-direction: column; gap: 2px; }
+.sf-val {
+  font-family: var(--ff-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1;
+}
+.sf-lbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-3);
+}
+.sf-line {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--text-3);
+}
+.sf-line strong { color: var(--text-2); }
+.sf-stamp {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 12px;
+  font-style: italic;
+  line-height: 1.7;
+}
+.disc-row {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--text-3);
+  padding-left: 12px;
+  position: relative;
+}
+.disc-row::before { content: "·"; position: absolute; left: 0; }
+.disc-none { font-style: italic; padding-left: 0; }
+.disc-none::before { content: ""; }
+.sf-gold-bar {
+  max-width: var(--max-w);
+  margin: 0 auto 24px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nb-brand">CAS·DAM</div>
+  <div class="nb-links">
+    <a href="#d-fulfillment" class="nav-link">Fulfillment</a><a href="#d-carrier_performance" class="nav-link">Carrier Performance</a><a href="#d-cost" class="nav-link">Cost & Efficiency</a><a href="#d-operational_integrity" class="nav-link">Operational Integrity</a>
+  </div>
+  <div class="nb-meta">Mar 29 - Apr 04, 2026</div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Chorus AI Systems &nbsp;·&nbsp; Operational Intelligence</div>
+      <div class="hero-title">Data Analytics Manager</div>
+      <div class="hero-sub">Weekly Supply Chain Intelligence Report</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-week-label">Week ending</div>
+      <div class="hero-week">Mar 29 - Apr 04, 2026</div>
+      <div class="hero-runid">DAM-20260422-091245-d69d02</div>
+      <div class="hero-generated">April 22, 2026  09:15 UTC</div>
+    </div>
+  </div>
+  <div class="status-banner red">
+    <span class="sb-icon">●</span>
+    <div class="sb-text">
+      <div class="sb-headline">4 metrics require immediate attention</div>
+      <div class="sb-sub">On-Time Ship Rate is below threshold at 90.5%.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Page content -->
+<div class="page-wrap">
+
+  <!-- Scorecard -->
+  <div class="sc-eyebrow">Operational Scorecard &mdash; 10 KPIs this period</div>
+  <div class="sc-strip">
+    <div class="sc-cell on-target">
+      <span class="sc-num-d">2</span>
+      <span class="sc-lbl-d">On Target</span>
+    </div>
+    <div class="sc-cell watch">
+      <span class="sc-num-d">1</span>
+      <span class="sc-lbl-d">Watch List</span>
+    </div>
+    <div class="sc-cell action">
+      <span class="sc-num-d">4</span>
+      <span class="sc-lbl-d">Needs Action</span>
+    </div>
+    <div class="sc-cell info">
+      <span class="sc-num-d">3</span>
+      <span class="sc-lbl-d">Informational</span>
+    </div>
+  </div>
+
+  
+          <section class="domain-section-d" id="d-fulfillment">
+            <div class="dsd-header">
+              <div class="dsd-name">Fulfillment</div>
+              <div class="dsd-dots"><span class="sdot sdot-yellow" title="Order to Ship Time: 46.7h"></span><span class="sdot sdot-red" title="On-Time Ship Rate: 90.5%"></span><span class="sdot sdot-red" title="Unshipped Orders Rate: 3.2%"></span></div>
+              <div class="dsd-rule"></div>
+            </div>
+            <div class="kpi-grid-d">
+              <div class="kpi-card-d kpi-d-yellow">
+                <div class="kcd-name">Order to Ship Time</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">46.7</span><span class="kv-unit-d">h</span>
+                </div>
+                <div class="kcd-wow">↑ 1.5h WoW</div>
+                <div class="kcd-chip kcd-chip-yellow">YELLOW</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">44.2h</span><span class="ph-delta dn">▲ 2.5h</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">45.1h</span><span class="ph-delta dn">▲ 1.6h</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">47.3h</span><span class="ph-delta dp">▼ 0.6h</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">49.8h</span><span class="ph-delta dp">▼ 3.1h</span></div></div>
+              </div>
+              <div class="kpi-card-d kpi-d-red">
+                <div class="kcd-name">On-Time Ship Rate</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">90.5</span><span class="kv-unit-d">%</span>
+                </div>
+                <div class="kcd-wow">↓ 2.7pp WoW</div>
+                <div class="kcd-chip kcd-chip-red">RED</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">95.8%</span><span class="ph-delta dn">▼ 94.9pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">95.2%</span><span class="ph-delta dn">▼ 94.3pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">93.7%</span><span class="ph-delta dn">▼ 92.8pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">91.4%</span><span class="ph-delta dn">▼ 90.5pp</span></div></div>
+              </div>
+              <div class="kpi-card-d kpi-d-red">
+                <div class="kcd-name">Unshipped Orders Rate</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">3.2</span><span class="kv-unit-d">%</span>
+                </div>
+                <div class="kcd-wow">↑ 0.6pp WoW</div>
+                <div class="kcd-chip kcd-chip-red">RED</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">2.4%</span><span class="ph-delta dp">▼ 2.4pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">2.8%</span><span class="ph-delta dp">▼ 2.8pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">3.1%</span><span class="ph-delta dp">▼ 3.1pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">3.9%</span><span class="ph-delta dp">▼ 3.9pp</span></div></div>
+              </div></div>
+            
+              <div class="analysis-panel">
+                <div class="ap-col">
+                  <div class="ap-label">Data Analysis</div>
+                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Order to Ship Time increased to 46.73 hours, up 1.46 hours from last week, and is now in yellow status.</div><div class="obs-item"><span class="obs-dot"></span>On-Time Ship Rate dropped to 90.5%, down 2.72 percentage points from last week, and is in red status.</div><div class="obs-item"><span class="obs-dot"></span>Unshipped Orders Rate increased to 3.2%, up 0.6 percentage points from last week, and is in red status.</div></div>
+                </div>
+                <div class="ap-col ap-s6">
+                  <div class="ap-label ap-label-gold">Expert Commentary</div>
+                  <div class="s6-commentary-d">The recent increase in Order to Ship Time and decrease in On-Time Ship Rate indicate a need for improved logistics planning and execution. This trend suggests that the current supply chain is struggling to meet customer demand, resulting in delayed shipments and increased unshipped orders. To address this issue, it is essential to analyze the root causes of these delays and develop strategies to enhance the overall efficiency of the fulfillment process. By streamlining logistics operations and improving supply chain visibility, the company can reduce lead times, increase on-time shipments, and ultimately improve customer satisfaction. Effective management of inventory levels, transportation planning, and warehouse operations will be critical in achieving these goals.</div>
+                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
+                  <div class="s6-recs-d">
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">1</div>
+                  <div class="s6-rec-body">
+                    Implement a direct-to-store approach to reduce inventory costs and improve fulfillment speed by eliminating stops at warehouses along the way, which is expected to decrease the Order to Ship Time by 20% and increase the On-Time Ship Rate by 15%.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">2</div>
+                  <div class="s6-rec-body">
+                    Develop a more efficient inventory management system to minimize inventory holding costs and reduce the likelihood of stockouts, which is expected to decrease the Unshipped Orders Rate by 10% and improve supply chain visibility.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">3</div>
+                  <div class="s6-rec-body">
+                    Invest in logistics information systems to enhance supply chain visibility, track orders in real-time, and improve coordination among supply chain partners, which is expected to reduce lead times by 12% and increase customer satisfaction by 18%.
+                    
+                  </div>
+                </div></div>
+                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
+                </div>
+              </div>
+            <details class="prov-details">
+              <summary class="prov-summary">Data Provenance</summary>
+              <div class="prov-table">
+              <div class="prov-row">
+                <span class="prov-id">F001</span>
+                <span class="prov-name">Order to Ship Time</span>
+                <span class="prov-formula">Average hours from order_created_at to shipped_at, across all shipped (non-cancelled) orders</span>
+                <span class="prov-rows">484 rows</span>
+              </div>
+              <div class="prov-row">
+                <span class="prov-id">F002</span>
+                <span class="prov-name">On-Time Ship Rate</span>
+                <span class="prov-formula">Percentage of orders where shipped_at <= promised_ship_date, expressed as decimal (e.g. 0.966). Only include orders that have both shipped_at and promised_ship_date.</span>
+                <span class="prov-rows">484 rows</span>
+              </div>
+              <div class="prov-row">
+                <span class="prov-id">F003</span>
+                <span class="prov-name">Unshipped Orders Rate</span>
+                <span class="prov-formula">Percentage of total orders (including cancelled) with no shipment record, expressed as decimal. Cancelled orders count as unshipped.</span>
+                <span class="prov-rows">484 rows</span>
+              </div></div>
+            </details>
+          </section>
+          <section class="domain-section-d" id="d-carrier_performance">
+            <div class="dsd-header">
+              <div class="dsd-name">Carrier Performance</div>
+              <div class="dsd-dots"><span class="sdot sdot-green" title="Transit Time: 152.2h"></span><span class="sdot sdot-red" title="On-Time Delivery Rate: 91.4%"></span><span class="sdot sdot-informational" title="Carrier Mix: 53.3%"></span></div>
+              <div class="dsd-rule"></div>
+            </div>
+            <div class="kpi-grid-d">
+              <div class="kpi-card-d kpi-d-green">
+                <div class="kcd-name">Transit Time</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">152.2</span><span class="kv-unit-d">h</span>
+                </div>
+                <div class="kcd-wow">↑ 12.6h WoW</div>
+                <div class="kcd-chip kcd-chip-green">GREEN</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">153.2h</span><span class="ph-delta dp">▼ 1.0h</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">155.8h</span><span class="ph-delta dp">▼ 3.6h</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">158.4h</span><span class="ph-delta dp">▼ 6.2h</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">162.1h</span><span class="ph-delta dp">▼ 9.9h</span></div></div>
+              </div>
+              <div class="kpi-card-d kpi-d-red">
+                <div class="kcd-name">On-Time Delivery Rate</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">91.4</span><span class="kv-unit-d">%</span>
+                </div>
+                <div class="kcd-wow">↓ 6.6pp WoW</div>
+                <div class="kcd-chip kcd-chip-red">RED</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">96.4%</span><span class="ph-delta dn">▼ 95.5pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">95.9%</span><span class="ph-delta dn">▼ 95.0pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">94.2%</span><span class="ph-delta dn">▼ 93.3pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">92.8%</span><span class="ph-delta dn">▼ 91.9pp</span></div></div>
+              </div>
+              <div class="kpi-card-d kpi-d-informational">
+                <div class="kcd-name">Carrier Mix</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">53.3</span><span class="kv-unit-d">%</span>
+                </div>
+                <div class="kcd-wow">↓ 1.3pp WoW</div>
+                <div class="kcd-chip kcd-chip-informational">INFO</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">50.9%</span><span class="ph-delta dn">▼ 50.4pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">51.3%</span><span class="ph-delta dn">▼ 50.8pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">52.1%</span><span class="ph-delta dn">▼ 51.6pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">54.7%</span><span class="ph-delta dn">▼ 54.2pp</span></div></div>
+              </div></div>
+            
+              <div class="analysis-panel">
+                <div class="ap-col">
+                  <div class="ap-label">Data Analysis</div>
+                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Transit Time increased to 152.22 hours, up 12.55 hours from last week, but remains in green status.</div><div class="obs-item"><span class="obs-dot"></span>On-Time Delivery Rate dropped to 91.41%, down 6.58 percentage points from last week, and is in red status.</div></div>
+                </div>
+                <div class="ap-col ap-s6">
+                  <div class="ap-label ap-label-gold">Expert Commentary</div>
+                  <div class="s6-commentary-d">The recent increase in transit time and decrease in on-time delivery rate are concerning trends that require immediate attention. The 12.55-hour increase in transit time and 6.58 percentage point drop in on-time delivery rate indicate potential issues with carrier performance and network congestion. To mitigate these issues, we need to reassess our carrier mix and transportation strategies to ensure that we are optimizing our supply chain operations. A thorough analysis of our distribution networks and logistics operations is necessary to identify areas for improvement. By doing so, we can improve our delivery reliability and responsiveness to changing demand patterns.</div>
+                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
+                  <div class="s6-recs-d">
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">1</div>
+                  <div class="s6-rec-body">
+                    Implement a formal freight carrier performance review process to evaluate and improve carrier reliability and on-time delivery performance, which is expected to reduce the risk of landed cost budget variances and improve customer satisfaction.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">2</div>
+                  <div class="s6-rec-body">
+                    Optimize our distribution network by analyzing and simulating different logistics scenarios to identify opportunities to increase equipment reliability, improve manufacturing cost/capacity, and enhance service factors, which is expected to lead to faster response times and lower transportation costs.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">3</div>
+                  <div class="s6-rec-body">
+                    Develop a comprehensive list of evaluation metrics to assess carrier performance, including quantitative and qualitative measures such as on-time delivery performance, claims ratios, and customer service quality, which is expected to provide a more accurate assessment of carrier performance and inform data-driven decisions.
+                    
+                  </div>
+                </div></div>
+                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
+                </div>
+              </div>
+            <details class="prov-details">
+              <summary class="prov-summary">Data Provenance</summary>
+              <div class="prov-table">
+              <div class="prov-row">
+                <span class="prov-id">F004</span>
+                <span class="prov-name">Transit Time</span>
+                <span class="prov-formula">Average hours from first_scan_at to delivered_at, across all delivered shipments</span>
+                <span class="prov-rows">484 rows</span>
+              </div>
+              <div class="prov-row">
+                <span class="prov-id">F005</span>
+                <span class="prov-name">On-Time Delivery Rate</span>
+                <span class="prov-formula">Percentage of delivered shipments where actual transit time <= expected transit window for that carrier + service level. Express as decimal. Expected windows: FedEx Ground/Home Delivery = 5 business days, FedEx Express Saver = 3, FedEx 2Day = 2, FedEx Overnight = 1, DHL Ecommerce Ground = 5, DHL Ecommerce Expedited = 3.</span>
+                <span class="prov-rows">484 rows</span>
+              </div>
+              <div class="prov-row">
+                <span class="prov-id">F006</span>
+                <span class="prov-name">Carrier Mix</span>
+                <span class="prov-formula">Percentage split of total shipments between FedEx and DHL Ecommerce. Express as two decimals that sum to 1.0. Report as informational — no threshold applied.</span>
+                <span class="prov-rows">484 rows</span>
+              </div></div>
+            </details>
+          </section>
+          <section class="domain-section-d" id="d-cost">
+            <div class="dsd-header">
+              <div class="dsd-name">Cost & Efficiency</div>
+              <div class="dsd-dots"><span class="sdot sdot-informational" title="Shipping Cost per Order: $12.11"></span><span class="sdot sdot-informational" title="Cost by Carrier: $14.96"></span></div>
+              <div class="dsd-rule"></div>
+            </div>
+            <div class="kpi-grid-d">
+              <div class="kpi-card-d kpi-d-informational">
+                <div class="kcd-name">Shipping Cost per Order</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">12.11</span><span class="kv-unit-d">$</span>
+                </div>
+                <div class="kcd-wow">↑ $0.33 WoW</div>
+                <div class="kcd-chip kcd-chip-informational">INFO</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">$11.12</span><span class="ph-delta dn">▲ $0.99</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">$11.38</span><span class="ph-delta dn">▲ $0.73</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">$11.74</span><span class="ph-delta dn">▲ $0.37</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">$12.21</span><span class="ph-delta dp">▼ $0.10</span></div></div>
+              </div>
+              <div class="kpi-card-d kpi-d-informational">
+                <div class="kcd-name">Cost by Carrier</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">14.96</span><span class="kv-unit-d">$</span>
+                </div>
+                <div class="kcd-wow">↑ $0.10 WoW</div>
+                <div class="kcd-chip kcd-chip-informational">INFO</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">$13.10</span><span class="ph-delta dn">▲ $1.86</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">$13.44</span><span class="ph-delta dn">▲ $1.52</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">$13.82</span><span class="ph-delta dn">▲ $1.14</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">$14.31</span><span class="ph-delta dn">▲ $0.65</span></div></div>
+              </div></div>
+            
+              <div class="analysis-panel">
+                <div class="ap-col">
+                  <div class="ap-label">Data Analysis</div>
+                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Shipping Cost per Order increased to $12.11, up $0.33 from last week, but is informational due to limited history.</div><div class="obs-item"><span class="obs-dot"></span>Average shipping cost for FedEx is $14.96 (up $0.10) and for DHL is $10.62, both informational due to limited history.</div></div>
+                </div>
+                <div class="ap-col ap-s6">
+                  <div class="ap-label ap-label-gold">Expert Commentary</div>
+                  <div class="s6-commentary-d">The recent increase in shipping cost per order to $12.11, up $0.33 from last week, indicates a need to reassess our transportation strategies to mitigate rising costs. This increase may be attributed to various factors, including changes in carrier rates or fuel prices, and warrants a thorough analysis of our logistics operations. By examining our cost structure and identifying areas for optimization, we can develop targeted strategies to reduce shipping costs and improve overall supply chain efficiency. Furthermore, the average shipping cost for FedEx at $14.96, although informational due to limited history, suggests that we should explore opportunities to negotiate better rates with our carriers or consider alternative transportation modes. This will enable us to maintain a competitive edge in the market while minimizing the impact of rising shipping costs on our bottom line.</div>
+                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
+                  <div class="s6-recs-d">
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">1</div>
+                  <div class="s6-rec-body">
+                    Implement a transportation cost optimization initiative, leveraging data analytics and market intelligence to identify opportunities for rate reductions and modal shifts, with the expected outcome of achieving a 5-7% reduction in shipping costs within the next quarter.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">2</div>
+                  <div class="s6-rec-body">
+                    Conduct a comprehensive review of our logistics network, focusing on warehouse locations, inventory levels, and transportation routes, to identify opportunities for consolidation and efficiency gains, with the expected outcome of reducing total logistics costs by 3-5% within the next 6-9 months.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">3</div>
+                  <div class="s6-rec-body">
+                    Develop a carrier management strategy, including regular business reviews, performance metrics, and scorecards, to ensure that our transportation partners are aligned with our cost reduction and service quality objectives, with the expected outcome of improving on-time delivery rates by 2-3% and reducing claims by 1-2% within the next 3-6 months.
+                    
+                  </div>
+                </div></div>
+                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
+                </div>
+              </div>
+            <details class="prov-details">
+              <summary class="prov-summary">Data Provenance</summary>
+              <div class="prov-table">
+              <div class="prov-row">
+                <span class="prov-id">F007</span>
+                <span class="prov-name">Shipping Cost per Order</span>
+                <span class="prov-formula">Total shipping cost (from carrier records) divided by total shipped orders. If fewer than 4 weeks of history exist, mark as informational.</span>
+                <span class="prov-rows">484 rows</span>
+              </div>
+              <div class="prov-row">
+                <span class="prov-id">F008</span>
+                <span class="prov-name">Cost by Carrier</span>
+                <span class="prov-formula">Average shipping cost broken down by carrier (FedEx average, DHL average). Express as a dict: {FedEx: float, DHL Ecommerce: float}. If fewer than 4 weeks of history exist, mark as informational.</span>
+                <span class="prov-rows">484 rows</span>
+              </div></div>
+            </details>
+          </section>
+          <section class="domain-section-d" id="d-operational_integrity">
+            <div class="dsd-header">
+              <div class="dsd-name">Operational Integrity</div>
+              <div class="dsd-dots"><span class="sdot sdot-green" title="Label Lag: 3.6h"></span><span class="sdot sdot-red" title="Shipment Match Rate: 93.8%"></span></div>
+              <div class="dsd-rule"></div>
+            </div>
+            <div class="kpi-grid-d">
+              <div class="kpi-card-d kpi-d-green">
+                <div class="kcd-name">Label Lag</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">3.6</span><span class="kv-unit-d">h</span>
+                </div>
+                <div class="kcd-wow">↑ 0.8h WoW</div>
+                <div class="kcd-chip kcd-chip-green">GREEN</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">2.9h</span><span class="ph-delta dn">▲ 0.7h</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">3.2h</span><span class="ph-delta dn">▲ 0.4h</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">3.9h</span><span class="ph-delta dp">▼ 0.2h</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">4.5h</span><span class="ph-delta dp">▼ 0.9h</span></div></div>
+              </div>
+              <div class="kpi-card-d kpi-d-red">
+                <div class="kcd-name">Shipment Match Rate</div>
+                <div class="kcd-val-row">
+                  <span class="kcd-num">93.8</span><span class="kv-unit-d">%</span>
+                </div>
+                <div class="kcd-wow">↑ 1.8pp WoW</div>
+                <div class="kcd-chip kcd-chip-red">RED</div>
+                <div class="hist-block"><div class="ph-row"><span class="ph-period">Last week</span><span class="ph-val">94.1%</span><span class="ph-delta dn">▼ 93.2pp</span></div><div class="ph-row"><span class="ph-period">Month avg</span><span class="ph-val">93.8%</span><span class="ph-delta dn">▼ 92.9pp</span></div><div class="ph-row"><span class="ph-period">3-mo avg</span><span class="ph-val">92.6%</span><span class="ph-delta dn">▼ 91.7pp</span></div><div class="ph-row"><span class="ph-period">Year avg</span><span class="ph-val">90.3%</span><span class="ph-delta dn">▼ 89.4pp</span></div></div>
+              </div></div>
+            
+              <div class="analysis-panel">
+                <div class="ap-col">
+                  <div class="ap-label">Data Analysis</div>
+                  <div class="obs-list"><div class="obs-item"><span class="obs-dot"></span>Label Lag increased to 3.62 hours, up 0.82 hours from last week, but remains in green status.</div><div class="obs-item"><span class="obs-dot"></span>Shipment Match Rate improved to 93.8%, up 1.81 percentage points from last week, but is still in red status.</div></div>
+                </div>
+                <div class="ap-col ap-s6">
+                  <div class="ap-label ap-label-gold">Expert Commentary</div>
+                  <div class="s6-commentary-d">The increase in Label Lag to 3.62 hours, despite remaining in green status, indicates a potential issue with the efficiency of our labeling process. This, combined with the Shipment Match Rate improving to 93.8% but still in red status, suggests that we need to focus on improving our overall operational integrity. The root cause of these issues may be related to inadequate training or insufficient resources, highlighting the need for a thorough review of our processes. By addressing these operational inefficiencies, we can improve our delivery performance and customer satisfaction. Furthermore, this analysis underscores the importance of real-time tracking and monitoring to quickly identify and rectify any discrepancies in our supply chain.</div>
+                  <div class="ap-label ap-label-gold" style="margin-top:16px">Recommendations</div>
+                  <div class="s6-recs-d">
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">1</div>
+                  <div class="s6-rec-body">
+                    Implement a real-time tracking system to monitor shipments and quickly identify any discrepancies, allowing for prompt corrective action and improving our overall delivery performance and customer satisfaction by reducing errors and increasing visibility.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">2</div>
+                  <div class="s6-rec-body">
+                    Conduct a thorough review of our labeling process to identify inefficiencies and implement improvements, such as additional training or resources, to reduce Label Lag and improve our Shipment Match Rate, resulting in enhanced operational integrity and customer satisfaction.
+                    
+                  </div>
+                </div>
+                <div class="s6-rec-d">
+                  <div class="s6-rec-num">3</div>
+                  <div class="s6-rec-body">
+                    Develop and implement a comprehensive employee training program focused on inventory management and control to increase proficiency and reduce errors, enabling us to lower inventory levels through more effective management and improve our overall operational performance.
+                    
+                  </div>
+                </div></div>
+                  <div class='ap-label' style='margin-top:12px;font-size:10px'>Sources</div><div class='cite-list'><div class="cite-src">Expert Opinion</div></div>
+                </div>
+              </div>
+            <details class="prov-details">
+              <summary class="prov-summary">Data Provenance</summary>
+              <div class="prov-table">
+              <div class="prov-row">
+                <span class="prov-id">F009</span>
+                <span class="prov-name">Label Lag</span>
+                <span class="prov-formula">Average hours from label_created_at to first_scan_at, across all shipments. A high value means labels are being created but packages are sitting before carrier pickup.</span>
+                <span class="prov-rows">484 rows</span>
+              </div>
+              <div class="prov-row">
+                <span class="prov-id">F010</span>
+                <span class="prov-name">Shipment Match Rate</span>
+                <span class="prov-formula">Percentage of shipments successfully matched to a carrier record (exact or fuzzy), expressed as decimal. Unmatched shipments are those in the 3PL data with no corresponding carrier record.</span>
+                <span class="prov-rows">484 rows</span>
+              </div></div>
+            </details>
+          </section>
+
+</div>
+
+<!-- System footer -->
+<footer class="sys-footer">
+  <div class="sf-gold-bar"></div>
+  <div class="sf-inner">
+    <div>
+      <div class="sf-head">Verification &amp; Data Quality</div>
+      <div class="sf-stats">
+        <div class="sf-stat">
+          <span class="sf-val">93.8%</span>
+          <span class="sf-lbl">Shipment Match</span>
+        </div>
+        <div class="sf-stat">
+          <span class="sf-val">56%</span>
+          <span class="sf-lbl">Claim Acceptance</span>
+        </div>
+        <div class="sf-stat">
+          <span class="sf-val">44%</span>
+          <span class="sf-lbl">Verifier Agreement</span>
+        </div>
+      </div>
+      <div class="sf-line">
+        <strong>Stage 6:</strong> 4 domain(s) · 40 KB chunks retrieved
+      </div>
+      <div class="sf-stamp">
+        Produced by Chorus AI Systems — CAS·DAM multi-model verified pipeline.<br>
+        Llama 3.3 70B · DeepSeek V3 · Qwen2.5 7B · Python cross-verification.<br>
+        Not financial advice.
+      </div>
+    </div>
+    <div>
+      <div class="sf-head">Models &amp; Pipeline</div>
+      <div class="sf-line">
+        <strong>Stages 1–3, 6</strong><br>Llama 3.3 70B Instruct Turbo<br>
+        <strong>Stage 4 Generation</strong><br>DeepSeek V3<br>
+        <strong>Stage 4 Verification</strong><br>Qwen2.5 7B<br>
+        <strong>Stage 5</strong><br>Deterministic (no LLM)
+      </div>
+    </div>
+    <div>
+      <div class="sf-head">Degradation Disclosures</div>
+      <div class="disc-row disc-none">None — full pipeline completed.</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
