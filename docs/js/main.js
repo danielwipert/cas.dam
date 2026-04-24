@@ -704,4 +704,17 @@
     heroPipeline.classList.add("ready");
   }
 
+  /* ─── Principles toggle: show/hide principles 5-13 ──────────────────── */
+  const principlesToggle = document.getElementById('principles-toggle');
+  if (principlesToggle) {
+    principlesToggle.addEventListener('click', function() {
+      const hidden = document.querySelectorAll('.principle-hidden');
+      const isOpen = this.classList.contains('open');
+      hidden.forEach(el => el.classList.toggle('revealed', !isOpen));
+      this.classList.toggle('open', !isOpen);
+      this.setAttribute('aria-expanded', !isOpen);
+      this.childNodes[0].textContent = isOpen ? 'Show all 13 principles' : 'Show fewer principles';
+    });
+  }
+
 })();

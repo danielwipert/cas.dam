@@ -3,8 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CASDAM: Chorus AI Systems Case Study</title>
-<meta name="description" content="CASDAM is a closed-loop, multi-agent analytics framework where every stage self-governs, every output is independently verified, and every claim traces to its source.">
+<title>CASDAM — Governed Multi-Agent AI Analytics Pipeline | Chorus AI Systems</title>
+<meta name="description" content="CASDAM is a governed multi-agent AI analytics pipeline built on cybernetic theory. Python-verified KPIs, structurally independent LLM verification, and full traceability from raw CSV to final report.">
+<link rel="canonical" href="https://danielwipert.github.io/cas.dam/">
+<meta name="google-site-verification" content="RFTmC3O6SxOvTpvmpg824zqZyVazTbME6QD7UY5vV2Y">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://danielwipert.github.io/cas.dam/">
+<meta property="og:title" content="CASDAM — Governed Multi-Agent AI Analytics Pipeline">
+<meta property="og:description" content="A closed-loop multi-agent AI pipeline where every KPI is Python-verified, every claim is independently checked, and every conclusion traces to its source. Built on Beer, Ashby, and Von Foerster.">
+<meta property="og:image" content="https://danielwipert.github.io/cas.dam/assets/screenshots/report-p1.png">
+<meta property="og:site_name" content="Chorus AI Systems">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CASDAM — Governed Multi-Agent AI Analytics Pipeline">
+<meta name="twitter:description" content="A closed-loop multi-agent AI pipeline where every KPI is Python-verified, every claim is independently checked, and every conclusion traces to its source.">
+<meta name="twitter:image" content="https://danielwipert.github.io/cas.dam/assets/screenshots/report-p1.png">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CASDAM",
+  "description": "A governed multi-agent AI analytics pipeline that ingests ecommerce operations data, runs it through five self-governing stages, and outputs a verified analytics report with full traceability.",
+  "applicationCategory": "BusinessApplication",
+  "url": "https://danielwipert.github.io/cas.dam/",
+  "author": {
+    "@type": "Person",
+    "name": "Daniel Wipert",
+    "url": "https://www.linkedin.com/in/daniel-wipert/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chorus AI Systems"
+  },
+  "keywords": "multi-agent AI, AI governance, LLM verification, analytics pipeline, cybernetics, Viable System Model, ecommerce analytics"
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -20,10 +59,10 @@
     </a>
     <ul class="nav-links">
       <li><a href="#problem">Problem</a></li>
+      <li><a href="#case-study">Case Study</a></li>
       <li><a href="#foundation">Foundation</a></li>
       <li><a href="#framework">Framework</a></li>
       <li><a href="#pattern">CASDAM</a></li>
-      <li><a href="#case-study">Case Study</a></li>
       <li><a href="#numbers">Numbers</a></li>
       <li><a href="#output">Output</a></li>
       <li><a href="#principles">Principles</a></li>
@@ -35,10 +74,10 @@
 </nav>
 <div class="nav-mobile" id="nav-mobile">
   <a href="#problem">Problem</a>
+  <a href="#case-study">Case Study</a>
   <a href="#foundation">Foundation</a>
   <a href="#framework">Framework</a>
   <a href="#pattern">CASDAM</a>
-  <a href="#case-study">Case Study</a>
   <a href="#numbers">Numbers</a>
   <a href="#output">Output</a>
   <a href="#principles">Principles</a>
@@ -52,10 +91,15 @@
       <div class="hero-content">
         <span class="hero-overline">Chorus AI Systems</span>
         <h1 class="hero-h1">AI that governs itself.</h1>
-        <p class="hero-sub">CASDAM (the <strong>Chorus AI Systems Data Analytics Manager</strong>) takes disparate operational data sources, runs them through a governed multi-agent AI pipeline, and outputs a verified analytics report. Every KPI is Python-computed. Every AI-generated claim is independently verified. Every conclusion traces to its source.</p>
+        <p class="hero-sub">CASDAM ingests operational data from multiple sources, computes every KPI independently in Python, and verifies each AI-generated claim against source-bound facts before it reaches the report. When confidence breaks, the system narrows scope or halts — and discloses every exception.</p>
         <div class="hero-ctas">
-          <a href="#pattern" class="btn btn-primary">See the Architecture &rarr;</a>
-          <a href="#case-study" class="btn btn-outline">Read the Case Study &rarr;</a>
+          <a href="#case-study" class="btn btn-primary">See It In Action &rarr;</a>
+          <a href="#pattern" class="btn btn-outline">The Architecture &rarr;</a>
+        </div>
+        <div class="hero-trust-chips">
+          <span class="trust-chip">Python-verified KPIs</span>
+          <span class="trust-chip">Independent claim verification</span>
+          <span class="trust-chip">Explicit halt conditions</span>
         </div>
         <p class="hero-footnote">Also: <a href="https://github.com/danielwipert/dossier-earnings-call" target="_blank" rel="noopener">Earnings Call Dossier</a>, a second implementation of the Chorus AI framework</p>
       </div>
@@ -211,7 +255,156 @@
   </div>
 </section>
 
-<!-- ── Section 3: The Theoretical Foundation ────────────────── -->
+<!-- ── Section 3: DAM — The Case Study ──────────────────────── -->
+<section id="case-study" class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="label">The Case Study</span>
+      <h2>One ecommerce operations report. Five self-governing stages.</h2>
+      <p class="section-subhead">Every week, a data analyst downloads CSVs from Shopify, FedEx, DHL, and a 3PL provider, reconciles them manually, computes 10 KPIs in Excel, and writes a summary for leadership. DAM automates this entire workflow using governed LLM agents at every stage where the analyst would normally apply judgment.</p>
+    </div>
+    <div class="fade-up">
+      <div class="stage-tabs" role="tablist">
+        <button class="stage-tab active" role="tab" data-stage="1">STAGE 1</button>
+        <button class="stage-tab" role="tab" data-stage="2">STAGE 2</button>
+        <button class="stage-tab" role="tab" data-stage="3">STAGE 3</button>
+        <button class="stage-tab" role="tab" data-stage="4">STAGE 4</button>
+        <button class="stage-tab" role="tab" data-stage="5">STAGE 5</button>
+      </div>
+      <div class="stage-panels">
+        <div class="stage-panel active" data-panel="1">
+          <div class="sp-left">
+            <h3>Data Ingestion &amp; Normalization</h3>
+            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Opening an unfamiliar CSV and deciding which column maps to which field. A skilled analyst spends 15–30 minutes per data source applying domain knowledge to ambiguous column names and inconsistent date formats.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Python validates every proposed field mapping. Duplicate <span class="fact-id">order_id</span> values trigger an immediate halt. The LLM cannot override a structural data integrity failure by expressing narrative confidence.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>Ambiguous mappings are disclosed in <span class="fact-id">FieldMappingLog</span>, not silently resolved. LLM mapping failure after one retry produces a <span class="fact-id">DegradationSignal</span> halt. The pipeline stops rather than continuing on corrupted data.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">RawCSVBundle</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">NormalizedDataset</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="2">
+          <div class="sp-left">
+            <h3>Cross-Source Reconciliation</h3>
+            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Running VLOOKUPs, then manually investigating the rows that don't match. An analyst applies business knowledge to decide whether a non-matching record is a data error, a legitimate exception, or a carrier reporting discrepancy.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Fuzzy match confidence threshold of 0.90 enforced by Python. The LLM cannot override this threshold by expressing narrative confidence: "I believe these records match" is not a valid override of a 0.74 confidence score.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>Match rate &lt; 80% → halt. 80–95% → warning disclosed in report. Every unmatched record appears with <span class="fact-id">join_status='unmatched'</span> in the output. Nothing is silently dropped.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">NormalizedDataset</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">ReconciledDataset</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="3">
+          <div class="sp-left">
+            <h3>KPI Computation</h3>
+            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Writing formulas in Excel, applying threshold rules, deciding what is Green vs. Yellow vs. Red. An analyst knows which metrics matter most and applies contextual judgment to borderline cases.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Python independently recomputes every KPI. Python always wins. LLM/Python mismatches are logged and tracked by Layer 5 for drift detection. The LLM value is informational only. It never reaches the FactList.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>Stage halts only if Python itself cannot compute a KPI, meaning a genuine data failure occurred. LLM errors are corrected silently by Python, logged for drift tracking, and disclosed in the verification footer.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">ReconciledDataset</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">FactList [F001–F010]</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="4">
+          <div class="sp-left">
+            <h3>Insight Generation + Verification</h3>
+            <div class="sp-meta"><span class="sp-model-tag">DeepSeek V3</span><span class="sp-model-tag">Qwen2.5 7B</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Writing the narrative: what does this week's data mean? What should leadership do? An analyst synthesises numbers into actionable language and applies industry knowledge to recommend responses.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Every claim must cite a <span class="fact-id">FACT_ID</span>. Qwen2.5 independently checks each citation: does the cited fact actually support this claim? Claims that fail verification are stripped entirely, not marked uncertain.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Failure Mode Handling</div>
+              <p>&lt; 3 verified claims → partial <span class="fact-id">DegradationSignal</span>. 0 claims → Level 2 halt. Cross-verifier agreement at 100% for 3 consecutive runs triggers a Layer 5 critical alert, not a success signal.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">FactList</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">VerifiedInsightList</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-panel" data-panel="5">
+          <div class="sp-left">
+            <h3>Report Compilation</h3>
+            <div class="sp-meta"><span class="sp-model-tag">No LLM: Deterministic</span></div>
+            <p class="sp-human"><strong>Human judgment replaced:</strong> Formatting the report, copying numbers into a template, sending it to leadership. Consistency, completeness, and delivery.</p>
+          </div>
+          <div class="sp-right">
+            <div class="sp-section">
+              <div class="sp-section-label">Governance Mechanism</div>
+              <p>Structural completeness check against required sections list. Missing section → halt. PDF page count deviation → warning logged. Every degradation disclosure from Stages 1–4 is surfaced in the verification footer.</p>
+            </div>
+            <div class="sp-section">
+              <div class="sp-section-label">Why This Matters</div>
+              <p>Stage 5 being a viable system without an LLM demonstrates that viability is a property of governance structure, not AI presence. The most reliable stage in the pipeline is the one with no model at all.</p>
+            </div>
+            <div class="schema-callout">
+              <span class="fact-id">VerifiedInsightList</span>
+              <span class="schema-arrow">→</span>
+              <span class="fact-id">GovernedReport (HTML + PDF)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FactList Chain -->
+    <div class="factlist-chain fade-up">
+      <div class="chain-title">The FactList: connective tissue of the entire pipeline</div>
+      <p class="chain-sub">Every KPI gets a unique <span class="fact-id">FACT_ID</span>. Every insight must cite one. Every citation is verified before the insight surfaces. The FactList is immutable after Stage 3. No downstream stage can add, modify, or remove entries.</p>
+      <div class="chain-nodes">
+        <div class="chain-node"><div class="cn-label">Source Data</div><div class="cn-val">Shopify · FedEx · DHL · 3PL CSV rows</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">Python Computed</div><div class="cn-val">10 KPI values, independently calculated</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">FactList Entry</div><div class="cn-val"><span class="fact-id">F001</span>–<span class="fact-id">F010</span> assigned, immutable</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">Citation Check</div><div class="cn-val">Qwen verifies claim ↔ FACT_ID alignment</div></div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node"><div class="cn-label">Report Claim</div><div class="cn-val">Verified insight with traceable lineage</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section 4: The Theoretical Foundation ────────────────── -->
 <section id="foundation" class="section">
   <div class="container">
     <div class="section-header fade-up">
@@ -470,155 +663,6 @@
   </div>
 </section>
 
-<!-- ── Section 6: DAM — The Case Study ──────────────────────── -->
-<section id="case-study" class="section">
-  <div class="container">
-    <div class="section-header fade-up">
-      <span class="label">The Case Study</span>
-      <h2>One ecommerce operations report. Five self-governing stages.</h2>
-      <p class="section-subhead">Every week, a data analyst downloads CSVs from Shopify, FedEx, DHL, and a 3PL provider, reconciles them manually, computes 10 KPIs in Excel, and writes a summary for leadership. DAM automates this entire workflow using governed LLM agents at every stage where the analyst would normally apply judgment.</p>
-    </div>
-    <div class="fade-up">
-      <div class="stage-tabs" role="tablist">
-        <button class="stage-tab active" role="tab" data-stage="1">STAGE 1</button>
-        <button class="stage-tab" role="tab" data-stage="2">STAGE 2</button>
-        <button class="stage-tab" role="tab" data-stage="3">STAGE 3</button>
-        <button class="stage-tab" role="tab" data-stage="4">STAGE 4</button>
-        <button class="stage-tab" role="tab" data-stage="5">STAGE 5</button>
-      </div>
-      <div class="stage-panels">
-        <div class="stage-panel active" data-panel="1">
-          <div class="sp-left">
-            <h3>Data Ingestion &amp; Normalization</h3>
-            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
-            <p class="sp-human"><strong>Human judgment replaced:</strong> Opening an unfamiliar CSV and deciding which column maps to which field. A skilled analyst spends 15–30 minutes per data source applying domain knowledge to ambiguous column names and inconsistent date formats.</p>
-          </div>
-          <div class="sp-right">
-            <div class="sp-section">
-              <div class="sp-section-label">Governance Mechanism</div>
-              <p>Python validates every proposed field mapping. Duplicate <span class="fact-id">order_id</span> values trigger an immediate halt. The LLM cannot override a structural data integrity failure by expressing narrative confidence.</p>
-            </div>
-            <div class="sp-section">
-              <div class="sp-section-label">Failure Mode Handling</div>
-              <p>Ambiguous mappings are disclosed in <span class="fact-id">FieldMappingLog</span>, not silently resolved. LLM mapping failure after one retry produces a <span class="fact-id">DegradationSignal</span> halt. The pipeline stops rather than continuing on corrupted data.</p>
-            </div>
-            <div class="schema-callout">
-              <span class="fact-id">RawCSVBundle</span>
-              <span class="schema-arrow">→</span>
-              <span class="fact-id">NormalizedDataset</span>
-            </div>
-          </div>
-        </div>
-        <div class="stage-panel" data-panel="2">
-          <div class="sp-left">
-            <h3>Cross-Source Reconciliation</h3>
-            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
-            <p class="sp-human"><strong>Human judgment replaced:</strong> Running VLOOKUPs, then manually investigating the rows that don't match. An analyst applies business knowledge to decide whether a non-matching record is a data error, a legitimate exception, or a carrier reporting discrepancy.</p>
-          </div>
-          <div class="sp-right">
-            <div class="sp-section">
-              <div class="sp-section-label">Governance Mechanism</div>
-              <p>Fuzzy match confidence threshold of 0.90 enforced by Python. The LLM cannot override this threshold by expressing narrative confidence: "I believe these records match" is not a valid override of a 0.74 confidence score.</p>
-            </div>
-            <div class="sp-section">
-              <div class="sp-section-label">Failure Mode Handling</div>
-              <p>Match rate &lt; 80% → halt. 80–95% → warning disclosed in report. Every unmatched record appears with <span class="fact-id">join_status='unmatched'</span> in the output. Nothing is silently dropped.</p>
-            </div>
-            <div class="schema-callout">
-              <span class="fact-id">NormalizedDataset</span>
-              <span class="schema-arrow">→</span>
-              <span class="fact-id">ReconciledDataset</span>
-            </div>
-          </div>
-        </div>
-        <div class="stage-panel" data-panel="3">
-          <div class="sp-left">
-            <h3>KPI Computation</h3>
-            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
-            <p class="sp-human"><strong>Human judgment replaced:</strong> Writing formulas in Excel, applying threshold rules, deciding what is Green vs. Yellow vs. Red. An analyst knows which metrics matter most and applies contextual judgment to borderline cases.</p>
-          </div>
-          <div class="sp-right">
-            <div class="sp-section">
-              <div class="sp-section-label">Governance Mechanism</div>
-              <p>Python independently recomputes every KPI. Python always wins. LLM/Python mismatches are logged and tracked by Layer 5 for drift detection. The LLM value is informational only. It never reaches the FactList.</p>
-            </div>
-            <div class="sp-section">
-              <div class="sp-section-label">Failure Mode Handling</div>
-              <p>Stage halts only if Python itself cannot compute a KPI, meaning a genuine data failure occurred. LLM errors are corrected silently by Python, logged for drift tracking, and disclosed in the verification footer.</p>
-            </div>
-            <div class="schema-callout">
-              <span class="fact-id">ReconciledDataset</span>
-              <span class="schema-arrow">→</span>
-              <span class="fact-id">FactList [F001–F010]</span>
-            </div>
-          </div>
-        </div>
-        <div class="stage-panel" data-panel="4">
-          <div class="sp-left">
-            <h3>Insight Generation + Verification</h3>
-            <div class="sp-meta"><span class="sp-model-tag">DeepSeek V3</span><span class="sp-model-tag">Qwen2.5 7B</span></div>
-            <p class="sp-human"><strong>Human judgment replaced:</strong> Writing the narrative: what does this week's data mean? What should leadership do? An analyst synthesises numbers into actionable language and applies industry knowledge to recommend responses.</p>
-          </div>
-          <div class="sp-right">
-            <div class="sp-section">
-              <div class="sp-section-label">Governance Mechanism</div>
-              <p>Every claim must cite a <span class="fact-id">FACT_ID</span>. Qwen2.5 independently checks each citation: does the cited fact actually support this claim? Claims that fail verification are stripped entirely, not marked uncertain.</p>
-            </div>
-            <div class="sp-section">
-              <div class="sp-section-label">Failure Mode Handling</div>
-              <p>&lt; 3 verified claims → partial <span class="fact-id">DegradationSignal</span>. 0 claims → Level 2 halt. Cross-verifier agreement at 100% for 3 consecutive runs triggers a Layer 5 critical alert, not a success signal.</p>
-            </div>
-            <div class="schema-callout">
-              <span class="fact-id">FactList</span>
-              <span class="schema-arrow">→</span>
-              <span class="fact-id">VerifiedInsightList</span>
-            </div>
-          </div>
-        </div>
-        <div class="stage-panel" data-panel="5">
-          <div class="sp-left">
-            <h3>Report Compilation</h3>
-            <div class="sp-meta"><span class="sp-model-tag">No LLM: Deterministic</span></div>
-            <p class="sp-human"><strong>Human judgment replaced:</strong> Formatting the report, copying numbers into a template, sending it to leadership. Consistency, completeness, and delivery.</p>
-          </div>
-          <div class="sp-right">
-            <div class="sp-section">
-              <div class="sp-section-label">Governance Mechanism</div>
-              <p>Structural completeness check against required sections list. Missing section → halt. PDF page count deviation → warning logged. Every degradation disclosure from Stages 1–4 is surfaced in the verification footer.</p>
-            </div>
-            <div class="sp-section">
-              <div class="sp-section-label">Why This Matters</div>
-              <p>Stage 5 being a viable system without an LLM demonstrates that viability is a property of governance structure, not AI presence. The most reliable stage in the pipeline is the one with no model at all.</p>
-            </div>
-            <div class="schema-callout">
-              <span class="fact-id">VerifiedInsightList</span>
-              <span class="schema-arrow">→</span>
-              <span class="fact-id">GovernedReport (HTML + PDF)</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FactList Chain -->
-    <div class="factlist-chain fade-up">
-      <div class="chain-title">The FactList: connective tissue of the entire pipeline</div>
-      <p class="chain-sub">Every KPI gets a unique <span class="fact-id">FACT_ID</span>. Every insight must cite one. Every citation is verified before the insight surfaces. The FactList is immutable after Stage 3. No downstream stage can add, modify, or remove entries.</p>
-      <div class="chain-nodes">
-        <div class="chain-node"><div class="cn-label">Source Data</div><div class="cn-val">Shopify · FedEx · DHL · 3PL CSV rows</div></div>
-        <div class="chain-arrow">→</div>
-        <div class="chain-node"><div class="cn-label">Python Computed</div><div class="cn-val">10 KPI values, independently calculated</div></div>
-        <div class="chain-arrow">→</div>
-        <div class="chain-node"><div class="cn-label">FactList Entry</div><div class="cn-val"><span class="fact-id">F001</span>–<span class="fact-id">F010</span> assigned, immutable</div></div>
-        <div class="chain-arrow">→</div>
-        <div class="chain-node"><div class="cn-label">Citation Check</div><div class="cn-val">Qwen verifies claim ↔ FACT_ID alignment</div></div>
-        <div class="chain-arrow">→</div>
-        <div class="chain-node"><div class="cn-label">Report Claim</div><div class="cn-val">Verified insight with traceable lineage</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ── Section 7: The Numbers ────────────────────────────────── -->
 <section id="numbers" class="section">
   <div class="container">
@@ -735,10 +779,44 @@
         </div>
       </div>
     </div>
+
+    <!-- Governance in action: proof log -->
+    <div class="proof-log-wrap fade-up">
+      <div class="proof-log-label">Governance in action</div>
+      <div class="proof-log">
+        <div class="proof-log-header">run log — 2026-04-22 09:12:45 — Stage 1 integrity check</div>
+        <div class="proof-log-line">
+          <span class="log-time">09:12:46</span>
+          <span class="log-event">Field mapping complete — Shopify, FedEx, DHL, 3PL ingested and normalized</span>
+          <span class="log-badge log-badge--pass">PASS</span>
+        </div>
+        <div class="proof-log-line">
+          <span class="log-time">09:12:47</span>
+          <span class="log-event">Integrity check — duplicate order_id detected: ORD-7821 appears ×3 across source files</span>
+          <span class="log-badge log-badge--halt">HALT</span>
+        </div>
+        <div class="proof-log-line">
+          <span class="log-time">09:12:47</span>
+          <span class="log-event">Pipeline halted at Stage 1 gate. DegradationSignal issued. Stages 2–5 blocked.</span>
+          <span class="log-badge log-badge--info">BLOCKED</span>
+        </div>
+        <div class="proof-log-line">
+          <span class="log-time">09:12:47</span>
+          <span class="log-event">Disclosure surfaced in verification footer. No unverified output released.</span>
+          <span class="log-badge log-badge--info">DISCLOSED</span>
+        </div>
+      </div>
+      <p style="margin-top:12px; font-size:13px; color:var(--text-2);">The system does not silently handle data integrity failures. It stops, explains why, and discloses the exception in the report.</p>
+    </div>
+
     <div class="output-cta fade-up">
       <a href="assets/sample-report.pdf" class="btn btn-outline" target="_blank" rel="noopener">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download Sample Report (PDF)
+      </a>
+      <a href="dashboard/" class="btn btn-primary" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        View Live Dashboard &rarr;
       </a>
     </div>
   </div>
@@ -797,7 +875,13 @@
           <div class="pc-body-inner"><p>The FactList implements this principle mechanically. Every insight in the final report cites a FACT_ID. Every FACT_ID traces to a Python-computed KPI value. Every Python value traces to specific source data rows. You can follow the chain from any sentence in the report back to the CSV row that generated it. This is not documentation. It is structure.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principles-toggle-row">
+        <button class="show-principles-btn" id="principles-toggle" aria-expanded="false">
+          Show all 13 principles
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">05</span>
           <div class="pc-content"><div class="pc-name">Observability</div><div class="pc-statement">If you cannot measure it, you cannot govern it.</div></div>
@@ -807,7 +891,7 @@
           <div class="pc-body-inner"><p>Every stage in DAM emits a <span class="fact-id">HealthTelemetry</span> object: latency, retry count, cost, match rates, mismatch counts, claim acceptance rates. This telemetry flows upward to the orchestrator and is persisted in the run log. Layer 5 operates on this data. A stage that produces correct outputs but emits no telemetry is ungovernable. Its health cannot be assessed over time.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">06</span>
           <div class="pc-content"><div class="pc-name">Graceful Degradation</div><div class="pc-statement">When confidence drops, the system narrows scope rather than continuing at full autonomy.</div></div>
@@ -817,7 +901,7 @@
           <div class="pc-body-inner"><p>DAM has five defined degradation levels. Level 1 is partial output with disclosure. Level 2 halts the affected stage but continues others. Full halt is reserved for data integrity failures (duplicate IDs, match rate collapse). The goal is never false confidence. A partial report that says "Stage 2 match rate was 82%, warning: 18% of shipments unmatched" is more trustworthy than a complete report that silently filled in the gaps.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">07</span>
           <div class="pc-content"><div class="pc-name">Independent Assurance</div><div class="pc-statement">Verification must be structurally independent from generation.</div></div>
@@ -827,7 +911,7 @@
           <div class="pc-body-inner"><p>Independence has two components in DAM: model independence (Qwen verifies DeepSeek: different company, architecture, and training) and computational independence (Python recomputes KPIs without using the LLM value). The Python verification of KPIs is the stronger form: it introduces a fundamentally different computational substrate, not just a different probabilistic model.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">08</span>
           <div class="pc-content"><div class="pc-name">Adaptive Improvement</div><div class="pc-statement">Systems must learn from errors. A system correct yesterday may be wrong today.</div></div>
@@ -837,7 +921,7 @@
           <div class="pc-body-inner"><p>Layer 5 exists because static systems degrade. The Layer5Monitor tracks trends across runs, not just whether the current run passed its gates, but whether passing rates are declining, retry rates are rising, or agreement patterns are locking. These are early signals of model drift or configuration degradation that would not be visible from a single-run perspective.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">09</span>
           <div class="pc-content"><div class="pc-name">Constitutional Governance</div><div class="pc-statement">No optimization overrides safety constraints. Ever.</div></div>
@@ -847,7 +931,7 @@
           <div class="pc-body-inner"><p>Constitutional constraints in DAM are not configuration. They are code paths that do not exist. There is no code path in Stage 4 that releases an unverified claim. There is no code path that adds entries to the FactList after Stage 3 completes. There is no code path that produces financial projections. These constraints cannot be "turned off" via prompt or parameter. They are structural absences.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">10</span>
           <div class="pc-content"><div class="pc-name">Dual Viability</div><div class="pc-statement">The system must be both operationally reliable and epistemically trustworthy.</div></div>
@@ -857,7 +941,7 @@
           <div class="pc-body-inner"><p>Operational reliability (the system runs without crashing) is insufficient. Epistemic trustworthiness (the outputs can be trusted) is also required. A system that produces outputs reliably but cannot verify them is operationally viable but epistemically untrustworthy. DAM requires both: it must complete and its completions must be independently verifiable.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">11</span>
           <div class="pc-content"><div class="pc-name">Requisite Governance Variety</div><div class="pc-statement">Governance capacity must scale with operational complexity. Scaling without governance is ungoverned risk.</div></div>
@@ -867,7 +951,7 @@
           <div class="pc-body-inner"><p>Ashby's Law applied directly. Adding Stage 6 to DAM required adding corresponding governance: the citation check for RAG outputs, the domain-level acceptance threshold, the knowledge base availability check. The stage could not be added without its governance layer. Doing so would have reduced overall system trustworthiness even while increasing capability.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">12</span>
           <div class="pc-content"><div class="pc-name">Ultrastable Adaptation</div><div class="pc-statement">Two feedback loops: one corrects outputs, one corrects the configuration when the first loop keeps failing.</div></div>
@@ -877,7 +961,7 @@
           <div class="pc-body-inner"><p>Ross Ashby's concept of ultrastability: a system with two nested feedback loops is more stable than one with a single loop. The first loop (runtime governance) corrects individual outputs. The second loop (Layer 5 / Layer5Monitor) corrects the system configuration when the first loop keeps activating. A system where the retry rate keeps rising needs configuration intervention, not more retries.</p></div>
         </div>
       </div>
-      <div class="principle-card" data-expand>
+      <div class="principle-card principle-hidden" data-expand>
         <button class="pc-trigger" aria-expanded="false">
           <span class="pc-num">13</span>
           <div class="pc-content"><div class="pc-name">Second-Order Self-Observation</div><div class="pc-statement">The system must observe its own observation processes. Persistent 100% verifier agreement is a red flag, not a green one.</div></div>
