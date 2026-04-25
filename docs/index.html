@@ -275,7 +275,7 @@
         <div class="stage-panel active" data-panel="1">
           <div class="sp-left">
             <h3>Data Ingestion &amp; Normalization</h3>
-            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <div class="sp-meta"><span class="sp-model-tag">Mistral Small 3.2 24B</span></div>
             <p class="sp-human"><strong>Human judgment replaced:</strong> Opening an unfamiliar CSV and deciding which column maps to which field. A skilled analyst spends 15–30 minutes per data source applying domain knowledge to ambiguous column names and inconsistent date formats.</p>
           </div>
           <div class="sp-right">
@@ -297,7 +297,7 @@
         <div class="stage-panel" data-panel="2">
           <div class="sp-left">
             <h3>Cross-Source Reconciliation</h3>
-            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <div class="sp-meta"><span class="sp-model-tag">Gemini 2.5 Flash</span></div>
             <p class="sp-human"><strong>Human judgment replaced:</strong> Running VLOOKUPs, then manually investigating the rows that don't match. An analyst applies business knowledge to decide whether a non-matching record is a data error, a legitimate exception, or a carrier reporting discrepancy.</p>
           </div>
           <div class="sp-right">
@@ -319,7 +319,7 @@
         <div class="stage-panel" data-panel="3">
           <div class="sp-left">
             <h3>KPI Computation</h3>
-            <div class="sp-meta"><span class="sp-model-tag">Llama 3.3 70B</span></div>
+            <div class="sp-meta"><span class="sp-model-tag">Claude Haiku 4.5</span></div>
             <p class="sp-human"><strong>Human judgment replaced:</strong> Writing formulas in Excel, applying threshold rules, deciding what is Green vs. Yellow vs. Red. An analyst knows which metrics matter most and applies contextual judgment to borderline cases.</p>
           </div>
           <div class="sp-right">
@@ -443,7 +443,7 @@
         </button>
         <div class="tc-body">
           <div class="tc-body-inner">
-            CASDAM satisfies Ashby's Law through two simultaneous strategies: <strong>amplification</strong> (multi-model verification, contradiction detection, model disagreement analysis) and <strong>attenuation</strong> (bounded agent autonomy, schema enforcement, state gating, domain restrictions). Four distinct model families are a hard architectural requirement, not a redundancy choice, because verifiers that share architecture share blind spots.
+            CASDAM satisfies Ashby's Law through two simultaneous strategies: <strong>amplification</strong> (multi-model verification, contradiction detection, model disagreement analysis) and <strong>attenuation</strong> (bounded agent autonomy, schema enforcement, state gating, domain restrictions). Six distinct model families across the pipeline — Mistral, Google, Anthropic, DeepSeek, Alibaba, Meta — are a hard architectural requirement, not a redundancy choice, because verifiers that share architecture share blind spots.
           </div>
         </div>
       </div>
@@ -523,7 +523,7 @@
           <div class="lp-vsm">Beer's System 1: Operations</div>
           <div class="lp-section">
             <div class="lp-section-label">DAM Implementation</div>
-            <p>Llama 3.3 70B Instruct Turbo (Stages 1–3 &amp; 6), DeepSeek V3 (Stage 4 generation). Each agent operates with bounded scope, defined input/output schemas, and no authority to make governance decisions. Agents do not know the pipeline exists. They receive input and produce output.</p>
+            <p>Six distinct model families, one per data-shaping role: Mistral Small 3.2 24B (mapping), Gemini 2.5 Flash (reconciliation), Claude Haiku 4.5 (KPI cross-check), DeepSeek V3 (generation), Qwen2.5 7B (verification), Llama 3.3 70B (advisor). All routed through a single OpenRouter client. Each agent operates with bounded scope, defined input/output schemas, and no authority to make governance decisions. Agents do not know the pipeline exists. They receive input and produce output.</p>
           </div>
           <div class="lp-failure"><strong>Failure Prevented</strong>Unbounded agents that make their own authority decisions, self-modify their instructions, or accumulate context beyond their defined scope.</div>
         </div>
@@ -675,13 +675,13 @@
         <span class="big-num" data-count="0.05" data-prefix="$" data-decimals="2">$0.05</span>
         <div class="big-num-label">Cost per run</div>
         <p class="big-num-desc">The same work a data analyst performs in 2 hours costs under five cents, with full governance and traceability.</p>
-        <p class="big-num-caveat">Costs reflect Together AI free-tier pricing on synthetic test data. Production deployment costs will vary.</p>
+        <p class="big-num-caveat">Costs reflect OpenRouter pay-per-token pricing on synthetic test data. Production deployment costs will vary.</p>
         <button class="num-expand-trigger" data-num-expand>
           Methodology
           <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="num-expand-body">
-          <div class="num-expand-body-inner">Together AI free-tier Llama 3.3 70B for Stages 1–3 &amp; 6, DeepSeek V3 and Qwen2.5 7B for Stage 4. Token budget enforced per stage. One retry per stage maximum. Cost ceiling is a constitutional constraint, not a soft target. Actual run cost on 2026-04-22: $0.0365.</div>
+          <div class="num-expand-body-inner">Six model families routed through a single OpenRouter account: Mistral Small 3.2 24B (Stage 1), Gemini 2.5 Flash (Stage 2), Claude Haiku 4.5 (Stage 3), DeepSeek V3 + Qwen2.5 7B (Stage 4), Llama 3.3 70B (Stage 6). Token budget enforced per stage. One retry per stage maximum. Cost ceiling is a constitutional constraint, not a soft target. Actual run cost on 2026-04-25: $0.0393 across both validation weeks.</div>
         </div>
       </div>
       <div class="big-num-card">
@@ -693,19 +693,19 @@
           <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="num-expand-body">
-          <div class="num-expand-body-inner">This is not a projection. It is the ratio of actual Together AI API costs at locked model selection to published mid-level data analyst labor rates. Manual analysis also has zero governance trail: no audit log, no traceability, no degradation disclosure.</div>
+          <div class="num-expand-body-inner">This is not a projection. It is the ratio of actual OpenRouter API costs at locked model selection to published mid-level data analyst labor rates. Manual analysis also has zero governance trail: no audit log, no traceability, no degradation disclosure.</div>
         </div>
       </div>
       <div class="big-num-card">
-        <span class="big-num" data-count="4" data-decimals="0">4</span>
-        <div class="big-num-label">Model families in the verification chain</div>
-        <p class="big-num-desc">Four structurally distinct model families prevent shared blind spots in the generation-verification chain.</p>
+        <span class="big-num" data-count="6" data-decimals="0">6</span>
+        <div class="big-num-label">Model families across the pipeline</div>
+        <p class="big-num-desc">Six structurally distinct model families — one per data-shaping role — prevent shared blind spots in both generation and verification.</p>
         <button class="num-expand-trigger" data-num-expand>
           Methodology
           <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="num-expand-body">
-          <div class="num-expand-body-inner">Meta Llama, DeepSeek, Qwen, and Mistral (fallback). This is Ashby's Law applied to verification, not redundancy. A verifier that shares architecture and training data with the generator shares its failure modes. Four distinct families satisfy Principle 13: the observation mechanisms cannot share the same structural blind spots.</div>
+          <div class="num-expand-body-inner">Mistral (mapping), Google (reconciliation), Anthropic (KPI cross-check), DeepSeek (insight generation), Alibaba/Qwen (insight verification), Meta/Llama (RAG advisor + fallback). This is Ashby's Law applied to verification, not redundancy. A verifier that shares architecture and training data with the generator shares its failure modes. Six distinct families satisfy Principle 13: the observation mechanisms cannot share the same structural blind spots. Single OpenRouter client routes to all six.</div>
         </div>
       </div>
     </div>
@@ -730,7 +730,7 @@
       <div class="gov-metric">
         <div class="gov-val">20%</div>
         <div class="gov-name">Retry Rate Threshold</div>
-        <p class="gov-desc">Above 20% triggers a Layer 5 warning. The fallback model (Mixtral 8x22B) is intentionally from a different family, to avoid compounding the same failure mode that caused the primary to fail.</p>
+        <p class="gov-desc">Above 20% triggers a Layer 5 warning. The shared fallback (Llama 3.3 70B via OpenRouter) is intentionally from a different family than every primary stage, so that a retry never compounds the same failure mode that caused the primary to fail.</p>
       </div>
     </div>
   </div>

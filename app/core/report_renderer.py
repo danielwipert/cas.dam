@@ -1805,16 +1805,19 @@ details[open] .prov-summary::before {{ content: "▾ "; }}
       </div>
       <div class="sf-stamp">
         Produced by Chorus AI Systems — CAS·DAM multi-model verified pipeline.<br>
-        Llama 3.3 70B · DeepSeek V3 · Qwen2.5 7B · Python cross-verification.<br>
+        Mistral · Gemini · Claude · DeepSeek · Qwen · Llama, all routed via OpenRouter, with Python cross-verification.<br>
         Not financial advice.
       </div>
     </div>
     <div>
       <div class="sf-head">Models &amp; Pipeline</div>
       <div class="sf-line">
-        <strong>Stages 1–3, 6</strong><br>Llama 3.3 70B Instruct Turbo<br>
-        <strong>Stage 4 Generation</strong><br>DeepSeek V3<br>
-        <strong>Stage 4 Verification</strong><br>Qwen2.5 7B<br>
+        <strong>Stage 1 — Mapping</strong><br>Mistral Small 3.2 24B<br>
+        <strong>Stage 2 — Reconciliation</strong><br>Gemini 2.5 Flash<br>
+        <strong>Stage 3 — KPI Cross-Check</strong><br>Claude Haiku 4.5<br>
+        <strong>Stage 4 — Generation</strong><br>DeepSeek V3<br>
+        <strong>Stage 4 — Verification</strong><br>Qwen2.5 7B<br>
+        <strong>Stage 6 — Advisor</strong><br>Llama 3.3 70B<br>
         <strong>Stage 5</strong><br>Deterministic (no LLM)
       </div>
     </div>
