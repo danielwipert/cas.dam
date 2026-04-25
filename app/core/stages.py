@@ -55,7 +55,8 @@ from core.prompts import (
 )
 from core.llm_client import (
     get_client, call_llm, parse_json_response,
-    MODEL_STAGES_1_3, MODEL_STAGE4_GEN, MODEL_STAGE4_VER, MODEL_FALLBACK,
+    MODEL_STAGE1, MODEL_STAGE2, MODEL_STAGE3,
+    MODEL_STAGE4_GEN, MODEL_STAGE4_VER, MODEL_FALLBACK,
 )
 from core.historical_kpis import HISTORICAL_BENCHMARKS
 
@@ -92,7 +93,7 @@ class Stage1:
     Reads four CSV files, uses LLM to map columns to canonical schema,
     applies the mapping, validates every row, emits canonical tables.
 
-    L1: LLM field mapping (Llama 3.3 70B)
+    L1: LLM field mapping (Mistral Small 3.2 24B via OpenRouter)
     L4: Python validates schema conformance on every row
     L3: Gate — retry once on mapping failure; halt on hard schema errors,
         duplicate order_ids, or impossible timestamp orderings
@@ -106,7 +107,7 @@ class Stage1:
         client = get_client()
         total_cost = 0.0
         retry_count = 0
-        model_used = MODEL_STAGES_1_3
+        model_used = MODEL_STAGE1
         fallback_activated = False
 
         sources = [
@@ -463,7 +464,7 @@ class Stage2:
         client = get_client()
         total_cost = 0.0
         retry_count = 0
-        model_used = MODEL_STAGES_1_3
+        model_used = MODEL_STAGE2
         fallback_activated = False
 
         # ---- Build lookup dicts ----
@@ -684,7 +685,7 @@ class Stage3:
     LLM computes all 10 KPIs. Python independently recomputes every one.
     Python wins on any disagreement. FactList is immutable after emission.
 
-    L1: LLM KPI computation (Llama 3.3 70B)
+    L1: LLM KPI computation (Claude Haiku 4.5 via OpenRouter)
     L4: Full deterministic Python recomputation
     L3: Gate — Python result is always final_value; LLM mismatch is logged
     """
@@ -696,7 +697,7 @@ class Stage3:
         client = get_client()
         total_cost = 0.0
         retry_count = 0
-        model_used = MODEL_STAGES_1_3
+        model_used = MODEL_STAGE3
         fallback_activated = False
 
         # ---- Build dataset stats for the prompt ----
@@ -2225,9 +2226,13 @@ body {{
     </div>
     <div style="margin-top:6px">
       <strong>Models:</strong>&nbsp;
-      Llama 3.3 70B (Stages 1&ndash;3 &amp; 6) &middot;
+      Mistral Small 3.2 24B (Mapping) &middot;
+      Gemini 2.5 Flash (Reconciliation) &middot;
+      Claude Haiku 4.5 (KPI Cross-Check) &middot;
       DeepSeek V3 (Generation) &middot;
-      Qwen2.5 7B (Verification)
+      Qwen2.5 7B (Verification) &middot;
+      Llama 3.3 70B (Advisor) &middot;
+      via OpenRouter
     </div>
     <div style="margin-top:4px;font-size:9pt">{s6_footer}</div>
     <div class="brand-stamp">

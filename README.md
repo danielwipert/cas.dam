@@ -17,7 +17,7 @@ cas.dam/
 │   ├── core/                         # All stage and governance code
 │   │   ├── schemas.py                # Pydantic data contracts
 │   │   ├── prompts.py                # LLM prompt builders
-│   │   ├── llm_client.py             # Together AI client + pricing
+│   │   ├── llm_client.py             # OpenRouter client + preflight + pricing
 │   │   ├── stages.py                 # Stages 1–5 MVS classes
 │   │   ├── stage6_supply_chain_advisor.py
 │   │   ├── rag_engine.py             # FAISS query/retrieval
@@ -74,12 +74,12 @@ From the `app/` directory.
 
 ```bash
 # One-time: Python deps for the full pipeline
-pip install pydantic together flask python-dotenv playwright pymupdf \
+pip install pydantic openai flask python-dotenv playwright pymupdf \
             faiss-cpu sentence-transformers
 playwright install chromium
 
-# Together AI key
-echo "TOGETHER_API_KEY=your_key" > app/.env
+# OpenRouter key (single account routes to all six model families)
+echo "OPENROUTER_API_KEY=your_key" > app/.env
 
 # One-time: build the Stage 6 FAISS index (needs PDFs in app/knowledge_base/sources/)
 cd app && python -m core.knowledge_base
@@ -112,7 +112,7 @@ A successful run writes:
 - `output/run_logs/<run_id>.json` — full telemetry
 - `data/factlists/<week>.json` — immutable FactList (cost baseline history)
 
-Typical cost: ~$0.02–0.05 per run. Typical latency: ~60 seconds.
+Typical cost: ~$0.04 per run. Typical latency: ~150 seconds (multi-provider routing through OpenRouter — slower than single-provider but well within budget for a weekly pipeline).
 
 ### Flask dashboard
 
@@ -160,11 +160,15 @@ Plain HTML/CSS/JS marketing site for GitHub Pages, hosted at `danielwipert.githu
 ```
 CSV files
     ↓
-Stage 1 (Llama 3.3 70B)    Field mapping → canonical orders / shipments / carrier records
+Preflight                  Ping every configured model on OpenRouter (~2s).
+                           Halt if any is unreachable — model selection is part
+                           of the pipeline's value proposition, not optional.
     ↓
-Stage 2 (Llama 3.3 70B)    Exact + fuzzy join → reconciliation table
+Stage 1 (Mistral Small 3.2 24B)   Field mapping → canonical orders / shipments / carrier records
     ↓
-Stage 3 (Llama 3.3 70B)    LLM + Python KPI compute → FactList (Python wins)
+Stage 2 (Gemini 2.5 Flash)        Exact + fuzzy join → reconciliation table
+    ↓
+Stage 3 (Claude Haiku 4.5)        LLM + Python KPI compute → FactList (Python wins)
     ↓
 Stage 4 (DeepSeek V3  →    Generate insights → Qwen2.5 7B verifies every FACT_ID
          Qwen2.5 7B)       Claims that fail citation check are stripped
@@ -176,13 +180,15 @@ Stage 6 (Llama 3.3 70B +   RAG over 11 supply-chain textbooks (FAISS + MiniLM-L6
 Stage 5 (no LLM)           Render PDF + dashboard HTML + report_data JSON
 ```
 
-Stages 1–2 halt the pipeline on failure. Stages 3, 4, 5, 6 degrade gracefully — the report still ships with a disclosure in the verification footer.
+All six model families are routed through a single OpenAI-compatible client pointed at OpenRouter (`app/core/llm_client.py`). Fallback for any stage is Llama 3.3 70B.
+
+Stages 1–2 halt the pipeline on failure. Stages 3, 4, 5, 6 degrade gracefully — the report still ships with a disclosure in the verification footer. Preflight halts unconditionally.
 
 ---
 
 ## Deployment (Render)
 
-The `Procfile` runs the Flask dashboard: `web: python app/dashboard/server.py`. `requirements.txt` is intentionally minimal (`flask`, `pydantic`, `requests`, `python-dotenv`) because the deployed service serves already-generated `report_data/*.json` — it does not run the pipeline.
+The `Procfile` runs the Flask dashboard: `web: python app/dashboard/server.py`. `requirements.txt` is intentionally minimal (`flask`, `pydantic`, `requests`, `python-dotenv`, `openai`) because the deployed service serves already-generated `report_data/*.json` — it does not run the pipeline. (`openai` is included because `llm_client.py` is imported transitively, but no API calls are made on the deployed service.)
 
 To update the deployed dashboard, run the pipeline locally, commit the resulting `output/report_data/*.json` files, and push. (The `output/` directory is otherwise gitignored; include report_data explicitly when updating production data.)
 

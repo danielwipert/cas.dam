@@ -1,42 +1,75 @@
 """
 llm_client.py
-Chorus AI Systems — Data Analytics Manager (DAM)
+Chorus AI Systems - Data Analytics Manager (DAM)
 
-Shared Together AI client, model constants, and JSON parsing utility.
-All stages import from here — no API setup scattered across files.
+Shared OpenRouter client, model constants, and JSON parsing utility.
+All stages import from here - no API setup scattered across files.
+
+Architecture: single OpenAI-compatible client pointed at OpenRouter, which
+proxies to five distinct model families (Mistral / Google / Anthropic /
+DeepSeek / Alibaba). See planning/docs/DAM_Multi_Model_Strategy_v1.md.
 """
 
 import json
 import os
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
 
-from together import Together
+from openai import OpenAI
 
 # ---------------------------------------------------------------------------
-# MODEL CONSTANTS  (three distinct families — Together AI serverless availability)
+# MODEL CONSTANTS  (five distinct families - all routed via OpenRouter)
 # ---------------------------------------------------------------------------
-# Qwen2.5-72B-Instruct-Turbo and Mixtral-8x22B require dedicated endpoints on
-# this account tier and are not available serverless.  Updated to available models:
-#   - Stages 1-3: Meta Llama 3.3 70B  (Meta)
-#   - Stage 4 gen: DeepSeek V3        (DeepSeek)
-#   - Stage 4 ver: Qwen2.5-7B Turbo   (Alibaba/Qwen — cross-family independence)
-#   - Fallback:    Llama 3.3 70B      (same family; last resort)
+#   Stage 1 mapping     : Mistral Small 3.2 24B   (Mistral)
+#   Stage 2 reconcile   : Gemini 2.5 Flash        (Google)
+#   Stage 3 KPI check   : Claude Haiku 4.5        (Anthropic)
+#   Stage 4 generation  : DeepSeek V3             (DeepSeek)
+#   Stage 4 verification: Qwen2.5-7B Turbo        (Alibaba/Qwen)
+#   Fallback            : Llama 3.3 70B Instruct  (Meta)
 
-MODEL_STAGES_1_3   = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
-MODEL_STAGE4_GEN   = "deepseek-ai/DeepSeek-V3"
-MODEL_STAGE4_VER   = "Qwen/Qwen2.5-7B-Instruct-Turbo"
-MODEL_FALLBACK     = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+MODEL_STAGE1       = "mistralai/mistral-small-3.2-24b-instruct"
+MODEL_STAGE2       = "google/gemini-2.5-flash"
+MODEL_STAGE3       = "anthropic/claude-haiku-4.5"
+MODEL_STAGE4_GEN   = "deepseek/deepseek-chat-v3"
+MODEL_STAGE4_VER   = "qwen/qwen-2.5-7b-instruct"
+MODEL_STAGE6       = "meta-llama/llama-3.3-70b-instruct"
+MODEL_FALLBACK     = "meta-llama/llama-3.3-70b-instruct"
 
-# Per-model pricing in USD per 1M tokens (Together AI serverless rates)
+# Per-model pricing in USD per 1M tokens (OpenRouter pass-through rates,
+# verify against https://openrouter.ai/models before assuming exact figures).
 MODEL_PRICING: dict[str, dict[str, float]] = {
-    "meta-llama/Llama-3.3-70B-Instruct-Turbo": {"input": 0.88, "output": 0.88},
-    "deepseek-ai/DeepSeek-V3":                 {"input": 1.25, "output": 1.25},
-    "Qwen/Qwen2.5-7B-Instruct-Turbo":          {"input": 0.30, "output": 0.30},
+    MODEL_STAGE1:     {"input": 0.20, "output": 0.60},
+    MODEL_STAGE2:     {"input": 0.30, "output": 2.50},
+    MODEL_STAGE3:     {"input": 1.00, "output": 5.00},
+    MODEL_STAGE4_GEN: {"input": 0.14, "output": 0.28},
+    MODEL_STAGE4_VER: {"input": 0.30, "output": 0.30},
+    MODEL_STAGE6:     {"input": 0.88, "output": 0.88},
+    MODEL_FALLBACK:   {"input": 0.88, "output": 0.88},
 }
 
-# Max tokens per call — enough for all stage outputs
+# All models intentionally configured on the pipeline. Used by preflight().
+# Deduplicated since MODEL_STAGE6 and MODEL_FALLBACK currently point at the
+# same Llama 3.3 70B route - one ping covers both.
+ALL_PIPELINE_MODELS: list[str] = list(dict.fromkeys([
+    MODEL_STAGE1,
+    MODEL_STAGE2,
+    MODEL_STAGE3,
+    MODEL_STAGE4_GEN,
+    MODEL_STAGE4_VER,
+    MODEL_STAGE6,
+    MODEL_FALLBACK,
+]))
+
+# OpenRouter API endpoint
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+
+# Optional headers for OpenRouter analytics (visible on their dashboard).
+OPENROUTER_REFERER = os.environ.get("OPENROUTER_REFERER", "https://cas.dam")
+OPENROUTER_TITLE   = os.environ.get("OPENROUTER_TITLE",   "Chorus AI - DAM")
+
+# Max tokens per call - enough for all stage outputs
 MAX_TOKENS = 4096
 
 # Default API call timeout in seconds
@@ -46,20 +79,28 @@ API_TIMEOUT = 120
 # CLIENT FACTORY
 # ---------------------------------------------------------------------------
 
-def get_client(timeout: int = API_TIMEOUT) -> Together:
+def get_client(timeout: int = API_TIMEOUT) -> OpenAI:
     """
-    Return a Together AI client.
-    Reads TOGETHER_API_KEY from environment.
+    Return an OpenAI-compatible client configured for OpenRouter.
+    Reads OPENROUTER_API_KEY from environment.
     Raises clearly if the key is missing.
     """
-    api_key = os.environ.get("TOGETHER_API_KEY")
+    api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise EnvironmentError(
-            "TOGETHER_API_KEY environment variable is not set. "
+            "OPENROUTER_API_KEY environment variable is not set. "
             "Export it before running the pipeline:\n"
-            "  export TOGETHER_API_KEY=your_key_here"
+            "  export OPENROUTER_API_KEY=your_key_here"
         )
-    return Together(api_key=api_key, timeout=timeout)
+    return OpenAI(
+        api_key=api_key,
+        base_url=OPENROUTER_BASE_URL,
+        timeout=timeout,
+        default_headers={
+            "HTTP-Referer": OPENROUTER_REFERER,
+            "X-Title":      OPENROUTER_TITLE,
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -70,18 +111,15 @@ def call_llm(
     system_prompt: str,
     user_prompt: str,
     model: str,
-    client: Optional[Together] = None,
+    client: Optional[OpenAI] = None,
     temperature: float = 0.1,
     max_tokens: int = MAX_TOKENS,
 ) -> tuple[str, float, float]:
     """
-    Call the Together AI chat completions endpoint.
+    Call the OpenRouter chat completions endpoint.
 
     Returns:
         (response_text, cost_usd, latency_seconds)
-
-    cost_usd is estimated from token counts — Together free-tier
-    models are $0 but we track for when the paid tier is used.
     """
     if client is None:
         client = get_client()
@@ -115,6 +153,51 @@ def call_llm(
 
 
 # ---------------------------------------------------------------------------
+# PREFLIGHT AVAILABILITY CHECK
+# ---------------------------------------------------------------------------
+
+def preflight_models(
+    model_ids: list[str],
+    timeout: int = 10,
+) -> dict[str, Optional[str]]:
+    """
+    Fire a 1-token ping at each model in parallel to verify availability
+    before the pipeline commits to a real run.
+
+    Catches the common failure modes:
+      - Model ID typo / renamed / removed from OpenRouter
+      - No account access for the model
+      - API key missing or expired
+      - Auth or routing broken on OpenRouter side
+
+    Returns:
+        Dict mapping model_id -> None (ok) or error string (failed).
+    """
+    client = get_client(timeout=timeout)
+    results: dict[str, Optional[str]] = {}
+
+    def ping(model: str) -> tuple[str, Optional[str]]:
+        try:
+            client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": "ping"}],
+                max_tokens=1,
+                temperature=0,
+            )
+            return model, None
+        except Exception as e:
+            return model, f"{type(e).__name__}: {e}"
+
+    with ThreadPoolExecutor(max_workers=max(1, len(model_ids))) as pool:
+        futures = [pool.submit(ping, m) for m in model_ids]
+        for fut in as_completed(futures):
+            model, err = fut.result()
+            results[model] = err
+
+    return results
+
+
+# ---------------------------------------------------------------------------
 # JSON PARSING UTILITY
 # ---------------------------------------------------------------------------
 
@@ -128,21 +211,17 @@ def parse_json_response(raw: str) -> dict:
 
     Raises ValueError with a clear message if parsing fails.
     """
-    # Strip markdown fences if present
     text = re.sub(r"```(?:json)?\s*", "", raw).strip()
     text = text.rstrip("`").strip()
 
-    # Try direct parse first
     try:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
 
-    # Find the first { or [ and try from there
     for start_char, end_char in [('{', '}'), ('[', ']')]:
         start = text.find(start_char)
         if start != -1:
-            # Find the matching closing bracket
             depth = 0
             end = -1
             for i, ch in enumerate(text[start:], start):

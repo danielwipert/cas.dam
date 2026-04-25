@@ -27,11 +27,9 @@ from .schemas import (
     Stage6Recommendation,
 )
 from .rag_engine import build_domain_context, is_index_available, DomainContext
-from .llm_client import get_client, call_llm, parse_json_response, MODEL_FALLBACK
+from .llm_client import get_client, call_llm, parse_json_response, MODEL_STAGE6, MODEL_FALLBACK
 
 StageResult = Union[VerifiedOutput, DegradationSignal]
-
-MODEL_STAGE6 = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 
 MAX_RETRIES  = 1
 MAX_TOKENS   = 2048

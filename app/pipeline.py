@@ -30,7 +30,14 @@ import os
 import sys
 import uuid
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Union
+
+from dotenv import load_dotenv
+
+# Load OPENROUTER_API_KEY (and any other secrets) from app/.env before any
+# module that reads env vars is imported.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 from core.schemas import (
     DegradationLevel, DegradationSignal, HealthTelemetry,
@@ -41,6 +48,7 @@ from core.schemas import (
 from core.stages import Stage1, Stage2, Stage3, Stage4, Stage5
 from core.stage6_supply_chain_advisor import Stage6SupplyChainAdvisor
 from core.factlist_store import save_factlist, load_prior_factlist, get_baseline_status
+from core.llm_client import preflight_models, ALL_PIPELINE_MODELS
 
 StageResult = Union[VerifiedOutput, DegradationSignal]
 
@@ -69,6 +77,7 @@ class DAMOrchestrator:
         fedex_path:   str,
         dhl_path:     str,
         week_date:    str,
+        skip_preflight: bool = False,
     ) -> RunLog:
 
         run_id   = f"DAM-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
@@ -81,6 +90,24 @@ class DAMOrchestrator:
         print(f"  Run ID : {run_id}")
         print(f"  Week   : {week_date}")
         print(f"{'='*60}\n")
+
+        # Preflight: verify every configured model is reachable on OpenRouter
+        # before burning time on Stage 1. Halts (does not degrade) on failure —
+        # model selection is part of the pipeline's value proposition.
+        if not skip_preflight:
+            print("[ Preflight ] Checking model availability on OpenRouter...")
+            checks = preflight_models(ALL_PIPELINE_MODELS)
+            failed = {m: e for m, e in checks.items() if e}
+            if failed:
+                print(f"  x {len(failed)} model(s) unreachable:")
+                for m, e in failed.items():
+                    print(f"    - {m}\n        {e}")
+                raise SystemExit(
+                    "Aborting: one or more configured models are unavailable. "
+                    "Fix model IDs in app/core/llm_client.py or check "
+                    "OPENROUTER_API_KEY before retrying."
+                )
+            print(f"  + {len(checks)} models reachable\n")
 
         # ----------------------------------------------------------------
         # STAGE 1
@@ -419,14 +446,17 @@ def main():
     parser.add_argument("--tpl",     help="Path to 3PL shipments CSV")
     parser.add_argument("--fedex",   help="Path to FedEx tracking CSV")
     parser.add_argument("--dhl",     help="Path to DHL tracking CSV")
-    parser.add_argument("--week",    help="Week end date (YYYY-MM-DD)",
-                        default=datetime.now().strftime("%Y-%m-%d"))
+    parser.add_argument("--week",    help="Week end date (YYYY-MM-DD). "
+                        "Defaults to today, or 2026-04-04 in --test mode.",
+                        default=None)
     parser.add_argument("--test",    action="store_true",
                         help="Use synthetic test data from test_data/")
     parser.add_argument("--meta",    action="store_true",
                         help="Show Layer 5 health summary (no pipeline run)")
     parser.add_argument("--adversarial", action="store_true",
                         help="Run adversarial test suite against planted-error data")
+    parser.add_argument("--skip-preflight", action="store_true",
+                        help="Skip OpenRouter model availability check (faster dev iteration)")
     args = parser.parse_args()
 
     # ---- --meta: Layer 5 health summary ----
@@ -449,7 +479,7 @@ def main():
         tpl     = "data/test/tpl_shipments.csv"
         fedex   = "data/test/fedex_tracking.csv"
         dhl     = "data/test/dhl_tracking.csv"
-        week    = "2026-04-04"
+        week    = args.week or "2026-04-04"
     else:
         if not all([args.shopify, args.tpl, args.fedex, args.dhl]):
             print("Error: provide --shopify, --tpl, --fedex, --dhl "
@@ -459,10 +489,10 @@ def main():
         tpl     = args.tpl
         fedex   = args.fedex
         dhl     = args.dhl
-        week    = args.week
+        week    = args.week or datetime.now().strftime("%Y-%m-%d")
 
     orchestrator = DAMOrchestrator()
-    orchestrator.run(shopify, tpl, fedex, dhl, week)
+    orchestrator.run(shopify, tpl, fedex, dhl, week, skip_preflight=args.skip_preflight)
 
 
 if __name__ == "__main__":

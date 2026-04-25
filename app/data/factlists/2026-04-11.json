@@ -1,0 +1,272 @@
+[
+  {
+    "fact_id": "F001",
+    "domain": "fulfillment",
+    "kpi_name": "Order to Ship Time",
+    "llm_value": null,
+    "python_value": 42.4,
+    "final_value": 42.4,
+    "threshold_status": "yellow",
+    "llm_python_match": true,
+    "prior_week_value": 46.73,
+    "wow_delta": -4.33,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Average hours from order_created_at to shipped_at, across all shipped (non-cancelled) orders",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F002",
+    "domain": "fulfillment",
+    "kpi_name": "On-Time Ship Rate",
+    "llm_value": null,
+    "python_value": 0.9487,
+    "final_value": 0.9487,
+    "threshold_status": "red",
+    "llm_python_match": true,
+    "prior_week_value": 0.905,
+    "wow_delta": 0.0437,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Percentage of orders where shipped_at <= promised_ship_date, expressed as decimal (e.g. 0.966). Only include orders that have both shipped_at and promised_ship_date.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F003",
+    "domain": "fulfillment",
+    "kpi_name": "Unshipped Orders Rate",
+    "llm_value": 0.025,
+    "python_value": 0.025,
+    "final_value": 0.025,
+    "threshold_status": "yellow",
+    "llm_python_match": true,
+    "prior_week_value": 0.032,
+    "wow_delta": -0.007,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Percentage of total orders (including cancelled) with no shipment record, expressed as decimal. Cancelled orders count as unshipped.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F004",
+    "domain": "carrier_performance",
+    "kpi_name": "Transit Time",
+    "llm_value": null,
+    "python_value": 140.76,
+    "final_value": 140.76,
+    "threshold_status": "green",
+    "llm_python_match": true,
+    "prior_week_value": 152.22,
+    "wow_delta": -11.46,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Average hours from first_scan_at to delivered_at, across all delivered shipments",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F005",
+    "domain": "carrier_performance",
+    "kpi_name": "On-Time Delivery Rate",
+    "llm_value": null,
+    "python_value": 0.9691,
+    "final_value": 0.9691,
+    "threshold_status": "yellow",
+    "llm_python_match": true,
+    "prior_week_value": 0.9141,
+    "wow_delta": 0.055,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Percentage of delivered shipments where actual transit time <= expected transit window for that carrier + service level. Express as decimal. Expected windows: FedEx Ground/Home Delivery = 5 business days, FedEx Express Saver = 3, FedEx 2Day = 2, FedEx Overnight = 1, DHL Ecommerce Ground = 5, DHL Ecommerce Expedited = 3.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F006",
+    "domain": "carrier_performance",
+    "kpi_name": "Carrier Mix",
+    "llm_value": 0.4872,
+    "python_value": 0.5214,
+    "final_value": 0.5214,
+    "threshold_status": "informational",
+    "llm_python_match": false,
+    "prior_week_value": 0.5331,
+    "wow_delta": -0.0117,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Percentage split of total shipments between FedEx and DHL Ecommerce. Express as two decimals that sum to 1.0. Report as informational \u2014 no threshold applied.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F007",
+    "domain": "cost",
+    "kpi_name": "Shipping Cost per Order",
+    "llm_value": null,
+    "python_value": 11.78,
+    "final_value": 11.78,
+    "threshold_status": "informational",
+    "llm_python_match": true,
+    "prior_week_value": 12.11,
+    "wow_delta": -0.33,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Total shipping cost (from carrier records) divided by total shipped orders. If fewer than 4 weeks of history exist, mark as informational.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F008",
+    "domain": "cost",
+    "kpi_name": "Cost by Carrier",
+    "llm_value": null,
+    "python_value": 14.78,
+    "final_value": 14.78,
+    "threshold_status": "informational",
+    "llm_python_match": true,
+    "prior_week_value": 14.96,
+    "wow_delta": -0.18,
+    "auxiliary_value": 10.1,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Average shipping cost broken down by carrier (FedEx average, DHL average). Express as a dict: {FedEx: float, DHL Ecommerce: float}. If fewer than 4 weeks of history exist, mark as informational.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F009",
+    "domain": "operational_integrity",
+    "kpi_name": "Label Lag",
+    "llm_value": null,
+    "python_value": 2.76,
+    "final_value": 2.76,
+    "threshold_status": "green",
+    "llm_python_match": true,
+    "prior_week_value": 3.62,
+    "wow_delta": -0.86,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Average hours from label_created_at to first_scan_at, across all shipments. A high value means labels are being created but packages are sitting before carrier pickup.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  },
+  {
+    "fact_id": "F010",
+    "domain": "operational_integrity",
+    "kpi_name": "Shipment Match Rate",
+    "llm_value": 0.9402,
+    "python_value": 0.9402,
+    "final_value": 0.9402,
+    "threshold_status": "red",
+    "llm_python_match": true,
+    "prior_week_value": 0.938,
+    "wow_delta": 0.0022,
+    "auxiliary_value": null,
+    "data_provenance": {
+      "source_tables": [
+        "reconciliation_shipments",
+        "canonical_orders",
+        "canonical_shipments",
+        "canonical_carrier_shipments"
+      ],
+      "row_count": 585,
+      "formula_used": "Percentage of shipments successfully matched to a carrier record (exact or fuzzy), expressed as decimal. Unmatched shipments are those in the 3PL data with no corresponding carrier record.",
+      "date_range": "2026-04-11",
+      "exclusions": null
+    },
+    "week_date": "2026-04-11",
+    "python_verified": true
+  }
+]

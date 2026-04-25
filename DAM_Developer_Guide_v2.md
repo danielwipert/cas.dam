@@ -1,12 +1,18 @@
 # Chorus AI Systems — Data Analytics Manager (DAM)
 ## Developer Guide & Implementation Reference
-**Version 2.0 · April 2026**
+**Version 2.1 · April 2026**
 
-Supersedes v1.0. Changes from v1:
+Supersedes v2.0. Amendments since v2.0:
+- **Migrated all LLM calls from Together AI to OpenRouter.** Single OpenAI-compatible client routes to six distinct model families (Mistral / Google / Anthropic / DeepSeek / Alibaba / Meta). Env var renamed: `TOGETHER_API_KEY` → `OPENROUTER_API_KEY`.
+- **Stages 1, 2, 3 now use distinct families** instead of all-Llama: Mistral Small 3.2 24B (mapping), Gemini 2.5 Flash (reconciliation), Claude Haiku 4.5 (KPI cross-check). Rationale: extends Stage 4's "structurally different = lower correlated blind spots" property to the data-shaping side. See `planning/docs/DAM_Multi_Model_Strategy_v1.md`.
+- **Added preflight availability check** (`preflight_models()` in `llm_client.py`) — pings every configured model in parallel at the top of every run, halts the pipeline if any is unreachable. Reason: prior incidents where models were configured but unavailable on the chosen provider tier.
+- **Cost: ~$0.04/run** (OpenRouter pricing). **Latency: ~150s** (multi-provider routing slower than single-provider; acceptable for a weekly pipeline).
+
+Changes from v1.0 (still applicable):
 - Added Stage 6 (Supply Chain Advisor — RAG)
 - Replaced two-page WeasyPrint report with editorial PDF + dark-navy HTML dashboard
 - Updated renderer to a three-tier PDF fallback (WeasyPrint → Playwright/Chromium → HTML)
-- Corrected Stage 4 verifier: Qwen2.5 **7B** Turbo (not 72B — unavailable serverless on this tier)
+- Stage 4 verifier: Qwen2.5 **7B** Turbo (not 72B)
 - Added Flask dashboard, Render deployment, CASDAM case-study site
 - Added `historical_kpis.py` synthetic benchmarks and `build_history.py` 9-week runner
 - Corrected `TRANSIT_WINDOWS` to calendar days, based on empirical test-data distribution
@@ -47,7 +53,7 @@ Supersedes v1.0. Changes from v1:
 
 DAM automates the weekly ecommerce operations reporting workflow: ingesting CSVs from Shopify, a 3PL, FedEx, and DHL; reconciling them; computing 10 KPIs; grounding commentary in a supply-chain knowledge base; and publishing an executive PDF and an HTML dashboard.
 
-**Cost:** ~$0.02–0.05 per run on Together AI. **Latency:** ~60 seconds end-to-end.
+**Cost:** ~$0.04 per run on OpenRouter (six model families, single client). **Latency:** ~150 seconds end-to-end.
 
 **What makes it architecturally interesting:** every stage is a self-governing Minimum Viable System (MVS) — the smallest unit containing all seven Chorus AI governance layers. Three levels of Beer's VSM recursion are implemented explicitly (orchestrator, stages, Stage 4 generation+verification pair); Stage 6 adds a fourth governance loop (retrieval → generation → deterministic citation check).
 
@@ -59,12 +65,12 @@ DAM automates the weekly ecommerce operations reporting workflow: ingesting CSVs
 cas.dam/
 ├── app/                                 # Pipeline + dashboard
 │   ├── pipeline.py                      # Orchestrator + CLI
-│   ├── .env                             # TOGETHER_API_KEY (gitignored)
+│   ├── .env                             # OPENROUTER_API_KEY (gitignored)
 │   │
 │   ├── core/
 │   │   ├── schemas.py                   # All Pydantic contracts
 │   │   ├── prompts.py                   # LLM prompt builders + KPI definitions
-│   │   ├── llm_client.py                # Together AI client + pricing
+│   │   ├── llm_client.py                # OpenRouter client + preflight + pricing
 │   │   ├── stages.py                    # Stage1..Stage5 MVS classes
 │   │   ├── stage6_supply_chain_advisor.py
 │   │   ├── rag_engine.py                # FAISS retrieval, no LLM
@@ -132,7 +138,7 @@ All pipeline commands run from the `app/` directory.
 ### Prerequisites
 
 ```bash
-pip install pydantic together flask python-dotenv playwright pymupdf \
+pip install pydantic openai flask python-dotenv playwright pymupdf \
             faiss-cpu sentence-transformers
 playwright install chromium
 ```
@@ -142,10 +148,10 @@ WeasyPrint is optional. On Windows it requires GTK and is usually skipped — Pl
 ### Environment
 
 ```bash
-echo "TOGETHER_API_KEY=your_key" > app/.env
+echo "OPENROUTER_API_KEY=your_key" > app/.env
 ```
 
-`build_history.py` loads the key from `app/.env`; `llm_client.get_client()` loads it from the process environment.
+`pipeline.py` calls `load_dotenv()` at startup, so `app/.env` is loaded before any module reads env vars. `build_history.py` reads the key directly from `app/.env`. Both rely on the OpenRouter key — no other provider keys are needed because all six model families route through OpenRouter.
 
 ### One-time setup
 
@@ -220,7 +226,7 @@ Level 1 — DAM Pipeline Orchestrator (app/pipeline.py)
       L6: FactList is the only permitted evidence base
 
     Level 3 — Stage 6 retrieval+generation+citation pair
-      L1: FAISS retrieves chunks; Llama 3.3 70B generates commentary + recs
+      L1: FAISS retrieves chunks (local MiniLM-L6-v2 embeddings); Llama 3.3 70B (via OpenRouter) generates commentary + recs
       L4: deterministic Python citation validator (chunk_id and FACT_ID exact match + inline-citation stripping)
       L3: recommendations with no valid citation are stripped; domains with <3 chunks are skipped
       L6: no financial projections, no knowledge beyond retrieved chunks + FactList
@@ -246,20 +252,24 @@ The orchestrator never reaches inside a stage. Stages self-govern; the orchestra
 ```
 CSV files
     ↓
-Stage 1  (Llama 3.3 70B)     Field mapping → canonical tables
+Preflight                            Ping every model on OpenRouter; halt on any failure (~2s)
     ↓
-Stage 2  (Llama 3.3 70B)     Exact + fuzzy join → reconciliation table
+Stage 1  (Mistral Small 3.2 24B)     Field mapping → canonical tables
     ↓
-Stage 3  (Llama 3.3 70B)     KPI compute (LLM) + Python recompute → FactList
+Stage 2  (Gemini 2.5 Flash)          Exact + fuzzy join → reconciliation table
+    ↓
+Stage 3  (Claude Haiku 4.5)          KPI compute (LLM) + Python recompute → FactList
     ↓    FactList saved → data/factlists/YYYY-MM-DD.json
-Stage 4  (DeepSeek V3 → Qwen2.5 7B)   Generate → verify → strip → verified_insights[]
+Stage 4  (DeepSeek V3 → Qwen2.5 7B)  Generate → verify → strip → verified_insights[]
     ↓
-Stage 6  (Llama 3.3 70B + FAISS)      Per-domain commentary + recommendations with citations
+Stage 6  (Llama 3.3 70B + FAISS)     Per-domain commentary + recommendations with citations
     ↓
-Stage 5  (deterministic)     Render PDF + dashboard HTML + report_data JSON
+Stage 5  (deterministic)             Render PDF + dashboard HTML + report_data JSON
     ↓
 run_logs/<run_id>.json  →  Layer5Monitor.analyze()
 ```
+
+All six model families are routed through a single OpenAI-compatible client pointed at `https://openrouter.ai/api/v1`. Fallback for any stage that fails its first attempt is `meta-llama/llama-3.3-70b-instruct` (also via OpenRouter).
 
 Stage ordering note: **Stage 6 runs after Stage 4 and before Stage 5** so that Stage 5 can embed Expert Commentary panels from Stage 6 output.
 
@@ -272,7 +282,7 @@ Stage ordering note: **Stage 6 runs after Stage 4 and before Stage 5** so that S
 | `app/pipeline.py` | Orchestrator + CLI (`--test`, `--meta`, `--adversarial`, CSV flags) |
 | `app/core/schemas.py` | All Pydantic contracts; enums; Stage1..Stage6 I/O types |
 | `app/core/prompts.py` | Six prompt builders, `KPI_DEFINITIONS`, `KPI_THRESHOLDS`, canonical field descriptions, `SYSTEM_PROMPTS` |
-| `app/core/llm_client.py` | Together AI wrapper; `get_client()`, `call_llm()`, `parse_json_response()`; model constants + pricing |
+| `app/core/llm_client.py` | OpenRouter wrapper (OpenAI-compat client); `get_client()`, `call_llm()`, `parse_json_response()`, `preflight_models()`; per-stage model constants, `MODEL_PRICING`, `ALL_PIPELINE_MODELS` |
 | `app/core/stages.py` | `Stage1`..`Stage5` MVS classes, `TRANSIT_WINDOWS`, Stage 5 PDF fallback chain |
 | `app/core/stage6_supply_chain_advisor.py` | `Stage6SupplyChainAdvisor` MVS; citation validator; inline-citation stripper |
 | `app/core/rag_engine.py` | `build_domain_context()`; FAISS query + deduplication per domain |
@@ -295,18 +305,19 @@ Stage ordering note: **Stage 6 runs after Stage 4 and before Stage 5** so that S
 ## 6. Pipeline Detail (Stages 1–6)
 
 ### Stage 1 — Ingestion & Normalisation
-- **Model:** Llama 3.3 70B (`MODEL_STAGES_1_3`)
+- **Model:** Mistral Small 3.2 24B (`MODEL_STAGE1`) — chosen for strong structured-output performance and a tokenizer trained on a different vocabulary than Meta/Google models, giving genuinely independent field-name intuitions.
 - **What it does:** Reads four CSVs with non-canonical column names. Asks the LLM for a mapping. Python applies the mapping and validates every row.
 - **Constraint:** Maps fields; never imputes. Ambiguity is disclosed in `FieldMappingLog`, not silently resolved.
 - **Gates:** Duplicate `order_id` → halt. LLM mapping fails after retry → halt. Any Stage 1 halt propagates to full pipeline halt.
 - **Datetime parsing** tolerates three formats (`%Y-%m-%dT%H:%M:%S[.%f]`, `%Y-%m-%d %H:%M:%S[.%f]`, `%Y-%m-%d`); microsecond suffixes parse correctly (fixed in commit `8733033`).
 
 ### Stage 2 — Reconciliation
-- **Model:** Llama 3.3 70B for fuzzy matches only; phase 1 (exact) is pure Python.
+- **Model:** Gemini 2.5 Flash (`MODEL_STAGE2`) for fuzzy matches only; phase 1 (exact) is pure Python. Gemini chosen for native JSON-Schema constrained output and a sharply different training corpus from Meta/Mistral — Python re-validates every fuzzy proposal anyway, so this is the lowest-stakes LLM call in the pipeline.
 - **Gates:** Match rate < 80% → halt. 80–95% → warning disclosed in report. Fuzzy confidence floor: 0.90 (Python-enforced, not trusted from the LLM).
 
 ### Stage 3 — KPI Computation → FactList
-- **Model:** Llama 3.3 70B for LLM-side compute; Python recomputes every KPI. Python always wins on mismatch.
+- **Model:** Claude Haiku 4.5 (`MODEL_STAGE3`) for LLM-side compute; Python recomputes every KPI. Python always wins on mismatch.
+- **Why Claude here:** Stage 3 is the highest-leverage stage for diversity ROI — different RLHF lineage, tokenizer, and training data than every other model in the pipeline give the strongest possible cross-check signal on arithmetic-heavy structured output.
 - **Mismatch tolerance:** 1 % relative (`abs(py - llm) / (abs(py) + 1e-9) > 0.01`).
 - **Constraint:** FactList is immutable after emission. `final_value == python_value`; `llm_value` is logged only.
 - **KPI fixes applied since v1:**
@@ -315,8 +326,8 @@ Stage ordering note: **Stage 6 runs after Stage 4 and before Stage 5** so that S
   - F009 Label Lag: computed from `shipped_at` → `first_scan_at`
 
 ### Stage 4 — Insight Generation + Verification (third-level MVS)
-- **Models:** DeepSeek V3 generator, Qwen2.5-**7B** Turbo verifier (not 72B — 72B is not available serverless on this Together tier).
-- **Why two families:** Structurally different training + architecture = lower correlated blind spots. If both agree, agreement means more than self-consistency.
+- **Models:** DeepSeek V3 generator (`MODEL_STAGE4_GEN`), Qwen2.5-**7B** verifier (`MODEL_STAGE4_VER`). Both via OpenRouter.
+- **Why two families:** Structurally different training + architecture = lower correlated blind spots. If both agree, agreement means more than self-consistency. This is the original cross-check rationale that motivated extending the multi-family principle to Stages 1–3.
 - **Third-level recursion:** generation = L1, Qwen verification = L4, claim-stripping gate = L3, FactList = L6.
 - **Claim stripping:** unconditional Python check —
   ```python
@@ -404,10 +415,10 @@ Six builder functions; each returns a complete string expecting JSON-only output
 
 | Function | Stage | Model | Key instruction |
 |----------|-------|-------|-----------------|
-| `build_stage1_prompt()` | 1 | Llama 3.3 70B | Map every source column; `canonical_field=null` if no match |
-| `build_stage2_exact_prompt()` | 2 | Llama 3.3 70B | Confirm join keys; flag anomalies only |
-| `build_stage2_fuzzy_prompt()` | 2 | Llama 3.3 70B | Propose fuzzy matches with confidence ≥ 0.90 |
-| `build_stage3_prompt()` | 3 | Llama 3.3 70B | Compute LLM values only; leave `python_value=null` |
+| `build_stage1_prompt()` | 1 | Mistral Small 3.2 24B | Map every source column; `canonical_field=null` if no match |
+| `build_stage2_exact_prompt()` | 2 | Gemini 2.5 Flash | Confirm join keys; flag anomalies only |
+| `build_stage2_fuzzy_prompt()` | 2 | Gemini 2.5 Flash | Propose fuzzy matches with confidence ≥ 0.90 |
+| `build_stage3_prompt()` | 3 | Claude Haiku 4.5 | Compute LLM values only; leave `python_value=null` |
 | `build_stage4_generation_prompt()` | 4 | DeepSeek V3 | Every claim must cite FACT_IDs; no projections |
 | `build_stage4_verification_prompt()` | 4 | Qwen2.5 7B | Strip if FACT_ID wrong, even if directionally correct |
 
@@ -424,34 +435,51 @@ Stage 6's prompt is built in `stage6_supply_chain_advisor._build_prompt()` — n
 ### Model Constants
 
 ```python
-MODEL_STAGES_1_3 = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
-MODEL_STAGE4_GEN = "deepseek-ai/DeepSeek-V3"
-MODEL_STAGE4_VER = "Qwen/Qwen2.5-7B-Instruct-Turbo"
-MODEL_FALLBACK   = "meta-llama/Llama-3.3-70B-Instruct-Turbo"   # same family — last resort
+MODEL_STAGE1     = "mistralai/mistral-small-3.2-24b-instruct"   # Mistral
+MODEL_STAGE2     = "google/gemini-2.5-flash"                    # Google
+MODEL_STAGE3     = "anthropic/claude-haiku-4.5"                 # Anthropic
+MODEL_STAGE4_GEN = "deepseek/deepseek-chat-v3"                  # DeepSeek
+MODEL_STAGE4_VER = "qwen/qwen-2.5-7b-instruct"                  # Alibaba/Qwen
+MODEL_STAGE6     = "meta-llama/llama-3.3-70b-instruct"          # Meta
+MODEL_FALLBACK   = "meta-llama/llama-3.3-70b-instruct"          # same as Stage 6 — last resort
 MAX_TOKENS       = 4096
 API_TIMEOUT      = 120
+
+ALL_PIPELINE_MODELS = [...]   # deduped list of all models above; consumed by preflight_models()
 ```
 
-Three distinct model families. Together AI serverless availability on this account tier excludes Qwen2.5-72B and Mixtral-8x22B; the v1 guide listed both by mistake.
+Six distinct model families across the pipeline. All routed through OpenRouter — single client, single key, multi-provider failover handled by OpenRouter for many of these models.
 
 ### Pricing
 
 ```python
 MODEL_PRICING = {
-    "meta-llama/Llama-3.3-70B-Instruct-Turbo": {"input": 0.88, "output": 0.88},  # per 1M tokens
-    "deepseek-ai/DeepSeek-V3":                 {"input": 1.25, "output": 1.25},
-    "Qwen/Qwen2.5-7B-Instruct-Turbo":          {"input": 0.30, "output": 0.30},
+    MODEL_STAGE1:     {"input": 0.20, "output": 0.60},   # per 1M tokens
+    MODEL_STAGE2:     {"input": 0.30, "output": 2.50},
+    MODEL_STAGE3:     {"input": 1.00, "output": 5.00},
+    MODEL_STAGE4_GEN: {"input": 0.14, "output": 0.28},
+    MODEL_STAGE4_VER: {"input": 0.30, "output": 0.30},
+    MODEL_STAGE6:     {"input": 0.88, "output": 0.88},
+    MODEL_FALLBACK:   {"input": 0.88, "output": 0.88},
 }
 ```
+
+Verify against [openrouter.ai/models](https://openrouter.ai/models) before assuming exact figures — OpenRouter pricing is pass-through and tracks the underlying providers.
 
 ### API
 
 ```python
-client = get_client()                       # reads TOGETHER_API_KEY; EnvironmentError if missing
+client = get_client()                       # reads OPENROUTER_API_KEY; EnvironmentError if missing
 text, cost, latency = call_llm(system_prompt, user_prompt, model, client=client,
                                 temperature=0.1, max_tokens=4096)
 parsed = parse_json_response(raw)           # handles ```json fences + leading preamble
+
+# Preflight (called once at the top of pipeline.run()):
+results = preflight_models(ALL_PIPELINE_MODELS, timeout=10)
+# {model_id: None if reachable, error string if not} — parallel pings, ~2s wall time
 ```
+
+`get_client()` returns an OpenAI-compatible client with `base_url="https://openrouter.ai/api/v1"`. Headers `HTTP-Referer` and `X-Title` are set so usage shows up under the right project on the OpenRouter dashboard.
 
 ---
 
@@ -880,7 +908,9 @@ Four subdirectories under `data/test/adversarial/`, each a full four-CSV set. Er
 
 ### Retry policy
 
-One retry per LLM stage. On retry, `MODEL_FALLBACK` is used. If retry fails, the stage degrades — it never burns tokens on a third attempt.
+One retry per LLM stage. On retry, `MODEL_FALLBACK` (Llama 3.3 70B via OpenRouter) is used. If retry fails, the stage degrades — it never burns tokens on a third attempt.
+
+Preflight runs before any stage and uses no retry: if a configured model is unreachable on OpenRouter at the start of a run, the pipeline halts unconditionally. Use `--skip-preflight` to bypass during fast dev iteration.
 
 ### Constitutional constraints (non-overridable)
 

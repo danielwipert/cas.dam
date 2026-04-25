@@ -50,14 +50,14 @@ FACTLIST_DIR = os.path.join(APP_DIR, "data", "factlists")
 def load_api_key() -> str:
     env_path = os.path.join(APP_DIR, ".env")
     if not os.path.exists(env_path):
-        print("  ERROR: app/.env not found. Add TOGETHER_API_KEY=... to it.")
+        print("  ERROR: app/.env not found. Add OPENROUTER_API_KEY=... to it.")
         sys.exit(1)
     with open(env_path) as f:
         for line in f:
             line = line.strip()
-            if line.startswith("TOGETHER_API_KEY="):
+            if line.startswith("OPENROUTER_API_KEY="):
                 return line.split("=", 1)[1].strip()
-    print("  ERROR: TOGETHER_API_KEY not found in app/.env")
+    print("  ERROR: OPENROUTER_API_KEY not found in app/.env")
     sys.exit(1)
 
 
@@ -70,7 +70,7 @@ def run_pipeline(week_date: str, api_key: str) -> bool:
         "--dhl",     "data/test/dhl_tracking.csv",
         "--week",    week_date,
     ]
-    env = {**os.environ, "TOGETHER_API_KEY": api_key}
+    env = {**os.environ, "OPENROUTER_API_KEY": api_key}
     result = subprocess.run(cmd, cwd=APP_DIR, env=env)
     return result.returncode == 0
 
