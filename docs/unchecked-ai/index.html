@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unchecked AI — Your AI report might be wrong. You have no way to know.</title>
+<meta name="description" content="Most AI in production has nobody checking its work. Unchecked AI produces confident, plausible numbers that nobody verified. Here's what 'checked AI' looks like — and why your business needs it.">
+
+<!-- Social / Open Graph -->
+<meta property="og:type"        content="article">
+<meta property="og:title"       content="Unchecked AI — Your AI report might be wrong. You have no way to know.">
+<meta property="og:description" content="Most AI in production has nobody checking its work. Here's what 'checked AI' looks like — and why your business needs it.">
+<meta property="og:url"         content="https://danielwipert.github.io/cas.dam/unchecked-ai/">
+<meta name="twitter:card"       content="summary_large_image">
+
+<link rel="canonical" href="https://danielwipert.github.io/cas.dam/unchecked-ai/">
+
+<!-- Fonts (match parent case study) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── Design tokens (match parent case study) ──────────────────── */
+:root {
+  --bg:          #0D1117;
+  --bg-2:        #161B22;
+  --bg-3:        #1C2128;
+  --teal:        #1ABC9C;
+  --teal-dk:     #17A589;
+  --teal-glow:   rgba(26,188,156,0.12);
+  --teal-subtle: rgba(26,188,156,0.06);
+  --teal-border: rgba(26,188,156,0.28);
+  --amber:       #F39C12;
+  --red:         #E74C3C;
+  --green:       #27AE60;
+  --text:        #E8EDF2;
+  --text-2:      #8B9DB0;
+  --text-3:      #4A5568;
+  --border:      rgba(255,255,255,0.08);
+  --sans:        'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono:        'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--teal); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--teal-dk); }
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+section { padding: 80px 0; }
+@media (min-width: 768px) { section { padding: 120px 0; } }
+
+/* ── Top bar ──────────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(13,17,23,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: 760px; margin: 0 auto; padding: 14px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.brand-link {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 2px;
+  color: var(--text-2); text-transform: uppercase;
+}
+.brand-link:hover { color: var(--text); }
+.brand-link strong { color: var(--teal); font-weight: 700; }
+.topbar-cta {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+  color: var(--text-2); text-transform: uppercase;
+}
+
+/* ── Typography ───────────────────────────────────────────────── */
+h1 {
+  font-size: clamp(34px, 5.5vw, 60px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 28px;
+}
+h2 {
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+h3 {
+  font-size: 20px; font-weight: 600;
+  letter-spacing: -0.01em; line-height: 1.3;
+  margin-bottom: 12px;
+}
+p { margin-bottom: 18px; color: var(--text); }
+.lede { font-size: 21px; line-height: 1.55; color: var(--text); margin-bottom: 28px; }
+.lede-2 { font-size: 19px; line-height: 1.6; color: var(--text-2); }
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 24px;
+  padding: 6px 12px;
+  background: var(--teal-subtle);
+  border: 1px solid var(--teal-border);
+  border-radius: 4px;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero {
+  padding-top: 80px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 768px) { .hero { padding-top: 120px; padding-bottom: 100px; } }
+
+.hero h1 .accent { color: var(--amber); }
+
+/* ── Bad-day cards ────────────────────────────────────────────── */
+.bad-day-grid {
+  display: grid;
+  gap: 20px;
+  margin-top: 40px;
+}
+.bad-day-card {
+  background: var(--bg-2);
+  border-left: 3px solid var(--red);
+  border-radius: 0 8px 8px 0;
+  padding: 24px 28px;
+}
+.bad-day-card .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 10px;
+  display: block;
+}
+.bad-day-card p { margin-bottom: 0; color: var(--text); font-size: 17px; }
+.bad-day-closer {
+  margin-top: 36px;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── Why this happens ─────────────────────────────────────────── */
+.why-block {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 36px 32px;
+  margin-top: 36px;
+}
+.why-block .why-headline {
+  font-family: var(--sans);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.why-block p:last-child { margin-bottom: 0; }
+.why-block .punch {
+  display: block;
+  margin-top: 18px;
+  font-style: italic;
+  color: var(--amber);
+  font-weight: 500;
+}
+
+/* ── The pattern (flow diagram) ───────────────────────────────── */
+.flow {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.flow-step {
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 24px;
+  text-align: center;
+  position: relative;
+}
+.flow-step.gen   { border-color: rgba(26,188,156,0.45); background: var(--teal-subtle); }
+.flow-step.check { border-color: rgba(243,156,18,0.45); background: rgba(243,156,18,0.06); }
+.flow-step.recompute { border-color: rgba(26,188,156,0.45); background: var(--teal-subtle); }
+.flow-step.deliver { border-color: rgba(39,174,96,0.5);   background: rgba(39,174,96,0.08); }
+
+.flow-step .step-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.flow-step .step-body { font-size: 16px; color: var(--text); font-weight: 500; }
+.flow-arrow {
+  font-family: var(--mono); font-size: 20px; color: var(--text-3);
+  line-height: 1;
+}
+.flow-split {
+  width: 100%; max-width: 560px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.flow-branch {
+  border-radius: 8px;
+  padding: 16px 18px;
+  text-align: center;
+  font-size: 14px;
+  font-family: var(--mono);
+}
+.flow-branch.pass { background: rgba(39,174,96,0.1);  border: 1px solid rgba(39,174,96,0.4);  color: var(--green); }
+.flow-branch.fail { background: rgba(231,76,60,0.1);  border: 1px solid rgba(231,76,60,0.4);  color: var(--red); }
+
+/* ── Before / After ───────────────────────────────────────────── */
+.ba-grid {
+  display: grid; gap: 20px; margin-top: 36px;
+}
+@media (min-width: 768px) { .ba-grid { grid-template-columns: 1fr 1fr; } }
+.ba-col {
+  background: var(--bg-2);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--border);
+}
+.ba-col.before { border-top: 3px solid var(--red); }
+.ba-col.after  { border-top: 3px solid var(--green); }
+.ba-head {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.ba-col.before .ba-head { color: var(--red); }
+.ba-col.after  .ba-head { color: var(--green); }
+.ba-snippet {
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 16px 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.ba-snippet .claim       { color: var(--text); }
+.ba-snippet .claim.bad {
+  text-decoration: line-through;
+  text-decoration-color: rgba(231,76,60,0.7);
+  text-decoration-thickness: 2px;
+  background: rgba(231,76,60,0.1);
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: rgba(232,237,242,0.6);
+}
+.ba-snippet .src {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--teal);
+  background: var(--teal-subtle);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+.ba-tag {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.ba-tag.removed { color: var(--red); background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.3); }
+.ba-tag.passed  { color: var(--green); background: rgba(39,174,96,0.1); border: 1px solid rgba(39,174,96,0.3); }
+
+/* ── Proof block ──────────────────────────────────────────────── */
+.proof {
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-3) 100%);
+  border: 1px solid var(--teal-border);
+  border-radius: 12px;
+  padding: 40px 36px;
+  margin-top: 40px;
+  text-align: center;
+}
+.proof p { font-size: 18px; }
+.proof .casdam-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 18px;
+  font-family: var(--mono); font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase;
+  font-weight: 700;
+  padding: 12px 20px;
+  background: var(--teal-glow);
+  border: 1px solid var(--teal-border);
+  border-radius: 6px;
+}
+.proof .casdam-link:hover { background: var(--teal); color: var(--bg); }
+
+/* ── Cost stats ───────────────────────────────────────────────── */
+.cost-grid {
+  display: grid; gap: 24px; margin-top: 40px;
+}
+@media (min-width: 768px) { .cost-grid { grid-template-columns: repeat(3, 1fr); } }
+.cost-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 24px;
+  text-align: left;
+}
+.cost-num {
+  font-family: var(--mono);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.cost-label {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.cost-desc { font-size: 14px; color: var(--text-2); line-height: 1.5; }
+
+/* ── CTA ──────────────────────────────────────────────────────── */
+.cta {
+  text-align: center;
+  padding: 100px 0 120px;
+  border-top: 1px solid var(--border);
+}
+.cta h2 { margin-bottom: 16px; }
+.cta .sub { color: var(--text-2); font-size: 19px; margin-bottom: 36px; }
+.cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 28px;
+  font-family: var(--sans);
+  font-size: 15px; font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--teal);
+  color: var(--bg);
+  border-color: var(--teal);
+}
+.btn-primary:hover { background: var(--teal-dk); color: var(--bg); border-color: var(--teal-dk); }
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+/* ── Footer ───────────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  text-align: center;
+}
+footer .container { max-width: 760px; }
+footer p {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--text-3); letter-spacing: 1px;
+  margin-bottom: 0;
+}
+footer a { color: var(--text-2); }
+footer a:hover { color: var(--teal); }
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ─────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand-link" href="../">
+      <strong>Chorus AI Systems</strong> · CASDAM
+    </a>
+    <a class="topbar-cta" href="../">Technical case study →</a>
+  </div>
+</div>
+
+<!-- ── Hero ────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">The Unchecked AI Problem</span>
+    <h1>The number in your AI report <span class="accent">might be wrong</span>. Right now, you have no way to know.</h1>
+    <p class="lede">Most AI in production has nobody checking its work. It produces confident, fluent, plausible-sounding output — and the wrong numbers look exactly like the right ones.</p>
+    <p class="lede-2">CASDAM is a working production system that catches the errors before they reach your report.</p>
+  </div>
+</section>
+
+<!-- ── The bad day ─────────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <span class="eyebrow">The Bad Day</span>
+    <h2>You have probably already lived one of these.</h2>
+    <p class="lede-2">Three failure scenarios that happen every week somewhere in production. They share one root cause: nobody checked the AI's work before it reached someone who acted on it.</p>
+
+    <div class="bad-day-grid">
+      <div class="bad-day-card">
+        <span class="label">Scenario 1</span>
+        <p>Your weekly board update cited a customer churn rate. Two days later, the data team can't reproduce the number. The board doesn't know yet.</p>
+      </div>
+      <div class="bad-day-card">
+        <span class="label">Scenario 2</span>
+        <p>Your AI dashboard summarized last quarter as "strong fulfillment performance." Your actual on-time rate was below SLA. The summary got there because the AI averaged in three weeks of stale data.</p>
+      </div>
+      <div class="bad-day-card">
+        <span class="label">Scenario 3</span>
+        <p>Your CFO asked, "How do you know that?" about a number from your AI report. You couldn't answer.</p>
+      </div>
+    </div>
+
+    <p class="bad-day-closer">None of these are model failures. They are <strong>governance</strong> failures — the AI did exactly what AI does, and there was no system in place to catch it.</p>
+  </div>
+</section>
+
+<!-- ── Why this happens ────────────────────────────────────────── -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <span class="eyebrow">Why It Happens</span>
+    <h2>AI doesn't know what it doesn't know.</h2>
+
+    <div class="why-block">
+      <div class="why-headline">There is no internal alarm.</div>
+      <p>AI generates output by predicting plausible-sounding text based on patterns. It can't tell when it's generating something wrong — because being wrong looks identical to being right from inside its own process. There is no flag. There is no warning. The output just goes out.</p>
+      <p>You find out it was wrong when someone outside the system catches it. Sometimes in a meeting. Sometimes in a quarterly report. <span class="punch">Sometimes never.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── The pattern ─────────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <span class="eyebrow">The Cure</span>
+    <h2>What "checked AI" looks like.</h2>
+    <p class="lede-2">Three structural mechanisms, layered. Each one is dumb on its own. Together they make wrong numbers nearly impossible to reach the report.</p>
+
+    <div class="flow">
+      <div class="flow-step gen">
+        <span class="step-label">Step 1</span>
+        <div class="step-body">An AI generates a claim and cites where it came from</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+
+      <div class="flow-step check">
+        <span class="step-label">Step 2</span>
+        <div class="step-body">A second, independent AI checks: does the source actually support this claim?</div>
+      </div>
+      <div class="flow-split">
+        <div class="flow-branch pass">↓ PASS<br><span style="color:var(--text-2);font-family:var(--sans);font-size:12px">claim continues</span></div>
+        <div class="flow-branch fail">↓ FAIL<br><span style="color:var(--text-2);font-family:var(--sans);font-size:12px">claim removed entirely</span></div>
+      </div>
+
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step recompute">
+        <span class="step-label">Step 3</span>
+        <div class="step-body">Numbers are independently recomputed by code (not AI). Code wins on any disagreement.</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+
+      <div class="flow-step deliver">
+        <span class="step-label">Result</span>
+        <div class="step-body"><strong>Only verified, source-cited claims reach your report.</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Before / After ──────────────────────────────────────────── -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <span class="eyebrow">In Practice</span>
+    <h2>Before and after the check.</h2>
+    <p class="lede-2">A weekly operations summary, generated by AI, before and after passing through the verification layer.</p>
+
+    <div class="ba-grid">
+      <div class="ba-col before">
+        <div class="ba-head">Unchecked AI</div>
+        <div class="ba-snippet">
+          <span class="claim">Order-to-ship time was 42.4 hours, slightly above the 30-day average.</span>
+          <span class="claim bad">Customer churn dropped to 4.7% this week.</span>
+          <span class="claim bad">FedEx average cost was $8.20 per shipment.</span>
+          <span class="claim">Match rate was 94.0% — below the 95% threshold.</span>
+        </div>
+        <span class="ba-tag removed">2 claims unverifiable · no source</span>
+      </div>
+
+      <div class="ba-col after">
+        <div class="ba-head">Checked AI (CASDAM)</div>
+        <div class="ba-snippet">
+          <span class="claim">Order-to-ship time was 42.4 hours, slightly above the 30-day average. <span class="src">F001</span></span>
+          <span class="claim">Match rate was 94.0% — below the 95% threshold. <span class="src">F010</span></span>
+          <p style="margin-top:14px;font-style:italic;color:var(--text-3);font-size:13px">2 claims stripped before publication: the system could not verify them against any source.</p>
+        </div>
+        <span class="ba-tag passed">Every remaining claim cites a source</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Proof point ─────────────────────────────────────────────── -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <span class="eyebrow">Proof</span>
+    <h2>This is a working production system. Not theory.</h2>
+
+    <div class="proof">
+      <p>CASDAM is a six-stage pipeline that does exactly what's described above. It uses six different AI systems from six different companies — so the AI checking the AI shares no training data and no architecture with the AI being checked. Every number in the final report is independently recomputed in plain code. Every claim cites the source it came from. When the AI is wrong, you see the disagreement in the verification footer — not in the executive summary.</p>
+      <a href="../" class="casdam-link">See the full CASDAM technical case study →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Cost of unchecked AI ────────────────────────────────────── -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <span class="eyebrow">The Hidden Cost</span>
+    <h2>What unchecked AI is costing you right now.</h2>
+    <p class="lede-2">If your team is using AI in any reporting or decision workflow without a verification layer, you are already paying for it. You may not be tracking the line item.</p>
+
+    <div class="cost-grid">
+      <div class="cost-card">
+        <div class="cost-num">0</div>
+        <div class="cost-label">Production AI tools today that show you which claims they verified</div>
+        <div class="cost-desc">Confidence scores aren't verification. Citations aren't verification. The model saying "I'm sure" is the problem, not the solution.</div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-num">3-8h</div>
+        <div class="cost-label">Per week your team already spends sanity-checking AI output</div>
+        <div class="cost-desc">Hidden overhead. Rarely tracked. Done by the same people you bought the AI to free up. The verification work didn't disappear — it migrated.</div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-num">1</div>
+        <div class="cost-label">Wrong number it takes to lose your CFO's trust in the entire system</div>
+        <div class="cost-desc">Once a number from "the AI report" turns out to be fabricated, every future number is suspect. Trust degrades faster than it builds.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ─────────────────────────────────────────────────────── -->
+<section class="cta">
+  <div class="container">
+    <h2>Want to see if your AI deployment has unchecked AI risk?</h2>
+    <p class="sub">A 20-minute conversation. I'll look at one workflow you're worried about and tell you honestly whether it has a verification gap.</p>
+    <div class="cta-buttons">
+      <a class="btn btn-primary" href="https://www.linkedin.com/in/daniel-wipert/" target="_blank" rel="noopener">
+        Message Daniel on LinkedIn →
+      </a>
+      <a class="btn btn-outline" href="../">
+        See the technical case study
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ──────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <p>
+      <a href="../">CASDAM Case Study</a> ·
+      <a href="../dashboard/">Live Dashboard</a> ·
+      <a href="https://github.com/danielwipert/cas.dam" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/daniel-wipert/" target="_blank" rel="noopener">LinkedIn</a>
+    </p>
+    <p style="margin-top:10px">© 2026 Chorus AI Systems</p>
+  </div>
+</footer>
+
+</body>
+</html>
